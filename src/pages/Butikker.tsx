@@ -4,7 +4,7 @@ import './Butikker.css';
 function Butikker() {
     return (
         <div className="Butikker">
-            <p>tekst her</p>
+            <p>tekst her om butikkene</p>
         </div>
 
 
