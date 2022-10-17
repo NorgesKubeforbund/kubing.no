@@ -1,0 +1,35 @@
+stages:
+  - build
+  - test
+
+variables:
+  npm_config_cache: '$CI_PROJECT_DIR/.npm'
+  CYPRESS_CACHE_FOLDER: '$CI_PROJECT_DIR/cache/Cypress'
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - cache/Cypress
+    - node_modules
+    - build
+
+  install:
+    image: cypress/browsers:node12.14.1-chrome85-ff81
+    stage: build
+    script:
+      - npm ci
+    
+  test:
+    image: cypress/browsers:node12.14.1-chrome85-ff81
+    stage: test
+    paralell: 2
+    script:
+      - npm ci
+      - npm run start &
+      - npx cypress run --record --key 2166158d-2340-4e7d-9e8d-e17a92083668 --parallel --browser chrome
+    artifacts:
+      when: always
+      paths:
+        - cypress/videos/**/*.mp4
+        - cypress/screenshots/**.png
+      expire_in: 1 day
