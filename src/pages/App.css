@@ -3,11 +3,12 @@
 .NavBar {
   
   margin-left: auto;
-  margin-right: 3vmin;
+  margin-right: 10px;
   align-items: center;
   float: right;
   display: flex;
-  width: 70vmin;
+  width: 30vmin;
+  min-width: 690px;
 }
 
 .MenuLinks {
@@ -17,7 +18,8 @@
   background-color: #282c34;
   color: white;
   border-style: hidden;
-  padding: 1vmin;
+  padding: 1px;
+  font-size: 0.9rem;
   transition: 0.4s;
 
 }
@@ -43,8 +45,8 @@
 
 .Logo {
   flex: 1;
-  height: 20vmin;
-  width: 20vmin;
+  height: 10rem;
+  width: 10rem;
   pointer-events: none;
 }
 
@@ -57,6 +59,8 @@
   .NavBar {
     
     justify-content: right;
+    min-width: 1px;
+    width: auto;
 
   }
   
@@ -82,7 +86,7 @@
   display: flex;
   
   align-items: center;
-  font-size: calc(10px + 2vmin);
+  font-size: calc(1rem + 2vmin);
   color: white;
 }
 

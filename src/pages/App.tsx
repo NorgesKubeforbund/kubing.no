@@ -44,17 +44,17 @@ function App() {
           window.location.href = "./LokaleArrangement"
           }} className="MenuLinks">Lokale arrangement</button>
         
-        <div className="DropDown">
-          <div className="IconBar"></div>
-          <div className="IconBar"></div>
-          <div className="IconBar"></div>
+          <div className="DropDown">
+            <div className="IconBar"></div>
+            <div className="IconBar"></div>
+            <div className="IconBar"></div>
+          </div>      
         </div>
-            
-          </div>
 
-
-          
       </header>
+
+
+      
       <p>
         Edit src/pages/App.tsx and save to reload.
       </p>
