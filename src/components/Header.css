@@ -22,12 +22,7 @@
   margin-left: 3px;
   border-radius: 10px;
 }
-.active, .MenuLinks:hover {
 
-  color: rgb(255, 0, 0);
-  cursor: pointer;
-  transition: color 0.4s;
-}
 .Logo {
 
   flex: 1;
@@ -135,6 +130,14 @@
     top: 135px;
   }
 }
+
+.active, .MenuLinks:hover {
+
+  color: rgb(255, 0, 0);
+  cursor: pointer;
+  transition: color 0.4s;
+}
+
 .DropDown:hover {
 
   cursor: pointer;
