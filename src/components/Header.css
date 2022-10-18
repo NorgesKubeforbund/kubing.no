@@ -21,10 +21,11 @@
   font-size: 0.9rem;
 }
 .DropDown {
+
   display: none;
-  
 }
 .IconBar {
+
   width: 35px;
   height: 3px;
   background-color: #868686;
@@ -35,11 +36,13 @@
 }
 
 .active, .MenuLinks:hover {
+
   color: rgb(255, 0, 0);
   cursor: pointer;
 }
 
 .Logo {
+
   flex: 1;
   height: 20vmin;
   width: 20vmin;
@@ -47,21 +50,23 @@
 }
 
 @media (prefers-reduced-motion: no-preference) {
+
   .Logo {
     animation: App-logo-spin infinite 20s linear;
   }
 }
 @media (max-width: 1080px) {
-  .NavBar {
-    
-    justify-content: right;
 
+  .NavBar {
+    justify-content: right;
   }
   
   .MenuLinks {
+
     display: none;
   }
   .DropDown {
+
     display: block;
     border-style: solid;
     border-width: 2px;
@@ -71,14 +76,15 @@
 }
 
 .DropDown:hover {
+
   cursor: pointer;
 }
 
 .App-header {
+
   background-color: #282c34;
   min-height: 150px;
   display: flex;
-  
   align-items: center;
   font-size: calc(1rem + 2vmin);
   color: white;
@@ -87,6 +93,7 @@
 
 
 @keyframes App-logo-spin {
+  
   from {
     transform: rotate(0deg);
   }
