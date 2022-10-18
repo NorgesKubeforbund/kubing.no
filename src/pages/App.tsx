@@ -1,68 +1,66 @@
 import React from 'react';
 import './App.css';
+import image from './media/NKF_Logo_trans.png';
+import icon from './media/icons8-menu-30.png';
+
+
+
 
 function App() {
+
+
   return (
     <div className="App">
       <header className="App-header">
-        <img src={""} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/pages/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-
-
-        >
-          Learn React
-
-        </a>
+        <div>
+          <img src={image} className="Logo" alt="logo" />
+          
+        </div>
+        <a>Norges Kubeforbund</a>
+        <div className="NavBar">
+          
+        <button onClick={() => {
+          window.location.href = "./"
+          }} className="MenuLinks active">Hjem</button>
+        <button onClick={() => {
+          window.location.href = "./Konkurranser"
+          }} className="MenuLinks">Konkurranser</button>
         <button onClick={() => {
           window.location.href = "./Butikker"
-          }}>Butikker</button>
-         
-
+          }} className="MenuLinks">Butikker</button>       
           <button onClick={() => {
           window.location.href = "./Guider"
-          }}>Guider</button>
-          
-
-          <button onClick={() => {
-          window.location.href = "./Konkurranser"
-          }}>Konkurranser</button>
-      
-          
+          }} className="MenuLinks">Guider</button>                       
           <button onClick={() => {
           window.location.href = "./OmOss"
-          }}>Om oss</button>
-
-          
+          }} className="MenuLinks">Om oss</button>         
           <button onClick={() => {
           window.location.href = "./Rekorder"
-          }}>Rekorder</button>
-
-
+          }} className="MenuLinks">Norske rekorder</button>
           <button onClick={() => {
           window.location.href = "./EksterneRessurser"
-          }}>Eksterne ressurser</button>
-
-
+          }} className="MenuLinks">Eksterne ressurser</button>
           <button onClick={() => {
           window.location.href = "./LokaleArrangement"
-          }}>Lokale arrangement</button>
+          }} className="MenuLinks">Lokale arrangement</button>
+        
+        <div className="DropDown">
+          <div className="IconBar"></div>
+          <div className="IconBar"></div>
+          <div className="IconBar"></div>
+        </div>
+            
+          </div>
+
+
           
       </header>
+      <p>
+        Edit src/pages/App.tsx and save to reload.
+      </p>
     </div>
   );
 }
 
 export default App;
 
-/*export default function App() {
-  return(
-    <div> hello world</div>
-  );
-}*/
