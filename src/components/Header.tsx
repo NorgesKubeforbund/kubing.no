@@ -14,14 +14,26 @@ export const NavBar = () => {
     {name: 'Lokale Arrangement', path: '/LokaleArrangement'},
   ]
 
+  function dropDown() {
+    var x = document.getElementById('NavBarFull') as HTMLElement;
+    if(x.className === 'NavBar') {
+      x.className += 'Responsive';
+
+    } else {
+      x.className = 'NavBar';
+    }
+  }
+
+
   return (
   <header className="App-header">
     <div>
     <img src={image} className="Logo" alt="logo" />
     
     </div>
-    <a>Norges Kubeforbund</a>
-      <div className="NavBar">
+    <a className="LogoName">Norges Kubeforbund</a>
+      
+      <div className="NavBar" id="NavBarFull">
         {pages.map((pg) => {
           if (pg['path'] == window.location.pathname) {
             return (
@@ -37,12 +49,14 @@ export const NavBar = () => {
             )
           }
         })}
-        <div className="DropDown">
+        
+      </div>
+        <div className="DropDown" onClick={() => {dropDown()}}>
           <div className="IconBar"></div>
           <div className="IconBar"></div>
           <div className="IconBar"></div>
         </div>
-      </div>
+      
   </header>
   )
 }
