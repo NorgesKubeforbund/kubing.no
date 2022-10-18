@@ -1,4 +1,6 @@
-.NavBar {
+
+
+.NavBar, .NavBarResponsive{
   
   margin-left: auto;
   margin-right: 3px;
@@ -7,16 +9,11 @@
   display: flex;
   width: 690px;
 }
-.MenuLinks {
-  
-  width: 100px;
-  background-color: #282c34;
-  color: white;
-  border-style: hidden;
-  padding: 3px;
-  transition: 0.4s;
-  font-size: 0.9rem;
-}
+
+
+
+
+
 .DropDown {
 
   display: none;
@@ -35,6 +32,7 @@
 
   color: rgb(255, 0, 0);
   cursor: pointer;
+  transition: color 0.4s;
 }
 .Logo {
 
@@ -53,6 +51,28 @@
     animation: App-logo-spin infinite 20s linear;
   }
 }
+@media (min-width: 1041px) {
+  .MenuLinks {
+  
+    width: 100px;
+    background-color: #282c34;
+    color: white;
+    border-style: hidden;
+    padding: 3px;
+    
+    font-size: 0.9rem;
+  }
+  .NavBarResponsive {
+    margin-left: auto;
+    margin-right: 3px;
+    align-items: center;
+    float: right;
+    display: flex;
+    width: 690px;
+  }
+}
+
+
 @media (max-width: 1040px) {
 
   .NavBar {
@@ -65,8 +85,25 @@
     width: 100%;
     font-size: 30px;
     padding-bottom: 20px;
+    
+    background-color: #282c34;
+    color: white;
+    border-style: hidden;
+    
 
   }
+  .NavBarResponsive {
+
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 165px;
+    width: 100%;
+    align-items: center;
+  
+  }
+
+  
   .DropDown {
 
     display: block;
