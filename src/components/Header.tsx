@@ -15,7 +15,7 @@ export const NavBar = () => {
   ]
 
   function dropDown() {
-    var x = document.getElementById('NavBarFull') as HTMLElement;
+    const x = document.getElementById('NavBarFull') as HTMLElement;
     if(x.className === 'NavBar') {
       x.className += 'Responsive';
 

@@ -12,7 +12,6 @@ cache:
     - cache/Cypress
     - node_modules
     - .npm
-    - build
 
 install:
   image: cypress/browsers:node12.14.1-chrome85-ff81
