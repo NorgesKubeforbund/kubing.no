@@ -7,8 +7,10 @@ variables:
   CYPRESS_CACHE_FOLDER: '$CI_PROJECT_DIR/cache/Cypress'
 
 cache:
+  key: ${CI_COMMIT_REF_SLUG}
   paths:
     - cache/Cypress
+    - node_modules
     - .npm
     - build
 
