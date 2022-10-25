@@ -18,6 +18,11 @@ install:
   script:
     - npm ci
     
+typescript:
+  stage: test
+  script:
+    - ./node_modules/.bin/tsc --noEmit
+    
 test:
   image: cypress/browsers:node12.14.1-chrome85-ff81
   stage: test
