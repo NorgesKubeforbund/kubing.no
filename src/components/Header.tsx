@@ -9,8 +9,8 @@ export const NavBar = () => {
     {name: 'Butikker', path: '/Butikker'}, 
     {name: 'Guider', path: '/Guider'}, 
     {name: 'Om Oss', path: '/OmOss'}, 
+    {name: 'Linker', path: '/Linker'},
     {name: 'Norske Rekorder', path: '/Rekorder'}, 
-    {name: 'Eksterne Ressurser', path: '/EksterneRessurser'}, 
     {name: 'Lokale Arrangement', path: '/LokaleArrangement'},
   ]
 
