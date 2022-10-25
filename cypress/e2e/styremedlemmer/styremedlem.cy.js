@@ -1,4 +1,3 @@
-import { Given, When, Then, And } from "cypress-cucumber-preprocessor/steps";
 /*
 ### Informasjon om NKF-styremedlem:
   Som bruker av nettsiden

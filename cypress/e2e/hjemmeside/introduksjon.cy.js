@@ -1,5 +1,3 @@
-import { Given, When, Then, And } from "cypress-cucumber-preprocessor/steps";
-
 /*
 ### Introduksjon til kubing:
   Som bruker av nettsiden
