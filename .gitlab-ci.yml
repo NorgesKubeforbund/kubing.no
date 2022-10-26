@@ -1,5 +1,6 @@
 stages:
   - build
+  - precheck
   - test
 
 variables:
@@ -18,11 +19,18 @@ install:
   stage: build
   script:
     - npm ci
+
+eslint:
+  stage: precheck
+  script:
+    - npm i -D
+    - npm run int
+    - npm run buildtest
     
 typescript:
-  stage: test
+  stage: precheck
   script:
-    - ./node_modules/.bin/tsc --noEmit
+    -  ./node_modules/typescript/bin/tsc --noEmit
     
 test:
   image: cypress/browsers:node12.14.1-chrome85-ff81
