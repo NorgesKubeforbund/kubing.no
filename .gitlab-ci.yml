@@ -1,3 +1,5 @@
+image: node:latest
+
 stages:
   - build
   - precheck
@@ -15,10 +17,13 @@ cache:
     - .npm
 
 install:
-  image: cypress/browsers:node12.14.1-chrome85-ff81
   stage: build
+  image: cypress/browsers:node12.14.1-chrome85-ff81
   script:
     - npm ci
+  artifacts:
+    paths:
+      - node_modules
 
 eslint:
   stage: precheck
