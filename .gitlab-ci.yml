@@ -24,11 +24,6 @@ install:
   artifacts:
     paths:
       - node_modules
-
-eslint:
-  stage: precheck
-  script:
-    - npm i -D
     
 typescript:
   stage: precheck
