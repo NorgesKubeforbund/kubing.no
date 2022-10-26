@@ -29,8 +29,6 @@ eslint:
   stage: precheck
   script:
     - npm i -D
-    - npm run int
-    - npm run buildtest
     
 typescript:
   stage: precheck
