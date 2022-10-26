@@ -1,5 +1,8 @@
+image: node:latest
+
 stages:
   - build
+  - precheck
   - test
 
 variables:
@@ -11,18 +14,26 @@ cache:
   paths:
     - cache/Cypress
     - node_modules
-    - build
+    - .npm
 
 install:
-  image: cypress/browsers:node12.14.1-chrome85-ff81
   stage: build
+  image: cypress/browsers:node12.14.1-chrome85-ff81
   script:
     - npm ci
+  artifacts:
+    paths:
+      - node_modules
+    
+typescript:
+  stage: precheck
+  script:
+    -  ./node_modules/typescript/bin/tsc --noEmit
     
 test:
   image: cypress/browsers:node12.14.1-chrome85-ff81
   stage: test
-  parallel: 2
+  #parallel:2
   script:
     - npm ci
     - npm run start &

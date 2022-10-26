@@ -1,5 +1,3 @@
-import { Given, When, Then, And } from "cypress-cucumber-preprocessor/steps";
-
 /*
 ### Informasjon om konkurranser:
   Som bruker av nettsiden
@@ -11,14 +9,14 @@ import { Given, When, Then, And } from "cypress-cucumber-preprocessor/steps";
   Så ser jeg en liste over kommende konkurranser
 */
   
-Given(/^at jeg er inne på nettsiden$/, () => {
+it('at jeg er inne på nettsiden', () => {
   cy.visit('http://localhost:3000');
 });
 
-When(/^jeg klikker meg inn på konkurranser-siden$/, () => {
+it('jeg klikker meg inn på konkurranser-siden', () => {
 
 });
 
-Then(/^så ser jeg en liste over kommende konkurranser$/, () => {
+it('så ser jeg en liste over kommende konkurranser', () => {
   
 });

@@ -1,3 +1,4 @@
+import React from 'react';
 import './Header.css';
 import image from '../media/NKF_Logo_trans.png';
 
@@ -15,7 +16,7 @@ export const NavBar = () => {
   ]
 
   function dropDown() {
-    var x = document.getElementById('NavBarFull') as HTMLElement;
+    const x = document.getElementById('NavBarFull') as HTMLElement;
     if(x.className === 'NavBar') {
       x.className += 'Responsive';
 
@@ -43,7 +44,7 @@ export const NavBar = () => {
             )
           } else {
             return (
-              <button onClick={() => {
+              <button key={pg['name']} onClick={() => {
                 window.location.href = pg['path']
               }} className="MenuLinks">{pg['name']}</button>
             )
