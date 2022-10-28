@@ -1,14 +1,39 @@
 import React from 'react';
 import { NavBar } from '../components/Header';
+import './App.css';
 
 
 function App() {
   return (
     <div className="App">
       <NavBar />
-      <p>
-        Edit src/pages/App.tsx and save to reload.
-      </p>
+      <div className='Main'>
+          <div className='Intro'>
+              <h1 className='MainHeader'>Hjem</h1>
+          </div>
+          <div className='Element'>
+            <h2>Velkommen</h2>
+            Velkommen til hjemmesiden til Norges kubeforbund. 
+            Hvis du ønsker å lære deg å løse Rubiks kube, så har du kommet til riktig sted. 
+            Vi har guider som beskriver hvordan dette gjøres. 
+            Hvis du allerede kan løse kuben, og kan tenke deg å delta i konkurranser, 
+            eller møte andre som driver med konkurransekubing, 
+            så har du også kommet til riktig sted. 
+            Her kan du finne informasjon om norske konkurranser og andre arrangement.
+          </div>
+          <div className='Element'>
+            <h2>Hva er 'speedcubing'?</h2>
+              Speedcubing er en sport hvor målet er å løse Rubiks kube og andre liknende puslespill på kortest mulig tid.
+              Flere ganger årlig arrangeres det konkurranser i Norge (og i resten av verden),
+              hvor deltagerne løser Rubiks kube på tid.
+          </div>
+          <div className='Element'>
+            <h2>Kommende konkurranser</h2>
+              Kommende konkurranser finner du i Konkurranse-taben i menyen over.
+          </div>
+
+
+      </div>
     </div>
   );
 }
