@@ -2,7 +2,7 @@ import React from 'react';
 import { NavBar } from '../components/Header';
 import './Linker.css';
 
-function EksterneRessurser() {
+function Linker() {
     return (
         <div className="Eksterne Ressurser">
             <NavBar/>
@@ -13,4 +13,4 @@ function EksterneRessurser() {
     );
 }
 
-export default EksterneRessurser;
+export default Linker;
