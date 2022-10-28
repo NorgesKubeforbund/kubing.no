@@ -1,4 +1,4 @@
-
+///<reference types="cypress" />
 /*
 ### Informasjon om konkurranser:
   Som bruker av nettsiden
@@ -10,13 +10,15 @@
   Så ser så blir jeg tatt til siden jeg valgte
 */
 
-describe('Navigasjonstesting', () => {
+describe('size/scaling', () => {
   context('1920p desktop', () => {
     beforeEach(() => {
       cy.viewport(1920, 1080);
     });
-    it('at jeg er inne på nettsiden', () => {
+    it('Gitt at jeg er inne på nettsiden', () => {
       cy.visit('http://localhost:3000');
+    });
+    it('Og jeg kan se navigasjonsbaren', () => {
       cy.get('.NavBar > button').should(($buttons) => {
         expect($buttons).to.have.length(8);
         expect($buttons.eq(0)).to.contain('Hjem');
@@ -30,12 +32,11 @@ describe('Navigasjonstesting', () => {
       });
       cy.get('.NavBar > button').first().should('have.class', 'MenuLinks active')
     });
-    
-    it('jeg klikker på navigasjonsbaren', () => {
+    it('Ønsker jeg å klikke på navigasjonsbaren', () => {
       cy.get('.NavBar').contains('Hjem').click();
     });
     
-    it('så blir jeg tatt til siden jeg valgte', () => {
+    it('Slik at eg blir jeg tatt til siden jeg valgte', () => {
       cy.url().should('eq', 'http://localhost:3000/')
     });
   });
@@ -44,8 +45,10 @@ describe('Navigasjonstesting', () => {
     beforeEach(() => {
       cy.viewport('iphone-6');
     });
-    it('at jeg er inne på nettsiden', () => {
+    it('Gitt at jeg er inne på nettsiden', () => {
       cy.visit('http://localhost:3000');
+    });
+    it('Og jeg kan se navigasjonsbaren', () => {
       cy.get('.DropDown').click()
       cy.get('.NavBarResponsive > button').should(($buttons) => {
         expect($buttons).to.have.length(8);
@@ -59,14 +62,111 @@ describe('Navigasjonstesting', () => {
         expect($buttons.eq(7)).to.contain('Lokale Arrangement');
       });
       cy.get('.NavBarResponsive > button').first().should('have.class', 'MenuLinks active')
-    });
-    
-    it('jeg klikker på navigasjonsbaren', () => {
+    })
+    it('Ønsker jeg å klikke på navigasjonsbaren', () => {
       cy.get('.NavBarResponsive').contains('Hjem').click();
     });
     
-    it('så blir jeg tatt til siden jeg valgte', () => {
+    it('Slik at eg blir jeg tatt til siden jeg valgte', () => {
       cy.url().should('eq', 'http://localhost:3000/')
     });
   });
 });
+
+describe('Navigation', () => {
+  context('Desktop from home to all pages', () => {
+    beforeEach(() => {
+      cy.viewport(1920, 1080);
+    });
+    it('Gitt at jeg er inne på nettsiden', () => {
+      cy.visit('http://localhost:3000');
+      cy.get('.NavBar > button').contains('Hjem').should('have.class', 'MenuLinks active');
+    });
+    it('Ønsker jeg å gå til konkurransesiden', () => {
+      cy.get('.NavBar').contains('Konkurranser').click();
+      cy.url().should('eq', 'http://localhost:3000/Konkurranser');
+      cy.get('.NavBar > button').contains('Konkurranser').should('have.class', 'MenuLinks active');
+    });
+    it('Og til Butikker siden', () => {
+      cy.get('.NavBar').contains('Butikker').click();
+      cy.url().should('eq', 'http://localhost:3000/Butikker');
+      cy.get('.NavBar > button').contains('Butikker').should('have.class', 'MenuLinks active');
+    });
+    it('Og til Om oss siden', () => {
+      cy.get('.NavBar').contains('Om Oss').click();
+      cy.url().should('eq', 'http://localhost:3000/OmOss')
+      cy.get('.NavBar > button').contains('Om Oss').should('have.class', 'MenuLinks active');
+    });
+    it('Og til Linker siden', () => {
+      cy.get('.NavBar').contains('Linker').click();
+      cy.url().should('eq', 'http://localhost:3000/Linker');
+      cy.get('.NavBar > button').contains('Linker').should('have.class', 'MenuLinks active');
+    });
+    it('Og til Norske Rekorder', () => {
+      cy.get('.NavBar').contains('Norske Rekorder').click();
+      cy.url().should('eq', 'http://localhost:3000/Rekorder');
+      cy.get('.NavBar > button').contains('Rekorder').should('have.class', 'MenuLinks active');
+    });
+    it('Og til siden Lokale arrangementer', () => {
+      cy.get('.NavBar').contains('Lokale Arrangement').click();
+      cy.url().should('eq', 'http://localhost:3000/LokaleArrangement');
+      cy.get('.NavBar > button').contains('Lokale Arrangement').should('have.class', 'MenuLinks active');
+    });
+    it('Så tilbake til hjem', () => {
+      cy.get('.NavBar').contains('Hjem').click();
+      cy.url().should('eq', 'http://localhost:3000/');
+      cy.get('.NavBar > button').contains('Hjem').should('have.class', 'MenuLinks active');
+    });
+  });
+
+  context('Mobile from home to all pages', () => {
+    beforeEach(() => {
+      cy.viewport('iphone-6');
+    });
+    it('Gitt at jeg er inne på nettsiden', () => {
+      cy.visit('http://localhost:3000');
+      cy.get('.NavBar > button').contains('Hjem').should('have.class', 'MenuLinks active');
+    });
+    it('Ønsker jeg å gå til konkurransesiden', () => {
+      cy.get('.DropDown').click();
+      cy.get('.NavBarResponsive').contains('Konkurranser').click();
+      cy.url().should('eq', 'http://localhost:3000/Konkurranser');
+      cy.get('.NavBar > button').contains('Konkurranser').should('have.class', 'MenuLinks active');
+      
+    });
+    it('Og til Butikker siden', () => {
+      cy.get('.DropDown').click();
+      cy.get('.NavBarResponsive').contains('Butikker').click();
+      cy.url().should('eq', 'http://localhost:3000/Butikker');
+      cy.get('.NavBar > button').contains('Butikker').should('have.class', 'MenuLinks active');
+    });
+    it('Og til Om oss siden', () => {
+      cy.get('.DropDown').click();
+      cy.get('.NavBarResponsive').contains('Om Oss').click();
+      cy.url().should('eq', 'http://localhost:3000/OmOss')
+    });
+    it('Og til Linker siden', () => {
+      cy.get('.DropDown').click();
+      cy.get('.NavBarResponsive').contains('Linker').click();
+      cy.url().should('eq', 'http://localhost:3000/Linker');
+    });
+    it('Og til Norske Rekorder', () => {
+      cy.get('.DropDown').click();
+      cy.get('.NavBarResponsive').contains('Norske Rekorder').click();
+      cy.url().should('eq', 'http://localhost:3000/Rekorder');
+    });
+    it('Og til siden Lokale arrangementer', () => {
+      cy.get('.DropDown').click();
+      cy.get('.NavBarResponsive').contains('Lokale Arrangement').click();
+      cy.url().should('eq', 'http://localhost:3000/LokaleArrangement');
+    });
+    it('Så tilbake til hjem', () => {
+      cy.get('.DropDown').click();
+      cy.get('.NavBarResponsive').contains('Hjem').click();
+      cy.url().should('eq', 'http://localhost:3000/');
+      cy.get('.NavBar > button').contains('Hjem').should('have.class', 'MenuLinks active');
+    });
+  });
+});
+
+export {}
