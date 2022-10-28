@@ -23,7 +23,7 @@
   border-radius: 10px;
 }
 
-.Logo {
+.Logo, .Spin {
 
   flex: 1;
   height: 10rem;
@@ -36,7 +36,7 @@
 }
 @media (prefers-reduced-motion: no-preference) {
 
-  .Logo {
+  .Spin {
     animation: App-logo-spin infinite 20s linear;
   }
 }
@@ -77,6 +77,7 @@
     font-size: 30px;
     font-family: 'Trebuchet MS';
     padding-bottom: 20px;
+    margin-top: -1px;
     
     background-color: #282c34;
     color: white;
