@@ -7,7 +7,7 @@ import {useEffect, useState} from 'react';
 function Konkurranser() {
 
     const [loading, setLoading] = useState<boolean>(false);
-    const [compData, setCompData] = useState<any>();
+    const [compData, setCompData] = useState<any>([]);
 
     const getCompData = async() => {
         setLoading(true);
@@ -21,11 +21,15 @@ function Konkurranser() {
         getCompData();
     }, []);
 
-
-    const comps = (competitions: any) => {
+    console.log(compData);
+    const comps = () => {
             return(
-                <div>{competitions.map((comp: any) => (
+                
+                <div>{compData.map((comp: any) => (
+                    <div>
                     <h1>{comp.name}</h1>
+                        <p>{comp.city}</p>
+                        </div> 
                   ))}</div>  
             );
     }
@@ -38,7 +42,7 @@ function Konkurranser() {
             <NavBar/>
             <div className="Comps">
             {loading && <p>Loading data...</p>}
-            {comps(compData)}
+            {comps()}
             </div>
         </div>
     );
