@@ -43,7 +43,7 @@ export const NavBar = () => {
             )
           } else {
             return (
-              <button onClick={() => {
+              <button key={pg['name']} onClick={() => {
                 window.location.href = pg['path']
               }} className="MenuLinks">{pg['name']}</button>
             )
