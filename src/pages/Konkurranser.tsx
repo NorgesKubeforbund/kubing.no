@@ -22,15 +22,30 @@ function Konkurranser() {
     }, []);
 
     console.log(compData);
+
+
+
+    
+
+
     const comps = () => {
             return(
-                
-                <div>{compData.map((comp: any) => (
-                    <div>
-                    <h1>{comp.name}</h1>
-                        <p>{comp.city}</p>
-                        </div> 
-                  ))}</div>  
+                <table className="compTable">
+                    <thead>
+                        <th>Navn</th>
+                        <th>By</th>
+                        <th>Dato</th>
+                    </thead>
+                    <tbody className="comp">{compData.map((comp: any) => (                                                                  
+                        <tr className="compRow">
+                            <td className="compName"><a href={comp.url} className="compLinks">{comp.name}</a></td>
+                            <td className="compCity">{comp.city}</td>
+                            <td className="compDate">{comp.start_date}</td>
+                        </tr>
+
+                    ))}
+                    </tbody>  
+                  </table>
             );
     }
 
@@ -40,9 +55,19 @@ function Konkurranser() {
     return (
         <div className="Konkurranser">
             <NavBar/>
-            <div className="Comps">
-            {loading && <p>Loading data...</p>}
-            {comps()}
+            <div className="Main">
+            
+                <div className="arrangere">
+                    <p>Ønsker du å arrangere en konkurranse?</p>
+                </div>
+
+                <h1 className='MainHeader'>Kommende Konkurranser</h1>
+                <div className="Comps">
+                {loading && <p>Loading data...</p>}
+                {comps()}
+                </div>
+                <br></br>
+                <br></br>
             </div>
         </div>
     );
