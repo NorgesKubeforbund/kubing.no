@@ -2,3 +2,17 @@
     align-items: center;
     text-align: center;
 }
+
+.td {
+    border-width: 1px;
+    border-style: solid;
+    border-color: black;
+}
+.tables {
+    display: flex;
+    flex-direction: row;
+}
+tr:nth-child(odd) {
+    background-color: #e2e2e2;
+    
+}
