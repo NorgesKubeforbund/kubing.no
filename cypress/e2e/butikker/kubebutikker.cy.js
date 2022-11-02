@@ -10,7 +10,7 @@
   Så finner jeg linker til butikker hvor jeg kan kjøpe kuber
 */
 
-describe.skip('Butikkdata', () => {
+describe('Butikkdata', () => {
   context('Desktopsjekk', () => {
     beforeEach(() => {
       cy.viewport(1920, 1080);
