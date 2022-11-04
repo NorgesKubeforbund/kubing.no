@@ -11,7 +11,7 @@ function Rekorder() {
 
     const getSheetData = async() => {
         setLoading(true);
-        const response = await axios.get('https://sheets.googleapis.com/v4/spreadsheets/1q9KIGan5FFJs67WMmtvj5rZWiBPPmdZp6s8zIodlqEw/values/UNR%20WCA?key=AIzaSyACiTiM4Kz8HfzwUkjXJushOi1YBgcjmKw');
+        const response = await axios.get('https://sheets.googleapis.com/v4/spreadsheets/1q9KIGan5FFJs67WMmtvj5rZWiBPPmdZp6s8zIodlqEw/values/EXPORT?key=AIzaSyACiTiM4Kz8HfzwUkjXJushOi1YBgcjmKw');
         setSheetData(response.data.values);
         setLoading(false);
         return await response.data;
@@ -24,33 +24,48 @@ function Rekorder() {
         getSheetData();
     }, []);
 
-    const unrTable = () => {
+    const unrWCATable = () => {
         return (
             <table>
-                <thead>
-                    <tr>
-                        <td>navn</td>
-                        <td>tid</td>
-                        <td>event</td>
-                        <td>tid</td>
-                        <td>navn</td>
-                        
-                    </tr>
-                </thead>
                 <tbody>
                     {sheetData.map((el: any) => (
+                    
+                    
                     <tr key={el[0]}>
-                        <td>{el[2]}</td>
+                        <th className="Cell">{el[0]}</th>
                         <td>{el[1]}</td>
-                        <td>{el[0]}</td>                        
-                        <td>{el[5]}</td>
-                        <td>{el[6]}</td>                          
+                        <td>{el[2]}</td>                        
+                        <td>{el[3]}</td>
+                        <td>{el[4]}</td>                             
                     </tr>
                     ))}                    
                 </tbody>
             </table>
         );
     }
+
+    const unrNonWCATable = () => {
+        return (
+            <table>
+                <tbody>
+                    {sheetData.map((el: any) => (
+                    <tr key={el[0]}>
+                        <td className="Cell"><b>{el[6]}</b></td>    
+                        <td>{el[7]}</td>  
+                        <td>{el[8]}</td> 
+                        <td>{el[9]}</td>  
+                        <td>{el[10]}</td>                            
+                    </tr>
+                    ))}                    
+                </tbody>
+            </table>
+        );
+
+
+
+    }
+
+
 
 
 
@@ -59,7 +74,11 @@ function Rekorder() {
             <NavBar/>
             <div className="tables">
                 {loading && <p>Loading data...</p>}  
-                <div>{unrTable()}</div>           
+                <div className='UnrWCA'>{unrWCATable()}</div> 
+
+                {loading && <p>Loading data...</p>}  
+                <div className='UnrNonWCA'>{unrNonWCATable()}</div>
+
             </div>
         </div>
 
