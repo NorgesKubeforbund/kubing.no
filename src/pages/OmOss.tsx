@@ -38,7 +38,6 @@ function OmOss() {
       rekkefolge: integer,
     }]
     */
-   console.log(brregData)
     setLoading(false);
     return await response.data;
   };
