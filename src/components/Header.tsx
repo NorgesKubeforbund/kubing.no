@@ -19,12 +19,10 @@ export const NavBar = () => {
     const x = document.getElementById('NavBarFull') as HTMLElement;
     if(x.className === 'NavBar') {
       x.className += 'Responsive';
-
     } else {
       x.className = 'NavBar';
     }
   }
-
 
   return (
   <header className="App-header">
@@ -57,7 +55,6 @@ export const NavBar = () => {
           <div className="IconBar"></div>
           <div className="IconBar"></div>
         </div>
-      
   </header>
   )
 }

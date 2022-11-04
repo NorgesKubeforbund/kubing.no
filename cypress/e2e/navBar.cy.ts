@@ -82,6 +82,19 @@ describe('Navigation', () => {
       cy.visit('http://localhost:3000');
       cy.get('.NavBar > button').contains('Hjem').should('have.class', 'MenuLinks active');
     });
+
+    // WIP
+    it.skip('Ønsker jeg å gå til konkurransesiden', () => {
+      cy.get('.NavBar').each(($el, index, $list) => {
+        cy.wrap($el).find('button')
+          .invoke('val')
+          .then(() => {
+            cy.click();
+            cy.url().should('eq', 'http://localhost:3000/');
+          })
+      })
+    });
+    
     it('Ønsker jeg å gå til konkurransesiden', () => {
       cy.get('.NavBar').contains('Konkurranser').click();
       cy.url().should('eq', 'http://localhost:3000/Konkurranser');
@@ -169,4 +182,4 @@ describe('Navigation', () => {
   });
 });
 
-export {}
+export {};
