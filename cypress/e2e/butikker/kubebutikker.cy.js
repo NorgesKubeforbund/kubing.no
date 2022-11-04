@@ -10,7 +10,7 @@
   Så finner jeg linker til butikker hvor jeg kan kjøpe kuber
 */
 
-describe.skip('Butikkdata', () => {
+describe('Butikkdata', () => {
   context('Desktopsjekk', () => {
     beforeEach(() => {
       cy.viewport(1920, 1080);
@@ -52,6 +52,7 @@ describe.skip('Butikkdata', () => {
       cy.get('H2 a').contains('Cuboss');
       cy.get('p a').contains('Cuboss');
     });
+
     it('Og jeg kan besøke nettbutikkene', () => {
       //hent alle p element, lagre kvart p element som $el i $liste
       cy.get('p').each(($el, index, $list) => {
