@@ -48,6 +48,7 @@ describe('Butikkdata', () => {
       cy.visit('http://localhost:3000/Butikker');
     });
     it('Ønsker jeg å se hvor jeg kan kjøpe kuber', () => {
+      //
       cy.get('H1').contains('Butikker');
       cy.get('H2 a').contains('Cuboss');
       cy.get('p a').contains('Cuboss');
