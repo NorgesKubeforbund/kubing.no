@@ -31,7 +31,7 @@ function Rekorder() {
                     {sheetData.map((el: any) => (
                     
                     
-                    <tr key={el[0]}>
+                    <tr key={el[0]} className="recordRow">
                         <th className="Cell">{el[0]}</th>
                         <td>{el[1]}</td>
                         <td>{el[2]}</td>                        
@@ -49,7 +49,7 @@ function Rekorder() {
             <table>
                 <tbody>
                     {sheetData.map((el: any) => (
-                    <tr key={el[0]}>
+                    <tr key={el[0]} className="recordRow">
                         <td className="Cell"><b>{el[6]}</b></td>    
                         <td>{el[7]}</td>  
                         <td>{el[8]}</td> 
