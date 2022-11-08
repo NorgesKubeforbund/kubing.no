@@ -2,7 +2,7 @@ import React from 'react';
 import { NavBar } from '../components/Header';
 import './Linker.css';
 
-function Linker() {
+function Linker(): React.ReactElement<any, any> {
     return (
         <div className="Eksterne Ressurser">
             <NavBar/>

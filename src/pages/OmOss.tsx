@@ -4,45 +4,43 @@ import { useEffect, useState } from 'react';
 import { NavBar } from '../components/Header';
 import './OmOss.css';
 
-function OmOss() {
+function OmOss(): React.ReactElement<any, any> {
 
   const [loading, setLoading] = useState<boolean>(false);
-  const [brregData, setBrregData] = useState<Array<any>>([]);
+  const [brregData, setBrregData] = useState<apiResponse[]>([]);
 
-  const getBrregData = async() => {
+  type apiResponse = {
+    type: {
+      _links: {
+        self: {
+          href: string
+        },
+      },
+      beskrivelse: string,
+      kode: string,
+    },
+    person: {
+      navn: {
+        fornavn: string, 
+        mellomnavn: string, 
+        etternavn: string,
+      }, 
+      erDoed: boolean, 
+      fodselsdato: string
+    }, 
+    fratraadt: boolean, 
+    rekkefolge: number,
+  };
+
+  const getBrregData = async(): Promise<apiResponse> => {
     setLoading(true);
     const response = await axios.get('https://data.brreg.no/enhetsregisteret/api/enheter/994663666/roller?beskrivelse=Styremedlem');
     setBrregData(response.data.rollegrupper[1].roller);
-    /*
-    brregData er nå et array med objekter: 
-    [{
-      type: {
-        _links: {
-          self: {
-            href: string
-          }
-        },
-        beskrivelse: string,
-        kode: string,
-      }, 
-      person {
-        navn: {
-          fornavn: string, 
-          mellomnavn: string, 
-          etternavn: string,
-        }, 
-        erDoed: boolean, 
-        fodselsdato: string
-      }, 
-      fratraadt: boolean, 
-      rekkefolge: integer,
-    }]
-    */
     setLoading(false);
-    return await response.data;
+    return response.data;
   };
 
-  const brregDataTable = () => {
+  const brregDataTable = (): React.ReactElement<any, any> => {
     return (
       <table>
         <thead>
@@ -54,8 +52,8 @@ function OmOss() {
           </tr>
         </thead>
         <tbody>
-          {brregData.map((el: any) => (
-            <tr key={el.person.fodelsdato}>
+          {brregData.map((el: apiResponse) => (
+            <tr key={el.person.fodselsdato}>
               <td className='fornavn'>{el.person.navn.fornavn}</td>
               <td className='mellomnavn'>{el.person.navn.mellomnavn}</td>
               <td className='etternavn'>{el.person.navn.etternavn}</td>
@@ -71,7 +69,7 @@ function OmOss() {
     getBrregData();
   }, []);
 
-  
+  //render
   return (
     <div className="OmOss">
       <NavBar/>
