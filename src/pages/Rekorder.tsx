@@ -14,7 +14,7 @@ function Rekorder() {
         const response = await axios.get('https://sheets.googleapis.com/v4/spreadsheets/1q9KIGan5FFJs67WMmtvj5rZWiBPPmdZp6s8zIodlqEw/values/EXPORT?key=AIzaSyACiTiM4Kz8HfzwUkjXJushOi1YBgcjmKw');
         setSheetData(response.data.values);
         setLoading(false);
-        return await response.data;
+        return response.data;
 
 
     }
