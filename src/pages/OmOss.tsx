@@ -45,10 +45,10 @@ function OmOss(): React.ReactElement<any, any> {
       <table>
         <thead>
           <tr>
-            <td>Fornavn:</td>
-            <td>Mellomnavn:</td>
-            <td>Etternavn:</td>
-            <td>Stilling:</td>
+            <th>Fornavn:</th>
+            <th>Mellomnavn:</th>
+            <th>Etternavn:</th>
+            <th>Stilling:</th>
           </tr>
         </thead>
         <tbody>
