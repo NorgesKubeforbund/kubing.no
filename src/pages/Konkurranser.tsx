@@ -11,7 +11,7 @@ function Konkurranser() {
 
     const getCompData = async() => {
         setLoading(true);
-        const response = await axios.get('https://www.worldcubeassociation.org/api/v0/competitions?country_iso2=NO&limit=30');
+        const response = await axios.get('https://www.worldcubeassociation.org/api/v0/competitions?country_iso2=NO');
         setCompData(response.data);
         setLoading(false);
         return response.data;
@@ -113,6 +113,14 @@ function Konkurranser() {
             
                 <div className="arrangere">
                     <p>Ønsker du å arrangere en konkurranse?</p>
+
+                    <div>
+                        <p>For at en konkurranse skal være godkjent av verdens kubeforbund, 
+                            må det være en deligat til stede under konkurranser</p>
+                    </div>
+
+
+
                 </div>
 
                 <h1 className='MainHeader'>Kommende Konkurranser</h1>
