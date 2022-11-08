@@ -2,7 +2,7 @@ import React from 'react';
 import { NavBar } from '../components/Header';
 import './LokaleArrangement.css';
 
-function LokaleArrangement() {
+function LokaleArrangement(): React.ReactElement<any, any> {
     return (
         <div className="LokaleArrangement">
             <NavBar/>

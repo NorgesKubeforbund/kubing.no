@@ -3,7 +3,7 @@ import { NavBar } from '../components/Header';
 import './App.css';
 
 
-function App() {
+function App(): React.ReactElement<any, any> {
   return (
     <div className="App">
       <NavBar />

@@ -2,7 +2,7 @@ import React from 'react';
 import './Butikker.css';
 import {NavBar} from '../components/Header';
 
-function Butikker() {
+function Butikker(): React.ReactElement<any, any> {
     return (
         <div className="Butikker">
             <NavBar/>            

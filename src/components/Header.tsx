@@ -2,9 +2,20 @@ import React from 'react';
 import './Header.css';
 import image from '../media/NKF_Logo_trans.png';
 
-export const NavBar = () => {
+export const NavBar = (): React.ReactElement<any, any> => {
 
-  const pages = [
+  type pagePaths = [
+    {name: string, path: string},
+    {name: string, path: string},
+    {name: string, path: string},
+    {name: string, path: string},
+    {name: string, path: string},
+    {name: string, path: string},
+    {name: string, path: string},
+    {name: string, path: string}
+  ]
+
+  const pages: pagePaths = [
     {name: 'Hjem', path: '/'}, 
     {name: 'Konkurranser', path: '/Konkurranser'}, 
     {name: 'Butikker', path: '/Butikker'}, 
@@ -15,7 +26,7 @@ export const NavBar = () => {
     {name: 'Lokale Arrangement', path: '/LokaleArrangement'},
   ]
 
-  function dropDown() {
+  function dropDown(): void {
     const x = document.getElementById('NavBarFull') as HTMLElement;
     if(x.className === 'NavBar') {
       x.className += 'Responsive';
