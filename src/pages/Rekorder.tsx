@@ -88,7 +88,6 @@ function Rekorder(): React.ReactElement<any, any> {
       <div className="tables">
         {loading && <p>Loading data...</p>}  
         <div className='UnrWCA'>{unrWCATable()}</div> 
-        {loading && <p>Loading data...</p>}  
         <div className='UnrNonWCA'>{unrNonWCATable()}</div>
       </div>
     </div>

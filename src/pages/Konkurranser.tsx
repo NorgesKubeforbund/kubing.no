@@ -90,42 +90,100 @@ function Konkurranser() {
       getCompData();
   }, []);
 
-  const comps = (): React.ReactElement<any, any> => {
-    return(
-      <table className="compTable">
-        <thead>
+  const commingComps = () => {
+  return(
+    <table className="compTable">
+      <thead>
+        <tr>
           <th>Navn</th>
-          <th>By</th>
+          <th>Sted</th>
           <th>Dato</th>
-        </thead>
-        <tbody className="comp">{compData.map((comp: apiResponse) => (                                                                  
-          <tr className="compRow">
-            <td className="compName"><a href={comp.url} className="compLinks">{comp.name}</a></td>
-            <td className="compCity">{comp.city}</td>
-            <td className="compDate">{comp.start_date}</td>
-          </tr>
-        ))}
-        </tbody>  
-      </table>
-    );
+        </tr>
+      </thead>
+      <tbody className="comp">{compData.map((comp: any) => {
+        let compDate;
+        let compElStart = new Date(comp.start_date);
+        let compElEnd = new Date(comp.end_date);
+        if (Date.parse(comp.start_date) === Date.parse(comp.end_date)){
+          compDate = compElStart.getDate() + " " + compElStart.toLocaleDateString("en-GB", {month: 'short'});
+        }
+        else { 
+          compDate = compElStart.getDate() + " " + compElStart.toLocaleDateString("en-GB", {month: 'short'}) + " - "  + 
+          compElEnd.getDate() + " " + compElEnd.toLocaleDateString("en-GB", {month: 'short'});
+        }
+        if(Date.parse(comp.end_date) > Date.now()){
+          return(                                  
+            <tr className="compRow" key={comp.id}>
+              <td className="compName"><a href={comp.url} className="compLinks">{comp.name}</a></td>
+              <td className="compCity">{comp.city}</td>
+              <td className="compDate">{compDate}</td>
+            </tr>
+          )
+        }
+        })}
+      </tbody>  
+    </table>
+  );
+}
+
+const pastComps = () => {
+  return(
+    <table className="compTable">
+      <thead>
+        <tr>
+          <th>Navn</th>
+          <th>Sted</th>
+          <th>Dato</th>
+        </tr>
+      </thead>
+      <tbody className="comp">{compData.map((comp: any) => {
+        let compDate;
+        let compElStart = new Date(comp.start_date);
+        let compElEnd = new Date(comp.end_date);
+        if (Date.parse(comp.start_date) === Date.parse(comp.end_date)){
+          compDate = compElStart.getDate() + " " + compElStart.toLocaleDateString("en-GB", {month: 'short'});
+        }
+        else { 
+          compDate = compElStart.getDate() + " " + compElStart.toLocaleDateString("en-GB", {month: 'short'}) + " - "  + 
+          compElEnd.getDate() + " " + compElEnd.toLocaleDateString("en-GB", {month: 'short'});
+        }
+        if(Date.parse(comp.end_date) < Date.now()){
+          return(                                  
+            <tr className="compRow" key={comp.id}>
+              <td className="compName"><a href={comp.url} className="compLinks">{comp.name}</a></td>
+              <td className="compCity">{comp.city}</td>
+              <td className="compDate">{compDate}</td>
+            </tr>
+          )
+        }
+        })}
+      </tbody>  
+    </table>
+  );
   }
+
   
   //render
   return (
     <div className="Konkurranser">
       <NavBar/>
       <div className="Main">
-      <div className="arrangere">
-        <p>Ønsker du å arrangere en konkurranse?</p>
+        <div className="arrangere">
+            <p>Ønsker du å arrangere en konkurranse?</p>
+        </div>
+        <h1 className='MainHeader'>Kommende Konkurranser</h1>
+        <div className="Comps">
+          {loading && <p>Loading data...</p>}
+          {commingComps()}
+        </div>
+        <h1 className='MainHeader'>Tidligere Konkurranser</h1>
+        <div className="Comps">
+          {loading && <p>Loading data...</p>}
+          {pastComps()}
+        </div>
+        <br></br>
+        <br></br>
       </div>
-      <h1 className='MainHeader'>Kommende Konkurranser</h1>
-      <div className="Comps">
-        {loading && <p>Loading data...</p>}
-        {comps()}
-      </div>
-      <br></br>
-      <br></br>
-    </div>
     </div>
   );
 }
