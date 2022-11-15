@@ -1,8 +1,46 @@
 import React from 'react';
 import './Butikker.css';
 import {NavBar} from '../components/Header';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+
 
 function Butikker(): React.ReactElement<any, any> {
+
+const [loading, setLoading] = useState<boolean>(false);
+  const [sheetData, setSheetData] = useState<string[][]>([]);
+
+
+  type butikkerInfo = {
+
+  }
+
+  const getSheetData = async(): Promise<butikkerInfo> => {
+    setLoading(true);
+    const response = await axios.get('https://sheets.googleapis.com/v4/spreadsheets/1Azvglk7gcyK0ql8_LRPHwmj0KQBzl5wrpiiYVEn3Frc/values/Butikker?key=AIzaSyACiTiM4Kz8HfzwUkjXJushOi1YBgcjmKw');
+    setSheetData(response.data.values);
+    setLoading(false);
+    return await response.data;
+  }
+  
+  useEffect(() => {
+    getSheetData();
+  }, []);
+
+  const shopElements = (): React.ReactElement<any, any> => {
+    return (
+      <div className="Main">
+          {
+          sheetData.map((el: string[]) => (
+              <div className="Element" key={el[0]}>
+                <h2>{el[0]}</h2>
+                <div> <a href={el[1]}>{el[2]}</a> {el[3]}</div>           
+              </div>                 
+          ))}
+      </div>
+    );
+  };
+
     return (
         <div className="Butikker">
             <NavBar/>            
@@ -13,34 +51,10 @@ function Butikker(): React.ReactElement<any, any> {
                     <br></br>
                     Her er en liste med forskjellige reputable kubebutikker som vi har god erfaring med.
                 </div>
-                <div className='ButikkDiv'>
-                    <h2><a href='https://cuboss.se/' target='_blank' rel='noopener' className='HeaderLinks'>Cuboss</a></h2>
-                    <p><a href='https://cuboss.se/' target='_blank' rel='noopener'>Cuboss</a> er 
-                        en kubebutikk lokalisert i Sverige. De har et bra utvalg og kort leveringstid.
-                    </p>
-                </div>              
-                <div className='ButikkDiv'>
-                    <h2><a href='https://nordicube.com/' target='_blank' rel='noopener' className='HeaderLinks'>Nordicube</a></h2>
-                    <p><a href='https://nordicube.com/' target='_blank' rel='noopener'>Nordicube</a> er 
-                        den eneste norske kubebutikken. Den har kort leveringstid og ingen importkostnader, men utvalget er nogenlude mangelfull.
-                    </p>
+                <div className="mainBody">
+                    {loading && <p>Loading data...</p>}
+                    <div>{shopElements()}</div>
                 </div>
-                <div className='ButikkDiv'>
-                    <h2><a href='https://speedcubeshop.com/' target='_blank' rel='noopener' className='HeaderLinks'>SpeedCubeShop</a></h2>
-                    <p><a href='https://speedcubeshop.com/' target='_blank' rel='noopener'>SpeedCubeShop</a> er 
-                        en kubebutikk lokalisert i USA. De har et stort utvalg, men kan ha noe lang leveringstid siden kubene kommer fra USA.
-                    </p>
-                </div>
-
-                <div className='ButikkDiv'>
-                    <h2><a href='https://www.thecubicle.com/' target='_blank' rel='noopener' className='HeaderLinks'>The Cubicle</a></h2>
-                    <p><a href='https://www.thecubicle.com/' target='_blank' rel='noopener'>The Cubicle</a> er
-                        en kubebutikk lokalisert i USA. Det har et stort utvalg, men også lengre leverinstid siden kubene sendes fra USA.
-                    </p>
-                </div>
-
-
-
             </div>
         </div>
 
