@@ -90,7 +90,7 @@ function OmOss(): React.ReactElement<any, any> {
             <br></br>
             1. 
             <br></br>
-            Sende en epost til medlem@kubing.no med fult <span className="boldText">navn, e-post, telefinnummer, kjønn, adresse, og fødselsdato.</span>
+            Sende en epost til medlem@kubing.no med <span className="boldText">fult navn, e-post, telefinnummer, kjønn, adresse, og fødselsdato.</span>
             <br></br>
             2. 
             <br></br>
