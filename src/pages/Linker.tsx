@@ -32,8 +32,15 @@ function Linker(): React.ReactElement<any, any> {
           {
           sheetData.map((el: string[]) => (
               <div className="Element" key={el[0]}>
-                <h2>{el[0]}</h2>
-                <div> <a href={el[1]}>{el[2]}</a> {el[3]}</div>           
+                <h2>
+                  <a href={el[1]} style={{textDecoration: "none"}}>{el[0]}</a>
+                </h2>
+                <div>
+                  <p>
+                    <a href={el[1]}>{el[2]}</a> 
+                    {el[3]}
+                  </p>
+                </div>           
               </div>                 
           ))}
       </div>
@@ -49,7 +56,6 @@ function Linker(): React.ReactElement<any, any> {
             <div className='Main'>
                 <div className='Intro'>
                     <h1 className='MainHeader'>Linker</h1>
-
                 </div>
                 <div className="mainBody">
                     {loading && <p>Loading data...</p>}
