@@ -34,7 +34,7 @@ function OmOss(): React.ReactElement<any, any> {
 
   const getBrregData = async(): Promise<apiResponse> => {
     setLoading(true);
-    const response = await axios.get('https://data.brreg.no/enhetsregisteret/api/enheter/994663666/roller?beskrivelse=Styremedlem');
+    const response = await axios.get(`${process.env.REACT_APP_OMOSS_KEY}`);
     setBrregData(response.data.rollegrupper[1].roller);
     setLoading(false);
     return response.data;

@@ -80,7 +80,7 @@ function Konkurranser() {
 
   const getCompData = async(): Promise<apiResponse> => {
     setLoading(true);
-    const response = await axios.get('https://www.worldcubeassociation.org/api/v0/competitions?country_iso2=NO&limit=30');
+    const response = await axios.get(`${process.env.REACT_APP_KONKURRANSE_KEY}`);
     setCompData(response.data);
     setLoading(false);
     return await response.data;

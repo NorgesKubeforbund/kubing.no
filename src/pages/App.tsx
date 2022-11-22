@@ -16,7 +16,7 @@ function App(): React.ReactElement<any, any> {
 
   const getSheetData = async(): Promise<hjemInfo> => {
     setLoading(true);
-    const response = await axios.get('https://sheets.googleapis.com/v4/spreadsheets/1Azvglk7gcyK0ql8_LRPHwmj0KQBzl5wrpiiYVEn3Frc/values/Hjem?key=AIzaSyACiTiM4Kz8HfzwUkjXJushOi1YBgcjmKw');
+    const response = await axios.get(`${process.env.REACT_APP_HJEM_KEY}`);
     setSheetData(response.data.values);
     setLoading(false);
     return await response.data;
