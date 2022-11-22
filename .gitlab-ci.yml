@@ -48,7 +48,7 @@ chrome:
 firefox:
   image: cypress/browsers:node16.14.2-slim-chrome100-ff99-edge
   stage: test
-  paralell: 3
+  parallel: 3
   script:
     - npm ci
     - npm start & wait-on https://localhost:3000
@@ -63,7 +63,7 @@ firefox:
 edge:
   image: cypress/browsers:node16.14.2-slim-chrome100-ff99-edge
   stage: test
-  paralell: 2
+  parallel: 2
   script:
     - npm ci
     - npm start & wait-on http://localhost:3000
@@ -78,7 +78,7 @@ edge:
 electron:
   image: cypress/browsers:node16.14.2-slim-chrome100-ff99-edge
   stage: test
-  paralell: 2
+  parallel: 2
   script:
     - npm ci
     - npm start & wait-on http://localhost:3000
