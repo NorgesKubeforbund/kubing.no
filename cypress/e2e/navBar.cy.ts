@@ -84,7 +84,7 @@ describe('Navigation', () => {
     });
 
     // WIP
-    it.skip('Ønsker jeg å gå til konkurransesiden', () => {
+    it.skip('Do each one', () => {
       cy.get('.NavBar').each(($el, index, $list) => {
         cy.wrap($el).find('button')
           .invoke('val')
