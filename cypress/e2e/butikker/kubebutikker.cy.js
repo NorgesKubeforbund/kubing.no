@@ -25,7 +25,7 @@ describe('Butikkdata', () => {
     });
     it('Og jeg kan besøke nettbutikkene', () => {
       //hent alle p element, lagre kvart p element som $el i $liste
-      cy.get('p').each(($el, index, $list) => {
+      cy.get('.butikkDetails').each(($el, index, $list) => {
         //for kvart $el finn a-element
         cy.wrap($el).find('a')
           //hent ut href-atributt frå $el
@@ -56,7 +56,7 @@ describe('Butikkdata', () => {
 
     it('Og jeg kan besøke nettbutikkene', () => {
       //hent alle p element, lagre kvart p element som $el i $liste
-      cy.get('p').each(($el, index, $list) => {
+      cy.get('.butikkDetails').each(($el, index, $list) => {
         //for kvart $el finn a-element
         cy.wrap($el).find('a')
           //hent ut href-atributt frå $el

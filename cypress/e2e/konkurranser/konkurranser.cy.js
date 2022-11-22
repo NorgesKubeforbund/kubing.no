@@ -9,14 +9,35 @@
   Så ser jeg en liste over kommende konkurranser
 */
   
-it('at jeg er inne på nettsiden', () => {
-  cy.visit('http://localhost:3000');
-});
-
-it('jeg klikker meg inn på konkurranser-siden', () => {
-
-});
-
-it('så ser jeg en liste over kommende konkurranser', () => {
-  
-});
+describe('KonkurranseData', () => {
+  context('Desktopsjekk', () => {
+    beforeEach(() => {
+      cy.viewport(1920,1080);
+    });
+    it('gitt at jeg er inne på nettsiden', () => {
+      cy.intercept({
+        method: 'GET',
+        url: 'https://www.worldcubeassociation.org/**/*',
+      }).as('loadingCheck')
+      cy.visit('http://localhost:3000/konkurranser');
+      cy.wait('@loadingCheck').then((interception) => {
+        assert.isNotNull(interception.response?.body, 'Page has loaded')
+      })
+    })
+  })
+  context('Desktopsjekk', () => {
+    beforeEach(() => {
+      cy.viewport('iphone-6');
+    });
+    it('gitt at jeg er inne på nettsiden', () => {
+      cy.intercept({
+        method: 'GET',
+        url: 'https://www.worldcubeassociation.org/**/*',
+      }).as('loadingCheck')
+      cy.visit('http://localhost:3000/konkurranser');
+      cy.wait('@loadingCheck').then((interception) => {
+        assert.isNotNull(interception.response?.body, 'Page has loaded')
+      })
+    })
+  })
+})

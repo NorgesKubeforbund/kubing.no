@@ -10,7 +10,7 @@
   Så får jeg en oversikt over eksterne ressurser som tar meg til riktige nettsider.
 */
 
-describe.skip('Linkersjekk', () => {
+describe('Linkersjekk', () => {
   context('Desktopsjekk', () => {
     beforeEach(() => {
       cy.viewport(1920, 1080);

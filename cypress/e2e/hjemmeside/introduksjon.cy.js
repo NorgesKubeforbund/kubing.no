@@ -16,7 +16,14 @@ describe('Hjemmesideinfosjekk', () => {
       cy.viewport(1920, 1080);
     });
     it('Gitt at jeg er inne på nettsiden', () => {
+      cy.intercept({
+        method: 'GET',
+        url: 'https://sheets.googleapis.com/**/*',
+      }).as('loadingCheck')
       cy.visit('http://localhost:3000');
+      cy.wait('@loadingCheck').then((interception) => {
+        assert.isNotNull(interception.response?.body, 'Home has loaded')
+      })
     });
     it('Ønsker jeg å bli ønsket velkommen', () => {
       cy.get('H2').contains('Velkommen');
@@ -30,7 +37,15 @@ describe('Hjemmesideinfosjekk', () => {
       cy.viewport('iphone-6');
     });
     it('Gitt at jeg er inne på nettsiden', () => {
+      cy.wait(500);
+      cy.intercept({
+        method: 'GET',
+        url: 'https://sheets.googleapis.com/**/*',
+      }).as('loadingCheck')
       cy.visit('http://localhost:3000');
+      cy.wait('@loadingCheck').then((interception) => {
+        assert.isNotNull(interception.response?.body, 'Home has loaded')
+      })
     });
     it('Ønsker jeg å bli ønsket velkommen', () => {
       cy.get('H2').contains('Velkommen');
