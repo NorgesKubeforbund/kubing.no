@@ -37,7 +37,9 @@ chrome:
   script:
     - npm ci
     - npm start & wait-on http://localhost:3000
-    - npx cypress run --record --key 2166158d-2340-4e7d-9e8d-e17a92083668 --parallel --browser chrome --group "Chrome"
+    - > 
+      npx cypress run --record --key 2166158d-2340-4e7d-9e8d-e17a92083668 
+      --parallel --browser chrome --group "Chrome"
   artifacts:
     when: always
     paths:
@@ -52,7 +54,9 @@ firefox:
   script:
     - npm ci
     - npm start & wait-on https://localhost:3000
-    - npx cypress run --record --key 2166158d-2340-4e7d-9e8d-e17a92083668 --parallel --browser firefox --group "Firefox"
+    ->
+      npx cypress run --record --key 2166158d-2340-4e7d-9e8d-e17a92083668 
+      --parallel --browser firefox --group "Firefox"
   artifacts:
     when: always
     paths:
@@ -67,7 +71,9 @@ edge:
   script:
     - npm ci
     - npm start & wait-on http://localhost:3000
-    - npx cypress run --record --key 2166158d-2340-4e7d-9e8d-e17a92083668 --parallel --browser edge --group "Edge"
+    -> 
+      npx cypress run --record --key 2166158d-2340-4e7d-9e8d-e17a92083668 
+      --parallel --browser edge --group "Edge"
   artifacts:
     when: always
     paths:
@@ -82,7 +88,9 @@ electron:
   script:
     - npm ci
     - npm start & wait-on http://localhost:3000
-    - npx cypress run --record --key 2166158d-2340-4e7d-9e8d-e17a92083668 --parallel --browser electron --group "Electron"
+    ->
+      npx cypress run --record --key 2166158d-2340-4e7d-9e8d-e17a92083668 
+      --parallel --browser electron --group "Electron"
   artifacts:
     when: always
     paths:
