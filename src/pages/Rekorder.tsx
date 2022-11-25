@@ -6,9 +6,13 @@ import { useEffect, useState } from 'react';
 
 function Rekorder(): React.ReactElement<any, any> {
 
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loadingWCA, setLoadingWCA] = useState<boolean>(false);
+  const [loadingNonWCA, setLoadingNonWCA] = useState<boolean>(false);
+  const [loadingOfficial, setLoadingOfficial] = useState<boolean>(false);
   const [sheetData, setSheetData] = useState<string[][]>([]);
-  const [norgesRekorder, setNorgesRekorder] = useState<wcaRekorder[]>([]);
+  const [sheetData2, setSheetData2] = useState<string[][]>([]);
+  const [norgesRekorder, setNorgesRekorderWCA] = useState<string[][]>([]);
+  
 
   type wcaRekorder = {
     national_records: {
@@ -18,7 +22,7 @@ function Rekorder(): React.ReactElement<any, any> {
         "333oh": { single: number, average: number },
         444: { single: number, average: number },
         555: { single: number, average: number },
-        minx: { single: number },
+        minx: { single: number, average: number },
         pyram: { single: number, average: number },
         skewb: { single: number, average: number }
       }
@@ -26,24 +30,55 @@ function Rekorder(): React.ReactElement<any, any> {
   }
 
   const getSheetData = async(): Promise<wcaRekorder> => {
-    setLoading(true);
-    const response = await axios.get(`${process.env.REACT_APP_NORSKEREKORDER_KEY}`);
+    setLoadingWCA(true);
+    const response = await axios.get(`${process.env.REACT_APP_NORSKEREKORDERWCA_KEY}`);
     setSheetData(response.data.values);
-    setLoading(false);
+    setLoadingWCA(false);
     return await response.data;
   }
 
   const nationaleRekorder = async(): Promise<wcaRekorder> => {
-    const response = await axios.get('https://www.worldcubeassociation.org/api/v0/records');
-    setNorgesRekorder(response.data.national_records.Norway);
-    console.log(norgesRekorder);
+    setLoadingOfficial(true);
+    const response = await axios.get(`${process.env.REACT_APP_NORSKEREKORDER_KEY}`);
+    setNorgesRekorderWCA(response.data.values);
+    setLoadingOfficial(false);
     return await response.data;
   }
+
+  const nasjonaleRekorderNonWCA = async(): Promise<any> => {
+    setLoadingNonWCA(true);
+    const response = await axios.get(`${process.env.REACT_APP_NORSKEREKORDERNONWCA_KEY}`);
+    setSheetData2(response.data.values);
+    setLoadingNonWCA(false);
+    return await response.data;
+  }
+
+
 
   useEffect(() => {
     getSheetData();
     nationaleRekorder();
+    nasjonaleRekorderNonWCA();
   }, []);
+
+  const WCATable = (): React.ReactElement<any, any> => {
+    return (
+      <table>
+        <tbody>
+          {norgesRekorder.map((el: string[]) => (
+          <tr key={el[0]} className="recordRow">
+            <th className="Cell">{el[0]}</th>
+            <td>{el[1]}</td>
+            <td>{el[2]}</td>                        
+            <td>{el[3]}</td>
+            <td>{el[4]}</td>                             
+          </tr>
+          ))}                    
+        </tbody>
+      </table>
+    );
+  };
+
 
   const unrWCATable = (): React.ReactElement<any, any> => {
     return (
@@ -67,13 +102,13 @@ function Rekorder(): React.ReactElement<any, any> {
     return (
       <table>
         <tbody>
-          {sheetData.map((el: string[]) => (
+          {sheetData2.map((el: string[]) => (
           <tr key={el[0]} className="recordRow">
-            <td className="Cell"><b>{el[6]}</b></td>    
-            <td>{el[7]}</td>  
-            <td>{el[8]}</td> 
-            <td>{el[9]}</td>  
-            <td>{el[10]}</td>                            
+            <td className="Cell"><b>{el[0]}</b></td>    
+            <td>{el[1]}</td>  
+            <td>{el[2]}</td> 
+            <td>{el[3]}</td>  
+            <td>{el[4]}</td>                            
           </tr>
           ))}                    
         </tbody>
@@ -86,9 +121,13 @@ function Rekorder(): React.ReactElement<any, any> {
     <div className="Rekorder">
       <NavBar/>
       <div className="tables">
-        {loading && <p>Loading data...</p>}  
+        {loadingWCA && <p>Loading data...</p>}  
         <div className='UnrWCA'>{unrWCATable()}</div> 
+        {loadingNonWCA && <p>Loading data...</p>}
         <div className='UnrNonWCA'>{unrNonWCATable()}</div>
+        {loadingOfficial && <p>Loading data...</p>}
+        <div className='WCA'>{WCATable()}</div>
+
       </div>
     </div>
   );
