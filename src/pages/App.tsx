@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from 'react';
+import React from 'react';
 import { NavBar } from '../components/Header';
 import './App.css';
 import axios from 'axios';
