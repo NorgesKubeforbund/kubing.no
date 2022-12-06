@@ -2,6 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { NavBar } from '../components/Header';
+import ContactForm from '../components/ContactForm'
 import './OmOss.css';
 
 function OmOss(): React.ReactElement<any, any> {
@@ -109,6 +110,7 @@ function OmOss(): React.ReactElement<any, any> {
           <h2>Kontakt oss</h2>
           <div>
             Kontakt oss med dette skjemaet: kontakt@kubing.no
+            <ContactForm serviceID={'service_5ijrcbl'} />
           </div>
         </div>
 
