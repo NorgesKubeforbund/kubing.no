@@ -76,7 +76,7 @@ function OmOss(): React.ReactElement<any, any> {
       <p>tekst her om oss</p>
       <div className="Main">
         <div className="intro">
-          <h1>Om oss</h1>
+          <h1 className="MainHeader">Om oss</h1>
           Norges kubeforbund jobber med å fremme interessen for løsing av Rubiks kube og andre lignende puslespill i Norge.
           Dette gjøres ved å arrangere konkurranser og bidra til å skape et sosialt miljø.
           Om du synest dette hørest spennende ut, så kan du bli medlem eller finne et lokalt miljø å bli kjendt med.
