@@ -15,7 +15,7 @@ const ContactForm = (props: {serviceID: string}) => {
       email: email.value,
       message: message.value,
     };
-    await sendEmailJS(conFom);
+    //await sendEmailJS(conFom);
     alert('Epost levert!');
     setFormStatus('Submit');
   };
