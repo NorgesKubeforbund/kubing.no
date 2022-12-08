@@ -89,7 +89,7 @@ function Rekorder(): React.ReactElement<any, any> {
   const displayTab = () => {
     const WCATable = (): React.ReactElement<any, any> => {
       return (
-        <table>
+        <table className="NRTable">
           <tbody>
             {norgesRekorder.map((el: string[]) => (
             <tr key={el[0]} className="recordRow">
@@ -107,7 +107,7 @@ function Rekorder(): React.ReactElement<any, any> {
   
     const unrWCATable = (): React.ReactElement<any, any> => {
       return (
-        <table>
+        <table className="NRTable">
           <tbody>
             {sheetData.map((el: string[]) => (
             <tr key={el[0]} className="recordRow">
@@ -125,7 +125,7 @@ function Rekorder(): React.ReactElement<any, any> {
     
     const unrNonWCATable = (): React.ReactElement<any, any> => {
       return (
-        <table>
+        <table className="NRTable">
           <tbody>
             {sheetData2.map((el: string[]) => (
             <tr key={el[0]} className="recordRow">
