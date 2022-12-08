@@ -50,24 +50,24 @@ const ContactForm = (props: {serviceID: string}) => {
 
   return (
     <div>
-      <h2>Ta kontakt med NKF here:</h2>
+      <h2>Ta kontakt med NKF her:</h2>
       <form onSubmit={onSubmit}>
         <div>
           <input className="form-control" type='hidden' id='contact_number' />
           <label className="form-label" htmlFor="name">
-            Name
+            Navn
           </label>
           <input className="form-control" type="text" id="name" required />
         </div>
         <div>
           <label className="form-label" htmlFor="email">
-            Email
+            Epost
           </label>
           <input className="form-control" type="email" id="email" required />
         </div>
         <div>
           <label className="form-label" htmlFor="message">
-            Message
+            Melding
           </label>
           <textarea className="form-control" id="message" required />
         </div>

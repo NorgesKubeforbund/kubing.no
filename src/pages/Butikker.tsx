@@ -34,7 +34,7 @@ const [loading, setLoading] = useState<boolean>(false);
           sheetData.map((el: string[]) => (
               <div className="Element" key={el[0]}>
                 <h2>
-                  <a href={el[1]} style={{textDecoration: "none"}}>{el[0]}</a>
+                  <a href={el[1]} style={{textDecoration: "none", color: "black"}}>{el[0]}</a>
                 </h2>
                 <div>
                   <p className='butikkDetails'>

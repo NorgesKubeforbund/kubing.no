@@ -33,12 +33,12 @@ function Linker(): React.ReactElement<any, any> {
           sheetData.map((el: string[]) => (
               <div className="Element" key={el[0]}>
                 <h2>
-                  <a href={el[1]} style={{textDecoration: "none"}}>{el[0]}</a>
+                  <a href={el[1]} style={{textDecoration: "none", color: "black"}}>{el[0]}</a>
                 </h2>
                 <div>
                   <p>
                     <a href={el[1]}>{el[2]}</a> 
-                    {el[3]}
+                    {" " + el[3]}
                   </p>
                 </div>           
               </div>                 

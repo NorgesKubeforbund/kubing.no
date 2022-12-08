@@ -5,7 +5,7 @@
     width: 70%;
 }
 
-.td {
+.tdlskfjsldfjsdlkfjd {
     border-width: 1px;
     border-style: solid;
     border-color: black;
@@ -43,7 +43,9 @@
     
 }
 .recordTable{
+    overflow-x: auto;
     border: 1px solid black;
+
     border-radius: 3px;
     border-top-left-radius: 0px;
     border-top-right-radius: 0px;
