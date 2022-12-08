@@ -15,7 +15,7 @@ const ContactForm = (props: {serviceID: string}) => {
       email: email.value,
       message: message.value,
     };
-    //await sendEmailJS(conFom);
+    await sendEmailJS(conFom);
     alert('Epost levert!');
     setFormStatus('Submit');
   };
@@ -31,9 +31,9 @@ const ContactForm = (props: {serviceID: string}) => {
       serviceKey: string;
       templateKey: string;
     } = {
-      publicKey: 'zGAGwnLnVLv8_wbM1' ,
+      publicKey: '0fO7DEII45daLxaZy' ,
       serviceKey: props.serviceID,
-      templateKey: 'template_ozas5ws'
+      templateKey: 'template_wydr8ym'
     };
     emailjs.send(
       emailJsData.serviceKey,
