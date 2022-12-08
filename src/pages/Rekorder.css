@@ -1,0 +1,55 @@
+
+.RekorderBody{
+    margin: auto;
+    align-items: center;
+    width: 70%;
+}
+
+.td {
+    border-width: 1px;
+    border-style: solid;
+    border-color: black;
+}
+.recordRow:nth-child(even) {
+    background-color: #e2e2e2;
+    
+}
+
+.tab{
+    display: inline-block;
+    overflow: hidden;
+    border: 1px solid black;
+    border-radius: 5px;
+    background-color: #f1f1f1;
+    border-bottom: 0px;
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+    margin-bottom: -5px;
+
+}
+
+.tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+}
+
+.tab button.Activated{
+    background-color: #b1b1b1;
+    
+}
+.recordTable{
+    border: 1px solid black;
+    border-radius: 3px;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+    margin-top: 0px;
+}
+.NRTable{
+    width: 100%;
+    border-collapse: collapse;
+}

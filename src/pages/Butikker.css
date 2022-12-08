@@ -1,0 +1,22 @@
+body {
+    background-color: #fcfcfc;
+}
+
+.Main {
+    align-items: center;
+    text-align: center;
+    font-size: 20px;
+    
+    
+}
+.MainHeader {
+    color: #d30000;
+    
+}
+.HeaderLinks {
+    color: black;
+    background-color: transparent;
+    text-decoration: none;
+}
+
+

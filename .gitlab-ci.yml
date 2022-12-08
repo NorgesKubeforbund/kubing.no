@@ -1,0 +1,99 @@
+image: node:latest
+
+stages:
+  - build
+  - precheck
+  #- test
+
+variables:
+  npm_config_cache: '$CI_PROJECT_DIR/.npm'
+  CYPRESS_CACHE_FOLDER: '$CI_PROJECT_DIR/cache/Cypress'
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - cache/Cypress
+    - node_modules
+    - .npm
+
+install:
+  stage: build
+  image: cypress/browsers:node12.14.1-chrome85-ff81
+  script:
+    - npm ci
+  artifacts:
+    paths:
+      - node_modules
+    
+typescript:
+  stage: precheck
+  script:
+    -  ./node_modules/typescript/bin/tsc --noEmit
+    
+chrome:
+  image: cypress/browsers:node16.14.2-slim-chrome100-ff99-edge
+  stage: test
+  parallel: 3
+  script:
+    - npm ci
+    - npm start & wait-on http://localhost:3000
+    - > 
+      npx cypress run --record --key 2166158d-2340-4e7d-9e8d-e17a92083668 
+      --parallel --browser chrome --group "Chrome"
+  artifacts:
+    when: always
+    paths:
+      - cypress/videos/**/*.mp4
+      - cypress/screenshots/**.png
+    expire_in: 1 day
+
+firefox:
+  image: cypress/browsers:node16.14.2-slim-chrome100-ff99-edge
+  stage: test
+  parallel: 3
+  script:
+    - npm ci
+    - npm start & wait-on https://localhost:3000
+    ->
+      npx cypress run --record --key 2166158d-2340-4e7d-9e8d-e17a92083668 
+      --parallel --browser firefox --group "Firefox"
+  artifacts:
+    when: always
+    paths:
+      - cypress/videos/**/*.mp4
+      - cypress/screenshots/**.png
+    expire_in: 1 day
+  
+edge:
+  image: cypress/browsers:node16.14.2-slim-chrome100-ff99-edge
+  stage: test
+  parallel: 2
+  script:
+    - npm ci
+    - npm start & wait-on http://localhost:3000
+    -> 
+      npx cypress run --record --key 2166158d-2340-4e7d-9e8d-e17a92083668 
+      --parallel --browser edge --group "Edge"
+  artifacts:
+    when: always
+    paths:
+      - cypress/videos/**/*.mp4
+      - cypress/screenshots/**.png
+    expire_in: 1 day
+
+electron:
+  image: cypress/browsers:node16.14.2-slim-chrome100-ff99-edge
+  stage: test
+  parallel: 2
+  script:
+    - npm ci
+    - npm start & wait-on http://localhost:3000
+    ->
+      npx cypress run --record --key 2166158d-2340-4e7d-9e8d-e17a92083668 
+      --parallel --browser electron --group "Electron"
+  artifacts:
+    when: always
+    paths:
+      - cypress/videos/**/*.mp4
+      - cypress/screenshots/**.png
+    expire_in: 1 day
