@@ -16,12 +16,25 @@ describe('Butikkdata', () => {
       cy.viewport(1920, 1080);
     });
     it('Gitt at jeg er inne på nettsiden', () => {
-      cy.visit('http://localhost:3000/Butikker');
+      cy.intercept({
+        method: 'GET',
+        url: 'https://sheets.googleapis.com/**/*',
+      }).as('loadingCheck')
+      cy.visit('http://localhost:3000/butikker');
+      cy.wait('@loadingCheck').then((interception) => {
+        assert.isNotNull(interception.response?.body, 'Butikk has loaded')
+      })
     });
     it('Ønsker jeg å se hvor jeg kan kjøpe kuber', () => {
-      cy.get('H1').contains('Butikker');
-      cy.get('H2 a').contains('Cuboss');
-      cy.get('p a').contains('Cuboss');
+      cy.get('.Element').each(($el, index, $list) => {
+        cy.wrap($el)
+          .find('h2 a')
+          .then(($title) => {
+            const storeName:string = $title.text();
+            cy.wrap($el)
+              .get('p a').should('contain', storeName);
+          });
+      });
     });
     it('Og jeg kan besøke nettbutikkene', () => {
       //hent alle p element, lagre kvart p element som $el i $liste
@@ -48,10 +61,15 @@ describe('Butikkdata', () => {
       cy.visit('http://localhost:3000/Butikker');
     });
     it('Ønsker jeg å se hvor jeg kan kjøpe kuber', () => {
-      //
-      cy.get('H1').contains('Butikker');
-      cy.get('H2 a').contains('Cuboss');
-      cy.get('p a').contains('Cuboss');
+      cy.get('.Element').each(($el, index, $list) => {
+        cy.wrap($el)
+          .find('h2 a')
+          .then(($title) => {
+            const storeName:string = $title.text();
+            cy.wrap($el)
+              .get('p a').should('contain', storeName);
+          });
+      });
     });
 
     it('Og jeg kan besøke nettbutikkene', () => {
