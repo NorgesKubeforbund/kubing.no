@@ -110,7 +110,7 @@ function OmOss(): React.ReactElement<any, any> {
           <h2>Kontakt oss</h2>
           <div>
             Kontakt oss med dette skjemaet: kontakt@kubing.no
-            <ContactForm serviceID={'service_5ijrcbl'} />
+            <ContactForm serviceID={'service_x020olk'} />
           </div>
         </div>
 
