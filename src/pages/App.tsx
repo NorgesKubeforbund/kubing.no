@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from 'react';
+import React from 'react';
 import { NavBar } from '../components/Header';
 import './App.css';
 import axios from 'axios';
@@ -48,11 +48,10 @@ function App(): React.ReactElement<any, any> {
       <div className='Main'>
           <div className='Intro'>
               <h1 className='MainHeader'>Hjem</h1>
-  
           </div>
           <div className="MainBody">
             {loading && <p>Loading data...</p>}
-            <div className="">{homeElements()}</div>
+            <div className="HomeElements">{homeElements()}</div>
           </div>
       </div>
     </div>

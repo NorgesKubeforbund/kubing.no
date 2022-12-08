@@ -30,14 +30,67 @@ typescript:
   script:
     -  ./node_modules/typescript/bin/tsc --noEmit
     
-test:
-  image: cypress/browsers:node12.14.1-chrome85-ff81
+chrome:
+  image: cypress/browsers:node16.14.2-slim-chrome100-ff99-edge
   stage: test
-  #parallel:2
+  parallel: 3
   script:
     - npm ci
-    - npm run start &
-    - npx cypress run --record --key 2166158d-2340-4e7d-9e8d-e17a92083668 --parallel --browser chrome
+    - npm start & wait-on http://localhost:3000
+    - > 
+      npx cypress run --record --key 2166158d-2340-4e7d-9e8d-e17a92083668 
+      --parallel --browser chrome --group "Chrome"
+  artifacts:
+    when: always
+    paths:
+      - cypress/videos/**/*.mp4
+      - cypress/screenshots/**.png
+    expire_in: 1 day
+
+firefox:
+  image: cypress/browsers:node16.14.2-slim-chrome100-ff99-edge
+  stage: test
+  parallel: 3
+  script:
+    - npm ci
+    - npm start & wait-on https://localhost:3000
+    ->
+      npx cypress run --record --key 2166158d-2340-4e7d-9e8d-e17a92083668 
+      --parallel --browser firefox --group "Firefox"
+  artifacts:
+    when: always
+    paths:
+      - cypress/videos/**/*.mp4
+      - cypress/screenshots/**.png
+    expire_in: 1 day
+  
+edge:
+  image: cypress/browsers:node16.14.2-slim-chrome100-ff99-edge
+  stage: test
+  parallel: 2
+  script:
+    - npm ci
+    - npm start & wait-on http://localhost:3000
+    -> 
+      npx cypress run --record --key 2166158d-2340-4e7d-9e8d-e17a92083668 
+      --parallel --browser edge --group "Edge"
+  artifacts:
+    when: always
+    paths:
+      - cypress/videos/**/*.mp4
+      - cypress/screenshots/**.png
+    expire_in: 1 day
+
+electron:
+  image: cypress/browsers:node16.14.2-slim-chrome100-ff99-edge
+  stage: test
+  parallel: 2
+  script:
+    - npm ci
+    - npm start & wait-on http://localhost:3000
+    ->
+      npx cypress run --record --key 2166158d-2340-4e7d-9e8d-e17a92083668 
+      --parallel --browser electron --group "Electron"
   artifacts:
     when: always
     paths:

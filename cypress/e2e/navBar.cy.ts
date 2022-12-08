@@ -16,7 +16,14 @@ describe('size/scaling', () => {
       cy.viewport(1920, 1080);
     });
     it('Gitt at jeg er inne på nettsiden', () => {
+      cy.intercept({
+        method: 'GET',
+        url: 'https://sheets.googleapis.com/**/*',
+      }).as('loadingCheck')
       cy.visit('http://localhost:3000');
+      cy.wait('@loadingCheck').then((interception) => {
+        assert.isNotNull(interception.response?.body, 'Home has loaded')
+      })
     });
     it('Og jeg kan se navigasjonsbaren', () => {
       cy.get('.NavBar > button').should(($buttons) => {
@@ -46,7 +53,20 @@ describe('size/scaling', () => {
       cy.viewport('iphone-6');
     });
     it('Gitt at jeg er inne på nettsiden', () => {
+      // required for firefox-browser
+      Cypress.on('uncaught:exception', (err, runnable) => {
+        // returning false here prevents Cypress from
+        // failing the test
+        return false
+      })
+      cy.intercept({
+        method: 'GET',
+        url: 'https://sheets.googleapis.com/**/*',
+      }).as('loadedCheck')
       cy.visit('http://localhost:3000');
+      cy.wait('@loadedCheck').then((interception) => {
+        assert.isNotNull(interception.response?.body, 'Home has loaded')
+      })
     });
     it('Og jeg kan se navigasjonsbaren', () => {
       cy.get('.DropDown').click()
@@ -84,13 +104,32 @@ describe('Navigation', () => {
     });
 
     // WIP
-    it.skip('Ønsker jeg å gå til konkurransesiden', () => {
+    it.skip('Do each one', () => {
+      // required for firefox-browser
+      Cypress.on('uncaught:exception', (err, runnable) => {
+        // returning false here prevents Cypress from
+        // failing the test
+        return false
+      })
       cy.get('.NavBar').each(($el, index, $list) => {
         cy.wrap($el).find('button')
-          .invoke('val')
-          .then(() => {
-            cy.click();
-            cy.url().should('eq', 'http://localhost:3000/');
+          .invoke('attr', 'id')
+          .then(id => {
+            cy.get('button')
+              .contains(`${id}`)
+              .click();
+            if(id == 'Hjem') {
+              cy.intercept({
+                method: 'GET',
+                url: 'https://sheets.googleapis.com/**/*',
+              }).as('loadingCheck')
+              cy.url().should('equal', 'http://localhost:3000/')
+              cy.wait('@loadingCheck').then((interception) => {
+                assert.isNotNull(interception.response?.body, 'Home has loaded')
+              })
+            } else {
+              cy.url().should('equal', 'http://localhost:3000/' + id)
+            }
           })
       })
     });

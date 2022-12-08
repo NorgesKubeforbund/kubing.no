@@ -33,8 +33,15 @@ const [loading, setLoading] = useState<boolean>(false);
           {
           sheetData.map((el: string[]) => (
               <div className="Element" key={el[0]}>
-                <h2>{el[0]}</h2>
-                <div> <a href={el[1]}>{el[2]}</a> {el[3]}</div>           
+                <h2>
+                  <a href={el[1]} style={{textDecoration: "none"}}>{el[0]}</a>
+                </h2>
+                <div>
+                  <p className='butikkDetails'>
+                    <a href={el[1]}>{el[2]}</a>
+                    {el[3]}
+                  </p>
+                </div>           
               </div>                 
           ))}
       </div>
@@ -47,9 +54,10 @@ const [loading, setLoading] = useState<boolean>(false);
             <div className='Main'>
                 <div className='Intro'>
                     <h1 className='MainHeader'>Butikker</h1>
-                    Mange lurer på hvor de kan få tak i kuber.
-                    <br></br>
-                    Her er en liste med forskjellige reputable kubebutikker som vi har god erfaring med.
+                    <p>
+                      Mange lurer på hvor de kan få tak i kuber. 
+                      Her er en liste med forskjellige reputable kubebutikker som vi har god erfaring med.
+                    </p>
                 </div>
                 <div className="mainBody">
                     {loading && <p>Loading data...</p>}

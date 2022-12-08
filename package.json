@@ -11,11 +11,15 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.4.2",
     "react-scripts": "5.0.1",
+    "wait-on": "^6.0.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "react-scripts start",
-    "test": "cypress run",
+    "cy:run:firefox": "cypress run --browser firefox",
+    "cy:run:chrome": "cypress run --browser chrome",
+    "cy:run:edge": "cypress run --browser edge",
+    "cy:run:electron": "cypress run --browser electron",
     "lint": "eslint . --ext .ts"
   },
   "eslintConfig": {
@@ -39,7 +43,7 @@
     "@types/react": "^18.0.22",
     "@types/react-dom": "^18.0.7",
     "axios": "^1.1.3",
-    "cypress": "^10.10.0",
+    "cypress": "^12.0.1",
     "typescript": "^4.8.4"
   }
 }
