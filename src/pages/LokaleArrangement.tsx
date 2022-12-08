@@ -2,7 +2,7 @@ import React from 'react';
 import { NavBar } from '../components/Header';
 import './LokaleArrangement.css';
 
-function LokaleArrangement() {
+function LokaleArrangement(): React.ReactElement<any, any> {
     return (
         <div className="LokaleArrangement">
             <NavBar/>
@@ -24,11 +24,11 @@ function LokaleArrangement() {
                 </div>
                 <div className='LokaltArrangement'>
                     <h2>Rogaland</h2>
-                    <a href='https://www.facebook.com/groups/1658988921015490' target='_blank' rel='noopener'>Sandnes SpeedCubers</a> har tilbud i sannes.
+                    <a href='https://www.facebook.com/groups/1658988921015490' target='_blank' rel='noopener'>Sandnes SpeedCubers</a> har tilbud i Sannes.
                 </div>
                 <div className='LokaltArrangement'>
                     <h2>Trøndelag</h2>
-                    I trondheim er det to forskjellige tilbud:<br></br>
+                    I Trondheim er det to forskjellige tilbud:<br></br>
                     
                     <a href='https://www.facebook.com/groups/1345849928919723' target='_blank' rel='noopener'>Flatåsen Kubeklubb</a> har tilbud.<br></br>
                     <a href='https://www.facebook.com/NTNUISpeedcubing' target='_blank' rel='noopener'>NTNUI Speedcubing</a> har tilbud.
