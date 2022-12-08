@@ -2,6 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { NavBar } from '../components/Header';
+import ContactForm from '../components/ContactForm'
 import './OmOss.css';
 
 function OmOss(): React.ReactElement<any, any> {
@@ -42,24 +43,25 @@ function OmOss(): React.ReactElement<any, any> {
 
   const brregDataTable = (): React.ReactElement<any, any> => {
     return (
-      <table>
+      <table className="styreTable">
         <thead>
           <tr>
-            <th>Fornavn:</th>
-            <th>Mellomnavn:</th>
-            <th>Etternavn:</th>
+            <th>Navn:</th>
             <th>Stilling:</th>
           </tr>
         </thead>
         <tbody>
-          {brregData.map((el: apiResponse) => (
+          {brregData.map((el: apiResponse) => {
+            let mellomNavn = "";
+            if(el.person.navn.mellomnavn !== undefined){    
+              mellomNavn = el.person.navn.mellomnavn;
+            }
+          return(
             <tr key={el.person.fodselsdato}>
-              <td className='fornavn'>{el.person.navn.fornavn}</td>
-              <td className='mellomnavn'>{el.person.navn.mellomnavn}</td>
-              <td className='etternavn'>{el.person.navn.etternavn}</td>
+              <td className='fornavn'>{el.person.navn.fornavn + " " + mellomNavn + " " + el.person.navn.etternavn }</td> 
               <td className={el.type.beskrivelse}>{el.type.beskrivelse}</td>
             </tr>
-          ))}
+          )})}
         </tbody>
       </table>
     )
@@ -73,10 +75,9 @@ function OmOss(): React.ReactElement<any, any> {
   return (
     <div className="OmOss">
       <NavBar/>
-      <p>tekst her om oss</p>
       <div className="Main">
         <div className="intro">
-          <h1>Om oss</h1>
+          <h1 className="MainHeader">Om oss</h1>
           Norges kubeforbund jobber med å fremme interessen for løsing av Rubiks kube og andre lignende puslespill i Norge.
           Dette gjøres ved å arrangere konkurranser og bidra til å skape et sosialt miljø.
           Om du synest dette hørest spennende ut, så kan du bli medlem eller finne et lokalt miljø å bli kjendt med.
@@ -90,7 +91,7 @@ function OmOss(): React.ReactElement<any, any> {
             <br></br>
             1. 
             <br></br>
-            Sende en epost til medlem@kubing.no med <span className="boldText">fult navn, e-post, telefinnummer, kjønn, adresse, og fødselsdato.</span>
+            Sende en epost til medlem@kubing.no med <span className="boldText">fult navn, e-post, telefonnummer, kjønn, adresse, og fødselsdato.</span>
             <br></br>
             2. 
             <br></br>
@@ -109,6 +110,7 @@ function OmOss(): React.ReactElement<any, any> {
           <h2>Kontakt oss</h2>
           <div>
             Kontakt oss med dette skjemaet: kontakt@kubing.no
+            <ContactForm serviceID={'service_x020olk'} />
           </div>
         </div>
 
