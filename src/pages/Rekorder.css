@@ -3,10 +3,11 @@
   align-items: center;
   width: 70%;
 }
-.td {
-  border-width: 1px;
-  border-style: solid;
-  border-color: black;
+
+.tdlskfjsldfjsdlkfjd {
+    border-width: 1px;
+    border-style: solid;
+    border-color: black;
 }
 .recordRow:nth-child(even) {
   background-color: #e2e2e2;
@@ -35,11 +36,13 @@
   background-color: #b1b1b1;
 }
 .recordTable{
-  border: 1px solid black;
-  border-radius: 3px;
-  border-top-left-radius: 0px;
-  border-top-right-radius: 0px;
-  margin-top: 0px;
+    overflow-x: auto;
+    border: 1px solid black;
+
+    border-radius: 3px;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+    margin-top: 0px;
 }
 .NRTable{
   width: 100%;
