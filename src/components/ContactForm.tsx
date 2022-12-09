@@ -18,7 +18,7 @@ const ContactForm = (props: {serviceID: string}) => {
       'reply-to': email.value,
     };
     //await sendEmailJS(conFom);
-   setTimeout(() => setDelivered(false), 2000);
+    setTimeout(() => setDelivered(false), 2000);
   };
 
   const sendEmailJS = async (conFom: {
@@ -86,7 +86,6 @@ const ContactForm = (props: {serviceID: string}) => {
     <div>
       <h2>Ta kontakt med NKF her:</h2>
       {delivered ? <p>Epost er levert</p> : formDisplay()}
-      
     </div>
   )
 };

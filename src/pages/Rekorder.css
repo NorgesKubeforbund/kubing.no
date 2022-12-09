@@ -3,7 +3,6 @@
   align-items: center;
   width: 70%;
 }
-
 .tdlskfjsldfjsdlkfjd {
     border-width: 1px;
     border-style: solid;
@@ -36,13 +35,12 @@
   background-color: #b1b1b1;
 }
 .recordTable{
-    overflow-x: auto;
-    border: 1px solid black;
-
-    border-radius: 3px;
-    border-top-left-radius: 0px;
-    border-top-right-radius: 0px;
-    margin-top: 0px;
+  overflow-x: auto;
+  border: 1px solid black;
+  border-radius: 3px;
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+  margin-top: 0px;
 }
 .NRTable{
   width: 100%;

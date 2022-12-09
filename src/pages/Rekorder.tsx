@@ -1,8 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavBar } from '../components/Header';
 import './Rekorder.css';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
 
 function Rekorder(): React.ReactElement<any, any> {
   const [loadingWCA, setLoadingWCA] = useState<boolean>(false);
@@ -74,7 +73,6 @@ function Rekorder(): React.ReactElement<any, any> {
       setTab2(false);
       setTab3(!tab3);
     }
-    
   }
 
   useEffect(() => {
@@ -83,8 +81,6 @@ function Rekorder(): React.ReactElement<any, any> {
     nasjonaleRekorderNonWCA();
   }, []);
 
-  
-  
   const displayTab = () => {
     const WCATable = (): React.ReactElement<any, any> => {
       return (
@@ -158,9 +154,15 @@ function Rekorder(): React.ReactElement<any, any> {
         </div>
         <br></br>
         <div className="tab">
-          <button className={tab1 ? "tabLinks Activated" : "tablinks"} onClick={() => toggleTabs('tab1')}><h3>Offisielle Rekorder</h3></button>
-          <button className={tab2 ? "tabLinks Activated" : "tablinks"} onClick={() => toggleTabs('tab2')}><h3>Uoffisielle Rekorder</h3> </button>
-          <button className={tab3 ? "tabLinks Activated" : "tablinks"} onClick={() => toggleTabs('tab3')}><h3>Ikke-WCA Rekorder</h3></button>
+          <button className={tab1 ? "tabLinks Activated" : "tablinks"} onClick={() => toggleTabs('tab1')}>
+            <h3>Offisielle Rekorder</h3>
+          </button>
+          <button className={tab2 ? "tabLinks Activated" : "tablinks"} onClick={() => toggleTabs('tab2')}>
+            <h3>Uoffisielle Rekorder</h3>
+          </button>
+          <button className={tab3 ? "tabLinks Activated" : "tablinks"} onClick={() => toggleTabs('tab3')}>
+            <h3>Ikke-WCA Rekorder</h3>
+          </button>
         </div>
         <div className="recordTable">
           {loadingWCA ? 'loading' : displayTab()}

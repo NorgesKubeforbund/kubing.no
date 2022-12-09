@@ -104,12 +104,7 @@ function OmOss(): React.ReactElement<any, any> {
             {brregDataTable()}
           </div>
         </div>
-
-
-            <ContactForm serviceID={'service_onnkkgn'} />
-          
-        
-
+        <ContactForm serviceID={'service_onnkkgn'} />
         <br></br>
         <br></br>
       </div>

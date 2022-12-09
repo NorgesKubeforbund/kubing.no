@@ -47,13 +47,13 @@ export const NavBar = (): React.ReactElement<any, any> => {
               <button key={pg['name']} id={pg['name']} onClick={() => {
                 window.location.href = pg['path']
               }} className="MenuLinks active">{pg['name']}</button>
-            )
+            );
           } else {
             return (
               <button key={pg['name']} id={pg['name']} onClick={() => {
                 window.location.href = pg['path']
               }} className="MenuLinks">{pg['name']}</button>
-            )
+            );
           }
         })} 
       </div>

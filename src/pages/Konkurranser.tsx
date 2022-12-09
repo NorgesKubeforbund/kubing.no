@@ -1,8 +1,7 @@
-import React, { ComponentType } from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import { NavBar } from '../components/Header';
 import './Konkurranser.css';
-import axios from 'axios';
-import {useEffect, useState} from 'react';
 
 function Konkurranser() {
   const [loading, setLoading] = useState<boolean>(false);
@@ -123,39 +122,40 @@ function Konkurranser() {
     );
   }
 
-const pastComps = () => {
-  return (
-    <table className="compTable">
-      <thead>
-        <tr>
-          <th>Navn</th>
-          <th>Sted</th>
-          <th>Dato</th>
-        </tr>
-      </thead>
-      <tbody className="comp">{compData.map((comp: any) => {
-        let compDate;
-        let compElStart = new Date(comp.start_date);
-        let compElEnd = new Date(comp.end_date);
-        if (Date.parse(comp.start_date) === Date.parse(comp.end_date)) {
-          compDate = compElStart.getDate() + " " + compElStart.toLocaleDateString("en-GB", {month: 'short'});
-        } else { 
-          compDate = compElStart.getDate() + " " + compElStart.toLocaleDateString("en-GB", {month: 'short'}) + " - "  + 
-          compElEnd.getDate() + " " + compElEnd.toLocaleDateString("en-GB", {month: 'short'});
-        }
-        if(Date.parse(comp.end_date) < Date.now()) {
-          return (                                  
-            <tr className="compRow" key={comp.id}>
-              <td className="compName"><a href={comp.url} className="compLinks">{comp.name}</a></td>
-              <td className="compCity">{comp.city}</td>
-              <td className="compDate">{compDate}</td>
-            </tr>
-          )
-        }
-        })}
-      </tbody>  
-    </table>
-  );
+  const pastComps = () => {
+    return (
+      <table className="compTable">
+        <thead>
+          <tr>
+            <th>Navn</th>
+            <th>Sted</th>
+            <th>Dato</th>
+          </tr>
+        </thead>
+        <tbody className="comp">
+          {compData.map((comp: any) => {
+            let compDate;
+            let compElStart = new Date(comp.start_date);
+            let compElEnd = new Date(comp.end_date);
+            if (Date.parse(comp.start_date) === Date.parse(comp.end_date)) {
+              compDate = compElStart.getDate() + " " + compElStart.toLocaleDateString("en-GB", {month: 'short'});
+            } else { 
+              compDate = compElStart.getDate() + " " + compElStart.toLocaleDateString("en-GB", {month: 'short'}) + " - "  + 
+              compElEnd.getDate() + " " + compElEnd.toLocaleDateString("en-GB", {month: 'short'});
+            }
+            if(Date.parse(comp.end_date) < Date.now()) {
+              return (                                  
+                <tr className="compRow" key={comp.id}>
+                  <td className="compName"><a href={comp.url} className="compLinks">{comp.name}</a></td>
+                  <td className="compCity">{comp.city}</td>
+                  <td className="compDate">{compDate}</td>
+                </tr>
+              )
+            }
+          })}
+        </tbody>  
+      </table>
+    );
   }
 
   //render

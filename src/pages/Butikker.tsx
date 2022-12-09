@@ -1,15 +1,12 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import './Butikker.css';
 import {NavBar} from '../components/Header';
-import axios from 'axios';
-import { useEffect, useState } from 'react';
 
 
 function Butikker(): React.ReactElement<any, any> {
-
-const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [sheetData, setSheetData] = useState<string[][]>([]);
-
 
   type butikkerInfo = {
 
@@ -48,26 +45,24 @@ const [loading, setLoading] = useState<boolean>(false);
     );
   };
 
-    return (
-        <div className="Butikker">
-          <NavBar/>            
-          <div className='Main'>
-            <div className='Intro'>
-              <h1 className='MainHeader'>Butikker</h1>
-              <p>
-                Mange lurer på hvor de kan få tak i kuber. 
-                Her er en liste med forskjellige reputable kubebutikker som vi har god erfaring med.
-              </p>
-            </div>
-            <div className="mainBody">
-              {loading && <p>Loading data...</p>}
-              <div>{shopElements()}</div>
-            </div>
-          </div>
+  return (
+    <div className="Butikker">
+      <NavBar/>            
+      <div className='Main'>
+        <div className='Intro'>
+          <h1 className='MainHeader'>Butikker</h1>
+          <p>
+            Mange lurer på hvor de kan få tak i kuber. 
+            Her er en liste med forskjellige reputable kubebutikker som vi har god erfaring med.
+          </p>
         </div>
-
-
-    );
+        <div className="mainBody">
+          {loading && <p>Loading data...</p>}
+          <div>{shopElements()}</div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default Butikker;

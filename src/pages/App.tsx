@@ -27,13 +27,12 @@ function App(): React.ReactElement<any, any> {
   const homeElements = (): React.ReactElement<any, any> => {
     return (
       <div className="Main">
-          {
-          sheetData.map((el: string[]) => (
-              <div className="Element" key={el[0]}>
-                <h2>{el[0]}</h2>
-                <p>{el[1]}</p>            
-              </div>                 
-          ))}
+        {sheetData.map((el: string[]) => (
+          <div className="Element" key={el[0]}>
+            <h2>{el[0]}</h2>
+            <p>{el[1]}</p>            
+          </div>                 
+        ))}
       </div>
     );
   };
@@ -43,7 +42,7 @@ function App(): React.ReactElement<any, any> {
       <NavBar />
       <div className='Main'>
         <div className='Intro'>
-            <h1 className='MainHeader'>Hjem</h1>
+          <h1 className='MainHeader'>Hjem</h1>
         </div>
         <div className="MainBody">
           {loading && <p>Loading data...</p>}
