@@ -8,3 +8,4 @@
   Når jeg går til norske rekorder-siden
   Så ser jeg en liste over hvem som har norgesrekordene og hva de er på
 */
+

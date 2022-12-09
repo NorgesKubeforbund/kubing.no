@@ -11,9 +11,10 @@
 */
 
 describe('Butikkdata', () => {
+  
   context('Desktopsjekk', () => {
     beforeEach(() => {
-      cy.viewport(1920, 1080);
+      cy.viewport(1228, 720);
     });
     it('Gitt at jeg er inne på nettsiden', () => {
       cy.intercept({
@@ -37,13 +38,9 @@ describe('Butikkdata', () => {
       });
     });
     it('Og jeg kan besøke nettbutikkene', () => {
-      //hent alle p element, lagre kvart p element som $el i $liste
       cy.get('.butikkDetails').each(($el, index, $list) => {
-        //for kvart $el finn a-element
         cy.wrap($el).find('a')
-          //hent ut href-atributt frå $el
           .invoke('attr', 'href')
-          //deretter bruk href til å sjekke om man kan besøke sida
           .then(href => {
             cy.request('href')
               .its('status')
@@ -52,7 +49,7 @@ describe('Butikkdata', () => {
       })
     });
   });
-
+  
   context('Mobilsjekk', () => {
     beforeEach(() => {
       cy.viewport('iphone-6');
