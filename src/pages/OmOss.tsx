@@ -1,12 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState }from 'react';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
 import { NavBar } from '../components/Header';
 import ContactForm from '../components/ContactForm'
 import './OmOss.css';
 
 function OmOss(): React.ReactElement<any, any> {
-
   const [loading, setLoading] = useState<boolean>(false);
   const [brregData, setBrregData] = useState<apiResponse[]>([]);
 
@@ -56,16 +54,17 @@ function OmOss(): React.ReactElement<any, any> {
             if(el.person.navn.mellomnavn !== undefined){    
               mellomNavn = el.person.navn.mellomnavn;
             }
-          return(
-            <tr key={el.person.fodselsdato}>
-              <td className='fornavn'>{el.person.navn.fornavn + " " + mellomNavn + " " + el.person.navn.etternavn }</td> 
-              <td className={el.type.beskrivelse}>{el.type.beskrivelse}</td>
-            </tr>
-          )})}
+            return(
+              <tr key={el.person.fodselsdato}>
+                <td className='fornavn'>{el.person.navn.fornavn + " " + mellomNavn + " " + el.person.navn.etternavn }</td> 
+                <td className={el.type.beskrivelse}>{el.type.beskrivelse}</td>
+              </tr>
+            )
+          })}
         </tbody>
       </table>
-    )
-  }
+    );
+  };
 
   useEffect(() => {
     getBrregData();

@@ -50,20 +50,20 @@ const [loading, setLoading] = useState<boolean>(false);
 
     return (
         <div className="Butikker">
-            <NavBar/>            
-            <div className='Main'>
-                <div className='Intro'>
-                    <h1 className='MainHeader'>Butikker</h1>
-                    <p>
-                      Mange lurer på hvor de kan få tak i kuber. 
-                      Her er en liste med forskjellige reputable kubebutikker som vi har god erfaring med.
-                    </p>
-                </div>
-                <div className="mainBody">
-                    {loading && <p>Loading data...</p>}
-                    <div>{shopElements()}</div>
-                </div>
+          <NavBar/>            
+          <div className='Main'>
+            <div className='Intro'>
+              <h1 className='MainHeader'>Butikker</h1>
+              <p>
+                Mange lurer på hvor de kan få tak i kuber. 
+                Her er en liste med forskjellige reputable kubebutikker som vi har god erfaring med.
+              </p>
             </div>
+            <div className="mainBody">
+              {loading && <p>Loading data...</p>}
+              <div>{shopElements()}</div>
+            </div>
+          </div>
         </div>
 
 

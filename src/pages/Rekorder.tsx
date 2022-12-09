@@ -5,7 +5,6 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 
 function Rekorder(): React.ReactElement<any, any> {
-
   const [loadingWCA, setLoadingWCA] = useState<boolean>(false);
   const [loadingNonWCA, setLoadingNonWCA] = useState<boolean>(false);
   const [loadingOfficial, setLoadingOfficial] = useState<boolean>(false);

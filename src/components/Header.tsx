@@ -3,7 +3,6 @@ import './Header.css';
 import image from '../media/NKF_Logo_trans.png';
 
 export const NavBar = (): React.ReactElement<any, any> => {
-
   type pagePaths = [
     {name: string, path: string},
     {name: string, path: string},
@@ -26,7 +25,7 @@ export const NavBar = (): React.ReactElement<any, any> => {
     {name: 'Lokale Arrangement', path: '/LokaleArrangement'},
   ]
 
-  function dropDown(): void {
+  const dropDown = (): void => {
     const x = document.getElementById('NavBarFull') as HTMLElement;
     if(x.className === 'NavBar') {
       x.className += 'Responsive';
@@ -36,13 +35,11 @@ export const NavBar = (): React.ReactElement<any, any> => {
   }
 
   return (
-  <header className="App-header">
-    <div>
-    <img src={image} className="Logo" alt="logo" />
-    
-    </div>
-    <a className="LogoName">Norges Kubeforbund</a>
-      
+    <header className="App-header">
+      <div>
+        <img src={image} className="Logo" alt="logo" />
+      </div>
+      <a className="LogoName">Norges Kubeforbund</a>
       <div className="NavBar" id="NavBarFull">
         {pages.map((pg) => {
           if (pg['path'] == window.location.pathname) {
@@ -58,14 +55,13 @@ export const NavBar = (): React.ReactElement<any, any> => {
               }} className="MenuLinks">{pg['name']}</button>
             )
           }
-        })}
-        
+        })} 
       </div>
         <div className="DropDown" onClick={() => {dropDown()}}>
           <div className="IconBar"></div>
           <div className="IconBar"></div>
           <div className="IconBar"></div>
         </div>
-  </header>
+    </header>
   )
 }
