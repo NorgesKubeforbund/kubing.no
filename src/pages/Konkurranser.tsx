@@ -1,13 +1,15 @@
 import React, { ComponentType } from 'react';
+import {useEffect, useState} from 'react';
+import Modal from 'react-modal';
+import axios from 'axios';
 import { NavBar } from '../components/Header';
 import './Konkurranser.css';
-import axios from 'axios';
-import {useEffect, useState} from 'react';
 
 function Konkurranser() {
 
   const [loading, setLoading] = useState<boolean>(false);
   const [compData, setCompData] = useState<apiResponse[]>([]);
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
 
   type apiResponse = 
   { id: string, 
@@ -87,8 +89,29 @@ function Konkurranser() {
   }
 
   useEffect(() => {
-      getCompData();
+    getCompData();
   }, []);
+
+  const displayModal = () => {
+    return (
+      <Modal
+        isOpen={modalVisible}
+        onRequestClose={() => setModalVisible(!modalVisible)}
+        className="modalContainer"
+      >
+        <button
+          className="modalCloseButton"
+          onClick={() => setModalVisible(!modalVisible)}>
+        Lukk vindu
+        </button>
+        <div className='modalContent'>
+          <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur placerat sapien at justo porttitor imperdiet. Nunc in quam fermentum, consequat ligula et, rhoncus diam. Aliquam et ultricies lorem, non pellentesque lacus. Cras arcu metus, eleifend ut vestibulum nec, dignissim in dolor. Aenean id euismod odio. Nulla tempus lacus non lacus suscipit, vel scelerisque erat malesuada. Suspendisse a mattis mauris. Sed nec massa sed tellus pharetra consequat sed a leo. Quisque viverra sapien lectus, vehicula interdum augue vulputate at.
+          </p>
+        </div>
+      </Modal>
+    )
+  }
 
   const commingComps = () => {
   return(
@@ -107,12 +130,12 @@ function Konkurranser() {
         if (Date.parse(comp.start_date) === Date.parse(comp.end_date)){
           compDate = compElStart.getDate() + " " + compElStart.toLocaleDateString("en-GB", {month: 'short'});
         }
-        else { 
-          compDate = compElStart.getDate() + " " + compElStart.toLocaleDateString("en-GB", {month: 'short'}) + " - "  + 
+        else {
+          compDate = compElStart.getDate() + " " + compElStart.toLocaleDateString("en-GB", {month: 'short'}) + " - "  +
           compElEnd.getDate() + " " + compElEnd.toLocaleDateString("en-GB", {month: 'short'});
         }
         if(Date.parse(comp.end_date) > Date.now()){
-          return(                                  
+          return(
             <tr className="compRow" key={comp.id}>
               <td className="compName"><a href={comp.url} className="compLinks">{comp.name}</a></td>
               <td className="compCity">{comp.city}</td>
@@ -121,7 +144,7 @@ function Konkurranser() {
           )
         }
         })}
-      </tbody>  
+      </tbody>
     </table>
   );
 }
@@ -161,7 +184,6 @@ const pastComps = () => {
     </table>
   );
   }
-
   
   //render
   return (
@@ -169,7 +191,13 @@ const pastComps = () => {
       <NavBar/>
       <div className="Main">
         <div className="arrangere">
-            <p>Ønsker du å arrangere en konkurranse?</p>
+          <button
+            className="modalOpenButton"
+            onClick={() => setModalVisible(!modalVisible)}>
+            Ønsker du å arrangere en konkurranse? Klikk her!
+          </button>
+          {modalVisible}
+          {displayModal()}
         </div>
         <h1 className='MainHeader'>Kommende Konkurranser</h1>
         <div className="Comps">
