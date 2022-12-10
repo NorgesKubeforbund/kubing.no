@@ -1,19 +1,10 @@
 import React from 'react';
 import './Header.css';
+import { pagePaths } from 'src/react-app-env';
 import image from '../media/NKF_Logo_trans.png';
 
 export const NavBar = (): React.ReactElement<any, any> => {
-  type pagePaths = [
-    {name: string, path: string},
-    {name: string, path: string},
-    {name: string, path: string},
-    {name: string, path: string},
-    {name: string, path: string},
-    {name: string, path: string},
-    {name: string, path: string},
-    {name: string, path: string}
-  ]
-
+  
   const pages: pagePaths = [
     {name: 'Hjem', path: '/'}, 
     {name: 'Konkurranser', path: '/Konkurranser'}, 
@@ -23,7 +14,7 @@ export const NavBar = (): React.ReactElement<any, any> => {
     {name: 'Linker', path: '/Linker'},
     {name: 'Norske Rekorder', path: '/Rekorder'}, 
     {name: 'Lokale Arrangement', path: '/LokaleArrangement'},
-  ]
+  ];
 
   const dropDown = (): void => {
     const x = document.getElementById('NavBarFull') as HTMLElement;
@@ -32,7 +23,7 @@ export const NavBar = (): React.ReactElement<any, any> => {
     } else {
       x.className = 'NavBar';
     }
-  }
+  };
 
   return (
     <header className="App-header">
