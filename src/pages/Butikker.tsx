@@ -8,17 +8,22 @@ function Butikker(): React.ReactElement<any, any> {
   const [loading, setLoading] = useState<boolean>(false);
   const [sheetData, setSheetData] = useState<string[][]>([]);
 
-  type butikkerInfo = {
-
-  }
-
-  const getSheetData = async(): Promise<butikkerInfo> => {
+  const getSheetData = async(): Promise<void> => {
     setLoading(true);
-    const response = await axios.get(`${process.env.REACT_APP_BUTIKKER_KEY}`);
-    setSheetData(response.data.values);
+    try {
+      await axios.get(`${process.env.REACT_APP_BUTIKKER_KEY}`)
+        .then(response => setSheetData(response.data.values))
+    } catch (error) {
+      let message: string;
+      if (error instanceof Error) {
+        message = error.message;
+      } else {
+        message = String(error);
+      }
+      alert(message);
+    }
     setLoading(false);
-    return await response.data;
-  }
+  };
   
   useEffect(() => {
     getSheetData();

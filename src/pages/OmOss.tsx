@@ -3,40 +3,27 @@ import axios from 'axios';
 import { NavBar } from '../components/Header';
 import ContactForm from '../components/ContactForm'
 import './OmOss.css';
+import { brregResponse } from 'src/react-app-env';
 
 function OmOss(): React.ReactElement<any, any> {
   const [loading, setLoading] = useState<boolean>(false);
-  const [brregData, setBrregData] = useState<apiResponse[]>([]);
+  const [brregData, setBrregData] = useState<brregResponse[]>([]);
 
-  type apiResponse = {
-    type: {
-      _links: {
-        self: {
-          href: string
-        },
-      },
-      beskrivelse: string,
-      kode: string,
-    },
-    person: {
-      navn: {
-        fornavn: string, 
-        mellomnavn: string, 
-        etternavn: string,
-      }, 
-      erDoed: boolean, 
-      fodselsdato: string
-    }, 
-    fratraadt: boolean, 
-    rekkefolge: number,
-  };
-
-  const getBrregData = async(): Promise<apiResponse> => {
+  const getBrregData = async(): Promise<void> => {
     setLoading(true);
-    const response = await axios.get(`${process.env.REACT_APP_OMOSS_KEY}`);
-    setBrregData(response.data.rollegrupper[1].roller);
+    try {
+      await axios.get(`${process.env.REACT_APP_OMOSS_KEY}`)
+        .then(response => setBrregData(response.data.rollegrupper[1].roller))
+    } catch (error) {
+      let message: string;
+      if (error instanceof Error) {
+        message = error.message;
+      } else {
+        message = String(error);
+      }
+      alert(message);
+    }
     setLoading(false);
-    return response.data;
   };
 
   const brregDataTable = (): React.ReactElement<any, any> => {
@@ -49,7 +36,7 @@ function OmOss(): React.ReactElement<any, any> {
           </tr>
         </thead>
         <tbody>
-          {brregData.map((el: apiResponse) => {
+          {brregData.map((el: brregResponse) => {
             let mellomNavn = "";
             if(el.person.navn.mellomnavn !== undefined){    
               mellomNavn = el.person.navn.mellomnavn;
