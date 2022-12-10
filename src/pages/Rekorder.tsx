@@ -4,55 +4,34 @@ import './Rekorder.css';
 import axios from 'axios';
 
 function Rekorder(): React.ReactElement<any, any> {
-  const [loadingWCA, setLoadingWCA] = useState<boolean>(false);
-  const [loadingNonWCA, setLoadingNonWCA] = useState<boolean>(false);
-  const [loadingOfficial, setLoadingOfficial] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [sheetData, setSheetData] = useState<string[][]>([]);
   const [sheetData2, setSheetData2] = useState<string[][]>([]);
   const [norgesRekorder, setNorgesRekorderWCA] = useState<string[][]>([]);
   const [tab1, setTab1] = useState<boolean>(true);
   const [tab2, setTab2] = useState<boolean>(false);
   const [tab3, setTab3] = useState<boolean>(false);
-  
 
-  type wcaRekorder = {
-    national_records: {
-      Norway: { 
-        222: { single: number, average: number },
-        333: { single: number, average: number },
-        "333oh": { single: number, average: number },
-        444: { single: number, average: number },
-        555: { single: number, average: number },
-        minx: { single: number, average: number },
-        pyram: { single: number, average: number },
-        skewb: { single: number, average: number },
+  const getData = async(): Promise<void> => {
+    setLoading(true);
+    try {
+      await axios.get(`${process.env.REACT_APP_NORSKEREKORDERWCA_KEY}`)
+        .then(response => setSheetData(response.data.values));
+      await axios.get(`${process.env.REACT_APP_NORSKEREKORDER_KEY}`)
+        .then(response => setNorgesRekorderWCA(response.data.values));
+      await axios.get(`${process.env.REACT_APP_NORSKEREKORDERNONWCA_KEY}`)
+        .then(response => setSheetData2(response.data.values));
+    } catch (error) {
+      let message: string;
+      if (error instanceof Error) {
+        message = error.message;
+      } else {
+        message = String(error);
       }
+      alert(message);
     }
-  }
-
-  const getSheetData = async(): Promise<wcaRekorder> => {
-    setLoadingWCA(true);
-    const response = await axios.get(`${process.env.REACT_APP_NORSKEREKORDERWCA_KEY}`);
-    setSheetData(response.data.values);
-    setLoadingWCA(false);
-    return response.data;
-  }
-
-  const nationaleRekorder = async(): Promise<wcaRekorder> => {
-    setLoadingOfficial(true);
-    const response = await axios.get(`${process.env.REACT_APP_NORSKEREKORDER_KEY}`);
-    setNorgesRekorderWCA(response.data.values);
-    setLoadingOfficial(false);
-    return response.data;
-  }
-
-  const nasjonaleRekorderNonWCA = async(): Promise<any> => {
-    setLoadingNonWCA(true);
-    const response = await axios.get(`${process.env.REACT_APP_NORSKEREKORDERNONWCA_KEY}`);
-    setSheetData2(response.data.values);
-    setLoadingNonWCA(false);
-    return response.data;
-  }
+    setLoading(false);
+  };
 
   function toggleTabs(tabName : string): void {
     if (tabName === 'tab1') {
@@ -76,9 +55,7 @@ function Rekorder(): React.ReactElement<any, any> {
   }
 
   useEffect(() => {
-    getSheetData();
-    nationaleRekorder();
-    nasjonaleRekorderNonWCA();
+    getData();
   }, []);
 
   const displayTab = () => {
@@ -165,7 +142,7 @@ function Rekorder(): React.ReactElement<any, any> {
           </button>
         </div>
         <div className="recordTable">
-          {loadingWCA ? 'loading' : displayTab()}
+          {loading ? 'loading' : displayTab()}
         </div>
       </div>
     </div>
