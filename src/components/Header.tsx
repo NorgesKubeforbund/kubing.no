@@ -25,10 +25,11 @@ export const NavBar = (): React.ReactElement<any, any> => {
     }
   };
 
+
   return (
     <header className="App-header">
       <div>
-        <img src={image} className="Logo" alt="logo" />
+        <img src={image} className="Logo" alt="logo"/>
       </div>
       <a className="LogoName">Norges Kubeforbund</a>
       <div className="NavBar" id="NavBarFull">

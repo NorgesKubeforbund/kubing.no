@@ -3,11 +3,6 @@
   align-items: center;
   width: 70%;
 }
-.tdlskfjsldfjsdlkfjd {
-    border-width: 1px;
-    border-style: solid;
-    border-color: black;
-}
 .recordRow:nth-child(even) {
   background-color: #e2e2e2;
 }
@@ -45,4 +40,5 @@
 .NRTable{
   width: 100%;
   border-collapse: collapse;
+  margin-top: -4px;
 }
