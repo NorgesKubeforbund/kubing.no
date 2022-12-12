@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { NavBar } from '../components/Header';
-import { compResponse } from '../react-app-env';
+import { compResponse} from '../types';
 import './Konkurranser.css';
 
 function Konkurranser() {

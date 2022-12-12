@@ -3,7 +3,7 @@ import axios from 'axios';
 import { NavBar } from '../components/Header';
 import ContactForm from '../components/ContactForm'
 import './OmOss.css';
-import { brregResponse } from 'src/react-app-env';
+import { brregResponse } from '../types';
 
 function OmOss(): React.ReactElement<any, any> {
   const [loading, setLoading] = useState<boolean>(false);

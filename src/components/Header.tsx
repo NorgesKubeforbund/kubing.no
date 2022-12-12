@@ -1,6 +1,6 @@
 import React from 'react';
 import './Header.css';
-import { pagePaths } from 'src/react-app-env';
+import { pagePaths } from '../types';
 import image from '../media/NKF_Logo_trans.png';
 
 export const NavBar = (): React.ReactElement<any, any> => {

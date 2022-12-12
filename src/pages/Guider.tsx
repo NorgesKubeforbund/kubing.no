@@ -6,7 +6,6 @@ import Nybegynnermetode from '../media/3x3-Begynnermetode.pdf'
 
 
 function Guider(): React.ReactElement<any, any> {
-
     
     const onButtonClick = () => {
         // using Java Script method to get PDF file
