@@ -1,4 +1,5 @@
 /// <reference types="react-scripts" />
+declare module '*.pdf'
 
 export type compResponse = { 
   id: string, 
