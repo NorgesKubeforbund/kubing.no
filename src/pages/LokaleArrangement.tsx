@@ -23,7 +23,7 @@ function LokaleArrangement(): React.ReactElement<any, any> {
         </div>
         <div className='LokaltArrangement'>
           <h2>Rogaland</h2>
-          <a href='https://www.facebook.com/groups/1658988921015490' target='_blank' rel='noopener'>Sandnes SpeedCubers</a> har tilbud i Sannes.
+          <a href='https://www.facebook.com/groups/1658988921015490' target='_blank' rel='noopener'>Sandnes SpeedCubers</a> har tilbud i Sandnes.
         </div>
         <div className='LokaltArrangement'>
           <h2>Trøndelag</h2>
