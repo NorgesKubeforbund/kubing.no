@@ -1,12 +1,10 @@
-import axios from 'axios';
-import { group } from 'console';
 import React, {useState, useEffect } from 'react';
+import axios from 'axios';
 import { NavBar } from '../components/Header';
 import './LokaleArrangement.css';
 
 function LokaleArrangement(): React.ReactElement<any, any> {
   const [loading, setLoading] = useState<boolean>(false);
-  //const [apiData, setApidata] = useState<string[][]>([]);
   const [groupedData, setGroupedData] = useState<Record<string, any>>({});
 
   const getData = async () => {
