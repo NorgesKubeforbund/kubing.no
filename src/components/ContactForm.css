@@ -1,0 +1,9 @@
+.form-control-message{
+  height: 100px;
+  width: 400px;
+  font-family: inherit;
+  overflow-x: auto;
+}
+.star{
+  color: red;
+}

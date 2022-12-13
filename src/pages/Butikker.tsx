@@ -1,27 +1,29 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import './Butikker.css';
 import {NavBar} from '../components/Header';
-import axios from 'axios';
-import { useEffect, useState } from 'react';
 
 
 function Butikker(): React.ReactElement<any, any> {
-
-const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [sheetData, setSheetData] = useState<string[][]>([]);
 
-
-  type butikkerInfo = {
-
-  }
-
-  const getSheetData = async(): Promise<butikkerInfo> => {
+  const getSheetData = async(): Promise<void> => {
     setLoading(true);
-    const response = await axios.get(`${process.env.REACT_APP_BUTIKKER_KEY}`);
-    setSheetData(response.data.values);
+    try {
+      await axios.get(`${process.env.REACT_APP_BUTIKKER_KEY}`)
+        .then(response => setSheetData(response.data.values))
+    } catch (error) {
+      let message: string;
+      if (error instanceof Error) {
+        message = error.message;
+      } else {
+        message = String(error);
+      }
+      alert(message);
+    }
     setLoading(false);
-    return await response.data;
-  }
+  };
   
   useEffect(() => {
     getSheetData();
@@ -48,26 +50,24 @@ const [loading, setLoading] = useState<boolean>(false);
     );
   };
 
-    return (
-        <div className="Butikker">
-            <NavBar/>            
-            <div className='Main'>
-                <div className='Intro'>
-                    <h1 className='MainHeader'>Butikker</h1>
-                    <p>
-                      Mange lurer på hvor de kan få tak i kuber. 
-                      Her er en liste med forskjellige reputable kubebutikker som vi har god erfaring med.
-                    </p>
-                </div>
-                <div className="mainBody">
-                    {loading && <p>Loading data...</p>}
-                    <div>{shopElements()}</div>
-                </div>
-            </div>
+  return (
+    <div className="Butikker">
+      <NavBar/>            
+      <div className='Main'>
+        <div className='Intro'>
+          <h1 className='MainHeader'>Butikker</h1>
+          <p>
+            Mange lurer på hvor de kan få tak i kuber. 
+            Her er en liste med forskjellige reputable kubebutikker som vi har god erfaring med.
+          </p>
         </div>
-
-
-    );
+        <div className="mainBody">
+          {loading && <p>Loading data...</p>}
+          <div>{shopElements()}</div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default Butikker;
