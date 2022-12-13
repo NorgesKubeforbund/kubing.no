@@ -132,13 +132,13 @@ function Rekorder(): React.ReactElement<any, any> {
         <br></br>
         <div className="tab">
           <button className={tab1 ? "tabLinks Activated" : "tablinks"} onClick={() => toggleTabs('tab1')}>
-            <h3>Offisielle Rekorder</h3>
+            <h3 className="offisielleRekorder">Offisielle Rekorder</h3>
           </button>
           <button className={tab2 ? "tabLinks Activated" : "tablinks"} onClick={() => toggleTabs('tab2')}>
-            <h3>Uoffisielle Rekorder</h3>
+            <h3 className="uoffisielleRekorder">Uoffisielle Rekorder</h3>
           </button>
           <button className={tab3 ? "tabLinks Activated" : "tablinks"} onClick={() => toggleTabs('tab3')}>
-            <h3>Ikke-WCA Rekorder</h3>
+            <h3 className="nonWcaRekorder">Ikke-WCA Rekorder</h3>
           </button>
         </div>
         <div className="recordTable">

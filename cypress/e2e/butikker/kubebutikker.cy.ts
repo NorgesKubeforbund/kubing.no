@@ -1,4 +1,3 @@
-/// <reference types="cypress" />
 /*
 ### Kubebutikk-informasjon:
   Som bruker av nettsiden

@@ -160,8 +160,6 @@ const pastComps = () => {
           {loading && <p>Loading data...</p>}
           {pastComps()}
         </div>
-        <br></br>
-        <br></br>
       </div>
     </div>
   );

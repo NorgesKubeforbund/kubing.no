@@ -24,6 +24,12 @@ describe('KonkurranseData', () => {
         assert.isNotNull(interception.response?.body, 'Page has loaded')
       })
     })
+    it('vil jeg se kommende konkurranser', () => {
+      cy.get('.Main .compTable').eq(0).should('be.visible');
+    })
+    it('vil jeg se tidligere konkurranser', () => {
+      cy.get('.Main .compTable').eq(1).should('be.visible');
+    })
   })
   context('Desktopsjekk', () => {
     beforeEach(() => {
@@ -38,6 +44,12 @@ describe('KonkurranseData', () => {
       cy.wait('@loadingCheck').then((interception) => {
         assert.isNotNull(interception.response?.body, 'Page has loaded')
       })
+    })
+    it('vil jeg se kommende konkurranser', () => {
+      cy.get('.Main .compTable').eq(0).should('be.visible');
+    })
+    it('vil jeg se tidligere konkurranser', () => {
+      cy.get('.Main .compTable').eq(1).should('be.visible');
     })
   })
 })

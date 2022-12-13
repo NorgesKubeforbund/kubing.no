@@ -1,4 +1,3 @@
-/// <reference types="cypress" />
 /*
 ### Introduksjon til kubing:
   Som bruker av nettsiden
