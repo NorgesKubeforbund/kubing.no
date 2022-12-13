@@ -41,3 +41,5 @@ describe('KonkurranseData', () => {
     })
   })
 })
+
+export {};

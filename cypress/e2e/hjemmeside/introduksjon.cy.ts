@@ -26,10 +26,14 @@ describe('Hjemmesideinfosjekk', () => {
       })
     });
     it('Ønsker jeg å bli ønsket velkommen', () => {
-      cy.get('H2').contains('Velkommen');
+      cy.get('.Intro .MainHeader').should('be.visible');
     });
     it('Og jeg vil bli introdusert til hva kubing er for noe', () => {
-      cy.get('H2').contains('Hva er \'speedcubing\'?');
+      cy.get('.HomeElements .Main').each(($el, index, $list) => {
+        cy.wrap($el)
+          .find('.Element')
+          .should('be.visible');
+      })
     });
   });
   context('Mobilecheck', () => {
@@ -48,12 +52,16 @@ describe('Hjemmesideinfosjekk', () => {
       })
     });
     it('Ønsker jeg å bli ønsket velkommen', () => {
-      cy.get('H2').contains('Velkommen');
+      cy.get('.Intro .MainHeader').should('be.visible');
     });
     it('Og jeg vil bli introdusert til hva kubing er for noe', () => {
-      cy.get('H2').contains('Hva er \'speedcubing\'?');
-    });
-  });
+      cy.get('.HomeElements .Main').each(($el, index, $list) => {
+        cy.wrap($el)
+          .find('.Element')
+          .should('be.visible');
+      })
+    })
+  })
 });
 
 export {};
