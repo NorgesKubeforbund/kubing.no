@@ -36,7 +36,7 @@ chrome:
   parallel: 3
   script:
     - npm ci
-    - npm start & wait-on http://localhost:3000
+    - npm run begin
     - > 
       npx cypress run --record --key 2166158d-2340-4e7d-9e8d-e17a92083668 
       --parallel --browser chrome --group "Chrome"
@@ -53,7 +53,7 @@ firefox:
   parallel: 3
   script:
     - npm ci
-    - npm start & wait-on https://localhost:3000
+    - npm run begin
     - >
       npx cypress run --record --key 2166158d-2340-4e7d-9e8d-e17a92083668 
       --parallel --browser firefox --group "Firefox"
@@ -70,7 +70,7 @@ edge:
   parallel: 2
   script:
     - npm ci
-    - npm start & wait-on http://localhost:3000
+    - npm run begin
     - > 
       npx cypress run --record --key 2166158d-2340-4e7d-9e8d-e17a92083668 
       --parallel --browser edge --group "Edge"
@@ -87,7 +87,7 @@ electron:
   parallel: 2
   script:
     - npm ci
-    - npm start & wait-on http://localhost:3000
+    - npm run begin
     - >
       npx cypress run --record --key 2166158d-2340-4e7d-9e8d-e17a92083668 
       --parallel --browser electron --group "Electron"
