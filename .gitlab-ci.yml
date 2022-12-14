@@ -3,7 +3,7 @@ image: node:latest
 stages:
   - build
   - precheck
-  #- test
+  - test
 
 variables:
   npm_config_cache: '$CI_PROJECT_DIR/.npm'
