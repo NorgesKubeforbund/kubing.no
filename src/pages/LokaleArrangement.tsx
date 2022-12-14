@@ -58,15 +58,25 @@ function LokaleArrangement(): React.ReactElement<any, any> {
 
   const displayGroupedData = () => {
     return (
-      <div key={"groupDataContainer"}>
+      <div key={"groupDataContainer"} className="allLokaleContainer">
         {Object.keys(groupedData).map((a, i) => {
           return (
-            <div key={a+"Container"}>
-              <h2 key={a + "Title"}>{a}</h2>
+            <div key={a+"Container"} className="individualContainer">
+              <h2 key={a + "Title"} className="arrTitle">{a}</h2>
               {Object.values(groupedData[a]).map((el: any) => {
                 const storage: string[] = Object.values(el);
                 return (
-                  <p key={storage[1]+"Text"}><a key={storage[1]+"Link"} href={storage[1]}>{storage[0]}</a>{" " + storage[2]}</p>
+                  <p 
+                    key={storage[1]+"Text"} 
+                    className="arrText"
+                  >
+                    <a 
+                      key={storage[1]+"Link"} 
+                      href={storage[1]} 
+                      className="arrLink"
+                    >{storage[0]}
+                    </a>
+                  {" " + storage[2]}</p>
                 )
               })}
             </div>
