@@ -17,7 +17,7 @@ const ContactForm = (props: {serviceID: string}) => {
       message: message.value,
       'reply-to': email.value,
     };
-    //await sendEmailJS(conFom);
+    await sendEmailJS(conFom);
     setTimeout(() => setDelivered(false), 2000);
   };
 
