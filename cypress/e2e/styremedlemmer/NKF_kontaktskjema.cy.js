@@ -28,11 +28,11 @@ describe('nasjonaleRekorder', () => {
     it('ønsker jeg å kunne å kunne kontakte NKF', () => {
       cy.get('.ContactForm').should('be.visible');
     })
-    it('slik at jeg får sendt et spørsmål til NKF', () => {
+    it.skip('slik at jeg får sendt et spørsmål til NKF', () => {
       cy.get('#name')
         .type('CyTest')
         .get('#email')
-        .type('toreorheim@gmail.com')
+        .type('cypress.kubingTest@gmail.com')
         .get('#message')
         .type('Dette er en cypress test')
         .get('.ContactForm button')
@@ -58,11 +58,11 @@ describe('nasjonaleRekorder', () => {
     it('ønsker jeg å kunne å kunne kontakte NKF', () => {
       cy.get('.ContactForm').should('be.visible');
     })
-    it('slik at jeg får sendt et spørsmål til NKF', () => {
+    it.skip('slik at jeg får sendt et spørsmål til NKF', () => {
       cy.get('#name')
         .type('CyTest')
         .get('#email')
-        .type('toreorheim@gmail.com')
+        .type('cypress.kubingTest@gmail.com')
         .get('#message')
         .type('Dette er en cypress test')
         .get('.ContactForm button')
