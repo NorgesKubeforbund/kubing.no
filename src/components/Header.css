@@ -34,13 +34,14 @@
 }
 @media (min-width: 1041px) {
   .MenuLinks {
-    width: 100px;
+    width: 120px;
     background-color: #282c34;
     color: white;
     border-style: hidden;
     padding: 3px;
     font-family: 'Trebuchet MS';
     font-size: 1rem;
+    margin: auto;
   }
   .NavBarResponsive {
     margin-left: auto;
@@ -119,6 +120,11 @@
   font-size: 2rem;
   color: white;
 }
+
+.clickableLogo{
+  cursor: pointer;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

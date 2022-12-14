@@ -28,7 +28,7 @@ export const NavBar = (): React.ReactElement<any, any> => {
 
   return (
     <header className="App-header">
-      <div>
+      <div onClick={() => window.location.href = "/"} className="clickableLogo">
         <img src={image} className="Logo" alt="logo"/>
       </div>
       <a className="LogoName">Norges Kubeforbund</a>
