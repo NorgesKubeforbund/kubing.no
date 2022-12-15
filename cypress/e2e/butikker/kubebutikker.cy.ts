@@ -13,7 +13,7 @@ describe('Butikkdata', () => {
   
   context('Desktopsjekk', () => {
     beforeEach(() => {
-      cy.viewport(1228, 720);
+      cy.viewport(1920, 1080);
     });
     it('Gitt at jeg er inne på nettsiden', () => {
       cy.intercept({
