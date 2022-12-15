@@ -1,4 +1,3 @@
-import { defineConfig } from "cypress";
 /*
 ### Løsing av kuber/guide:
   Som bruker av nettsiden
