@@ -41,7 +41,7 @@ function Guider(): React.ReactElement<any, any> {
           </p>
           <h2>Guide på engelsk</h2>
           <p className="engelskGuide">
-            Det finnes flere guider for nybegynnere på engelsk, mange av de er på YouTube. En av de finner du <a href="https://www.youtube.com/watch?v=609nhVzg-5Q">her</a>
+            Det finnes flere guider for nybegynnere på engelsk, mange av de er på YouTube. En av de finner du <a href="https://www.youtube.com/watch?v=7Ron6MN45LY">her</a>
           </p>
         </div>
         </div>
