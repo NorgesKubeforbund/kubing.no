@@ -26,18 +26,18 @@ describe('size/scaling', () => {
       })
     });
     it('Og jeg kan se navigasjonsbaren', () => {
-      cy.get('.NavBar > button').should(($buttons) => {
+      cy.get('.NavBar').find('button').then(($buttons) => {
         expect($buttons).to.have.length(8);
         expect($buttons.eq(0)).to.contain('Hjem');
         expect($buttons.eq(1)).to.contain('Konkurranser');
         expect($buttons.eq(2)).to.contain('Butikker');
         expect($buttons.eq(3)).to.contain('Guider');
-        expect($buttons.eq(4)).to.contain('Om Oss');
-        expect($buttons.eq(5)).to.contain('Linker');
-        expect($buttons.eq(6)).to.contain('Norske Rekorder');
-        expect($buttons.eq(7)).to.contain('Lokale Arrangement');
+        expect($buttons.eq(4)).to.contain('Linker');
+        expect($buttons.eq(5)).to.contain('Norske Rekorder');
+        expect($buttons.eq(6)).to.contain('Lokale Arrangement');
+        expect($buttons.eq(7)).to.contain('Om Oss');
       });
-      cy.get('.NavBar > button').first().should('have.class', 'MenuLinks active')
+      cy.get('.NavBar').find('button').first().should('have.class', 'MenuLinks active')
     });
     it('Ønsker jeg å klikke på navigasjonsbaren', () => {
       cy.get('.NavBar').contains('Hjem').click();
@@ -70,16 +70,16 @@ describe('size/scaling', () => {
     });
     it('Og jeg kan se navigasjonsbaren', () => {
       cy.get('.DropDown').click()
-      cy.get('.NavBarResponsive > button').should(($buttons) => {
+      cy.get('.NavBarResponsive').find('button').then(($buttons) => {
         expect($buttons).to.have.length(8);
         expect($buttons.eq(0)).to.contain('Hjem');
         expect($buttons.eq(1)).to.contain('Konkurranser');
         expect($buttons.eq(2)).to.contain('Butikker');
         expect($buttons.eq(3)).to.contain('Guider');
-        expect($buttons.eq(4)).to.contain('Om Oss');
-        expect($buttons.eq(5)).to.contain('Linker');
-        expect($buttons.eq(6)).to.contain('Norske Rekorder');
-        expect($buttons.eq(7)).to.contain('Lokale Arrangement');
+        expect($buttons.eq(4)).to.contain('Linker');
+        expect($buttons.eq(5)).to.contain('Norske Rekorder');
+        expect($buttons.eq(6)).to.contain('Lokale Arrangement');
+        expect($buttons.eq(7)).to.contain('Om Oss');
       });
       cy.get('.NavBarResponsive > button').first().should('have.class', 'MenuLinks active')
     })
@@ -101,39 +101,7 @@ describe('Navigation', () => {
     it('Gitt at jeg er inne på nettsiden', () => {
       cy.visit('http://localhost:3000');
       cy.get('.NavBar > button').contains('Hjem').should('have.class', 'MenuLinks active');
-    });
-
-    // WIP
-    it.skip('Do each one', () => {
-      // required for firefox-browser
-      Cypress.on('uncaught:exception', (err, runnable) => {
-        // returning false here prevents Cypress from
-        // failing the test
-        return false
-      })
-      cy.get('.NavBar').each(($el, index, $list) => {
-        cy.wrap($el).find('button')
-          .invoke('attr', 'id')
-          .then(id => {
-            cy.get('button')
-              .contains(`${id}`)
-              .click();
-            if(id == 'Hjem') {
-              cy.intercept({
-                method: 'GET',
-                url: 'https://sheets.googleapis.com/**/*',
-              }).as('loadingCheck')
-              cy.url().should('equal', 'http://localhost:3000/')
-              cy.wait('@loadingCheck').then((interception) => {
-                assert.isNotNull(interception.response?.body, 'Home has loaded')
-              })
-            } else {
-              cy.url().should('equal', 'http://localhost:3000/' + id)
-            }
-          })
-      })
-    });
-    
+    });    
     it('Ønsker jeg å gå til konkurransesiden', () => {
       cy.get('.NavBar').contains('Konkurranser').click();
       cy.url().should('eq', 'http://localhost:3000/Konkurranser');

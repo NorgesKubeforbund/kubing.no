@@ -1,3 +1,7 @@
 body {
-    background-color: #fcfcfc;
+  background-color: #fcfcfc;
+}
+.Main {
+  margin: auto;
+  width: 70%;
 }

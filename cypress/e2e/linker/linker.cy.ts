@@ -1,4 +1,3 @@
-///<reference types="cypress" />
 /*
 ### Relaterte ressurser:
   Som bruker av nettsiden

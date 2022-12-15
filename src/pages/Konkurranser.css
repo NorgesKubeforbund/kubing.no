@@ -1,48 +1,95 @@
-
-
-.arrangere{
-    align-items: center;
+.arrangere {
+  align-items: center;
 }
-
-
+.modalOpenButton {
+  position: relative;
+  border: 1px solid black;
+  border-radius: 0.5em;
+  background-color: #f1f1f1;
+  font-size: large;
+}
+.modalOpenButton:hover {
+  transition-duration: 0.1s;
+  background-color: #dbdbdb;
+}
+.modalOpenButton:after {
+  content: "";
+  display: block;
+  position: absolute;
+  border-radius: 4em;
+  left: 0;
+  top:0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: all 0.5s;
+  box-shadow: 0 0 10px 40px #d30000;
+}
+.modalOpenButton:active:after{
+  box-shadow: 0 0 0 0 #d30000;
+  position: absolute;
+  border-radius: 4em;
+  left: 0;
+  top: 0;
+  opacity: 1;
+  transition: 0s;
+}
+.modalOpenButton:active {
+  top: 1px;
+}
+.modalContainer {
+  background-color: #f1f1f1;
+  margin: 15%;
+  border: 1px solid black;
+}
+.modalCloseButton {
+    position: relative;
+    border: 1px solid black;
+    border-radius: 15px;
+    border-bottom-left-radius: 0%;
+    border-bottom-right-radius: 0%;
+    background-color: #f1f1f1;
+    font-size: large;
+    top: -30px;
+    left: -1px;
+    padding: 3px;
+}
+.modalContent {
+  position: relative;
+  top: -26px;
+  padding: 1%;
+}
 .compTable{
-    width: 70%;
-    margin: auto;
-    border-collapse: collapse;
-    
+  width: 70%;
+  margin: auto;
+  border-collapse: collapse;  
 }
 .comp {
-    justify-content: center;
-    align-items: center;
-    
-    
-    
+  justify-content: center;
+  align-items: center;
 }
-.compRow{
-    transition: background-color 0.2s;
+.compRow {
+  transition: background-color 0.2s;
 }
-
 .compRow:nth-child(odd) {
-    background-color: #e2e2e2;
-    
+  background-color: #e2e2e2;  
 }
-.compName{
-    width: 30%;
+.compName {
+  width: 30%;
 }
-.compCity{
-    width: 30%;
-    
+.compCity {
+  width: 30%;  
 }
-.compDate{
-    width: 30%;
+.compDate {
+  width: 30%;
 }
-
-.compLinks:link, .compLinks:visited{
-    text-decoration: none;
-    color: #d30000;
+.compLinks:link, .compLinks:visited {
+  text-decoration: none;
+  color: #d30000;
 }
-
-
-.compRow:hover{
-    background-color: #c2c2c2;
+.compRow:hover {
+  background-color: #c2c2c2;
+}
+.Main {
+  margin-bottom: 10%;
 }

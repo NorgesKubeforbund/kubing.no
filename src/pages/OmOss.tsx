@@ -1,44 +1,29 @@
-import React from 'react';
+import React, { useEffect, useState }from 'react';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
 import { NavBar } from '../components/Header';
 import ContactForm from '../components/ContactForm'
 import './OmOss.css';
+import { brregResponse } from '../types';
 
 function OmOss(): React.ReactElement<any, any> {
-
   const [loading, setLoading] = useState<boolean>(false);
-  const [brregData, setBrregData] = useState<apiResponse[]>([]);
+  const [brregData, setBrregData] = useState<brregResponse[]>([]);
 
-  type apiResponse = {
-    type: {
-      _links: {
-        self: {
-          href: string
-        },
-      },
-      beskrivelse: string,
-      kode: string,
-    },
-    person: {
-      navn: {
-        fornavn: string, 
-        mellomnavn: string, 
-        etternavn: string,
-      }, 
-      erDoed: boolean, 
-      fodselsdato: string
-    }, 
-    fratraadt: boolean, 
-    rekkefolge: number,
-  };
-
-  const getBrregData = async(): Promise<apiResponse> => {
+  const getBrregData = async(): Promise<void> => {
     setLoading(true);
-    const response = await axios.get(`${process.env.REACT_APP_OMOSS_KEY}`);
-    setBrregData(response.data.rollegrupper[1].roller);
+    try {
+      await axios.get(`${process.env.REACT_APP_OMOSS_KEY}`)
+        .then(response => setBrregData(response.data.rollegrupper[1].roller))
+    } catch (error) {
+      let message: string;
+      if (error instanceof Error) {
+        message = error.message;
+      } else {
+        message = String(error);
+      }
+      alert(message);
+    }
     setLoading(false);
-    return response.data;
   };
 
   const brregDataTable = (): React.ReactElement<any, any> => {
@@ -51,21 +36,22 @@ function OmOss(): React.ReactElement<any, any> {
           </tr>
         </thead>
         <tbody>
-          {brregData.map((el: apiResponse) => {
+          {brregData.map((el: brregResponse) => {
             let mellomNavn = "";
             if(el.person.navn.mellomnavn !== undefined){    
               mellomNavn = el.person.navn.mellomnavn;
             }
-          return(
-            <tr key={el.person.fodselsdato}>
-              <td className='fornavn'>{el.person.navn.fornavn + " " + mellomNavn + " " + el.person.navn.etternavn }</td> 
-              <td className={el.type.beskrivelse}>{el.type.beskrivelse}</td>
-            </tr>
-          )})}
+            return(
+              <tr key={el.person.fodselsdato}>
+                <td className='fornavn'>{el.person.navn.fornavn + " " + mellomNavn + " " + el.person.navn.etternavn }</td> 
+                <td className={el.type.beskrivelse}>{el.type.beskrivelse}</td>
+              </tr>
+            )
+          })}
         </tbody>
       </table>
-    )
-  }
+    );
+  };
 
   useEffect(() => {
     getBrregData();
@@ -105,15 +91,7 @@ function OmOss(): React.ReactElement<any, any> {
             {brregDataTable()}
           </div>
         </div>
-
-        <div className="Element">
-          <h2>Kontakt oss</h2>
-          <div>
-            Kontakt oss med dette skjemaet: kontakt@kubing.no
-            <ContactForm serviceID={'service_x020olk'} />
-          </div>
-        </div>
-
+        <ContactForm serviceID={'service_onnkkgn'} />
         <br></br>
         <br></br>
       </div>

@@ -1,5 +1,4 @@
 .NavBar, .NavBarResponsive{
-  
   margin-left: auto;
   margin-right: 3px;
   align-items: center;
@@ -7,13 +6,10 @@
   display: flex;
   width: 690px;
 }
-
 .DropDown {
-
   display: none;
 }
 .IconBar {
-
   width: 35px;
   height: 3px;
   background-color: #868686;
@@ -22,36 +18,30 @@
   margin-left: 3px;
   border-radius: 10px;
 }
-
 .Logo, .Spin {
-
   flex: 1;
   height: 10rem;
   width: 10rem;
   pointer-events: none;
 }
 .LogoName {
-
   width: 235px;
 }
 @media (prefers-reduced-motion: no-preference) {
-
   .Spin {
     animation: App-logo-spin infinite 20s linear;
   }
 }
 @media (min-width: 1041px) {
   .MenuLinks {
-  
-    width: 100px;
+    width: 120px;
     background-color: #282c34;
     color: white;
     border-style: hidden;
     padding: 3px;
-    
     font-family: 'Trebuchet MS';
     font-size: 1rem;
-
+    margin: auto;
   }
   .NavBarResponsive {
     margin-left: auto;
@@ -62,43 +52,30 @@
     width: 690px;
   }
 }
-
-
 @media (max-width: 1040px) {
-
   .NavBar {
-
     justify-content: right;
     display: none;
   }
   .MenuLinks {
-
     width: 100%;
     font-size: 30px;
     font-family: 'Trebuchet MS';
     padding-bottom: 20px;
     margin-top: -1px;
-    
     background-color: #282c34;
     color: white;
     border-style: hidden;
-    
-
   }
   .NavBarResponsive {
-
     display: flex;
     flex-direction: column;
     position: absolute;
     top: 165px;
     width: 100%;
     align-items: center;
-  
   }
-
-  
   .DropDown {
-
     display: block;
     border-style: solid;
     border-width: 2px;
@@ -109,45 +86,33 @@
     position: absolute;
     right: 40px;
     top: 40px;
-
   }
   .NavBarResponsive {
-
     display: flex;
     flex-direction: column;
     position: absolute;
     top: 165px;
     width: 100%;
     align-items: center;
-  
   }
 }
-
 @media (max-width: 350px) {
-
   .Logo {
-
     display: none;
   }
   .NavBarResponsive {
-
     top: 135px;
   }
 }
-
 .active, .MenuLinks:hover {
-
   color: rgb(255, 0, 0);
   cursor: pointer;
   transition: color 0.4s;
 }
-
 .DropDown:hover {
-
   cursor: pointer;
 }
 .App-header {
-
   background-color: #282c34;
   min-height: 150px;
   display: flex;
@@ -155,8 +120,12 @@
   font-size: 2rem;
   color: white;
 }
+
+.clickableLogo{
+  cursor: pointer;
+}
+
 @keyframes App-logo-spin {
-  
   from {
     transform: rotate(0deg);
   }
@@ -164,4 +133,3 @@
     transform: rotate(360deg);
   }
 }
-
