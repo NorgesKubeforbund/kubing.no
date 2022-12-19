@@ -2,7 +2,6 @@
   align-items: center;
 }
 .modalOpenButton {
-  z-index: 0;
   position: relative;
   border: 1px solid black;
   border-radius: 0.5em;
@@ -93,5 +92,4 @@
 }
 .Main {
   margin-bottom: 10%;
-  z-index: -1;
 }
