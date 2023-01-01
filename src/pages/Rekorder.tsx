@@ -144,6 +144,8 @@ function Rekorder(): React.ReactElement<any, any> {
         <div className="recordTable">
           {loading ? 'loading' : displayTab()}
         </div>
+        <br></br>
+        <br></br>
       </div>
     </div>
   );

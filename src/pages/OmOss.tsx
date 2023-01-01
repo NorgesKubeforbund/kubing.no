@@ -72,16 +72,12 @@ function OmOss(): React.ReactElement<any, any> {
         <div className="Element">
           <h2>Bli medlem</h2>
           <div>
-            Medlemskap i Norges kubeforbund koster 50 kroner i året. Ved å bli medlem støtter du arbeidet vårt slik at vi blant annet kan arrangere flere og større konkurranser.
+            Medlemskap i Norges kubeforbund koster 100 kroner i året. Ved å bli medlem støtter du arbeidet vårt slik at vi blant annet kan arrangere flere og større konkurranser.
             For å bli medlem må du gjøre to ting:
             <br></br>
-            1. 
+            1: Sende en epost til medlem@kubing.no med <span className="boldText">fult navn, e-post, telefonnummer, kjønn, adresse, og fødselsdato.</span>
             <br></br>
-            Sende en epost til medlem@kubing.no med <span className="boldText">fult navn, e-post, telefonnummer, kjønn, adresse, og fødselsdato.</span>
-            <br></br>
-            2. 
-            <br></br>
-            Overføre <span className="boldText">50 kroner</span> til Norges Kubeforbund. <span className="boldText">Merk med fullt navn på personen som skal melde seg inn!</span> (kontonummer: 1503.13.61831 Vipps-nummer: 24441)
+            2: Overføre <span className="boldText">100 kroner</span> til Norges Kubeforbund. <span className="boldText">Merk med fullt navn på personen som skal melde seg inn!</span> (kontonummer: 1503.13.61831 Vipps-nummer: 24441)
           </div>
         </div>
         <div className="element">

@@ -145,7 +145,7 @@ const pastComps = () => {
           <button
             className="modalOpenButton"
             onClick={() => setModalVisible(!modalVisible)}>
-            Ønsker du å arrangere en konkurranse? Klikk her!
+            Ønsker du å arrangere en konkurranse?
           </button>
           {modalVisible}
           {displayModal()}

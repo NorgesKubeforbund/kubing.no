@@ -41,6 +41,7 @@
   background-color: #f1f1f1;
   margin: 15%;
   border: 1px solid black;
+  
 }
 .modalCloseButton {
     position: relative;
@@ -58,6 +59,7 @@
   position: relative;
   top: -26px;
   padding: 1%;
+   
 }
 .compTable{
   width: 70%;
