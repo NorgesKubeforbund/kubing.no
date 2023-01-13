@@ -73,11 +73,11 @@ function OmOss(): React.ReactElement<any, any> {
           <h2>Bli medlem</h2>
           <div>
             Medlemskap i Norges kubeforbund koster 100 kroner i året. Ved å bli medlem støtter du arbeidet vårt slik at vi blant annet kan arrangere flere og større konkurranser.
-            For å bli medlem må du gjøre to ting:
+            Det er to måter å bli medlem:
             <br></br>
-            1: Sende en epost til medlem@kubing.no med <span className="boldText">fult navn, e-post, telefonnummer, kjønn, adresse, og fødselsdato.</span>
+            For de med Vipps: betal <span className="boldText">100 kroner</span> til 24441 og merk meldingen med<span className="boldText"> fult navn, e-post, telefonnummer, kjønn, adresse, og fødselsdato.</span>
             <br></br>
-            2: Overføre <span className="boldText">100 kroner</span> til Norges Kubeforbund. <span className="boldText">Merk med fullt navn på personen som skal melde seg inn!</span> (kontonummer: 1503.13.61831 Vipps-nummer: 24441)
+            For de uten Vipps: Overføre <span className="boldText">100 kroner</span> til kontonummer 1503.13.61831 <span className="boldText">OG</span> Sende en epost til medlem@kubing.no med <span className="boldText">fult navn, e-post, telefonnummer, kjønn, adresse, og fødselsdato.</span>
           </div>
         </div>
         <div className="element">
