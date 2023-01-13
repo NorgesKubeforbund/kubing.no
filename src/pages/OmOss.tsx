@@ -77,7 +77,7 @@ function OmOss(): React.ReactElement<any, any> {
             <br></br>
             For de med Vipps: betal <span className="boldText">100 kroner</span> til 24441 og merk meldingen med<span className="boldText"> fult navn, e-post, telefonnummer, kjønn, adresse, og fødselsdato.</span>
             <br></br>
-            For de uten Vipps: Overføre <span className="boldText">100 kroner</span> til kontonummer 1503.13.61831 <span className="boldText">OG</span> Sende en epost til medlem@kubing.no med <span className="boldText">fult navn, e-post, telefonnummer, kjønn, adresse, og fødselsdato.</span>
+            For de uten Vipps: overføre <span className="boldText">100 kroner</span> til kontonummer 1503.13.61831 <span className="boldText">OG</span> Sende en epost til medlem@kubing.no med <span className="boldText">fult navn, e-post, telefonnummer, kjønn, adresse, og fødselsdato.</span>
           </div>
         </div>
         <div className="element">
