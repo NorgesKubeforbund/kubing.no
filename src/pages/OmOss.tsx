@@ -87,7 +87,7 @@ function OmOss(): React.ReactElement<any, any> {
             Deretter send en epost til medlem@kubing.no med <span className="boldText">fullt navn, e-post, telefonnummer, kjønn, adresse, og fødselsdato.</span>
             <br></br>
             <br></br>
-            Om du er usikker på om du allerede er medlem, kan du sende mail til medlem@kubing.no og spørre.
+            Om du er usikker på om du allerede er medlem, kan du sende mail til <a href="mailto:medlem@kubing.no">medlem@kubing.no</a> og spørre.
 
             </div>
         </div>
