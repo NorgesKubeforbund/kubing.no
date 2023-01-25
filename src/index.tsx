@@ -7,7 +7,7 @@ import Guider from './pages/Guider';
 import Konkurranser from './pages/Konkurranser';
 import OmOss from './pages/OmOss';
 import Rekorder from './pages/Rekorder';
-import Linker from './pages/Linker';
+import Lenker from './pages/Lenker';
 import LokaleArrangement from './pages/LokaleArrangement';
 
 import {
@@ -41,8 +41,8 @@ const router = createBrowserRouter([
     element: <Rekorder/>,
   },
   {
-    path: "Linker",
-    element: <Linker/>,
+    path: "Lenker",
+    element: <Lenker/>,
   },
   {
     path: "LokaleArrangement",

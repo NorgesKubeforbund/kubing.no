@@ -66,7 +66,7 @@ function OmOss(): React.ReactElement<any, any> {
           <h1 className="MainHeader">Om oss</h1>
           Norges kubeforbund jobber med å fremme interessen for løsing av Rubiks kube og andre lignende puslespill i Norge.
           Dette gjøres ved å arrangere konkurranser og bidra til å skape et sosialt miljø.
-          Om du synest dette hørest spennende ut, så kan du bli medlem eller finne et lokalt miljø å bli kjent med.
+          Om du synes dette høres spennende ut, kan du bli medlem eller finne et lokalt miljø å bli kjent med.
           Lokale miljø i ditt nærområdet finner du i lokale arrangement-taben i menyen over.
           <br></br>
           
@@ -75,14 +75,14 @@ function OmOss(): React.ReactElement<any, any> {
           <h2>Bli medlem</h2>
           <div>
             Medlemskap i Norges kubeforbund koster 100 kroner i året. Ved å bli medlem støtter du arbeidet vårt slik at vi blant annet kan arrangere flere og større konkurranser. 
-            Medlemer for ofte rabatt på norske konkurranser.
+            Medlem får ofte rabatt på norske konkurranser.
             <br></br>
             <br></br>
             For å bli medlem må du gjøre to ting:
             <br></br>
             For de med Vipps: betal <span className="boldText">100 kroner</span> til 24441 og merk meldingen med navn.
             <br></br>
-            For de uten Vipps: overføre <span className="boldText">100 kroner</span> til kontonummer 1503.13.61831.
+            For de uten Vipps: overfør <span className="boldText">100 kroner</span> til kontonummer 1503.13.61831.
             <br></br>
             Deretter send en epost til medlem@kubing.no med <span className="boldText">fullt navn, e-post, telefonnummer, kjønn, adresse, og fødselsdato.</span>
             <br></br>

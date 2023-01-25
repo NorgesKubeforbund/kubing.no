@@ -58,7 +58,7 @@ function Butikker(): React.ReactElement<any, any> {
           <h1 className='MainHeader'>Butikker</h1>
           <p>
             Mange lurer på hvor de kan få tak i kuber. 
-            Her er en liste med forskjellige reputable kubebutikker som vi har god erfaring med.
+            Her er en liste med forskjellige kubebutikker som vi har god erfaring med.
           </p>
         </div>
         <div className="mainBody">

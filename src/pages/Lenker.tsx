@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { NavBar } from '../components/Header';
-import './Linker.css';
+import './Lenker.css';
 
 function Linker(): React.ReactElement<any, any> {
   const [loading, setLoading] = useState<boolean>(false);
@@ -53,7 +53,7 @@ function Linker(): React.ReactElement<any, any> {
       <NavBar/>
       <div className='Main'>
         <div className='Intro'>
-          <h1 className='MainHeader'>Linker</h1>
+          <h1 className='MainHeader'>Lenker</h1>
         </div>
         <div className="mainBody">
           {loading && <p>Loading data...</p>}

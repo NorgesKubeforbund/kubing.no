@@ -10,7 +10,7 @@ export const NavBar = (): React.ReactElement<any, any> => {
     {name: 'Konkurranser', path: '/Konkurranser'}, 
     {name: 'Butikker', path: '/Butikker'}, 
     {name: 'Guider', path: '/Guider'}, 
-    {name: 'Linker', path: '/Linker'},
+    {name: 'Lenker', path: '/Lenker'},
     {name: 'Norske Rekorder', path: '/Rekorder'}, 
     {name: 'Lokale Arrangement', path: '/LokaleArrangement'},
     {name: 'Om Oss', path: '/OmOss'}, 
