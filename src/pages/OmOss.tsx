@@ -68,17 +68,28 @@ function OmOss(): React.ReactElement<any, any> {
           Dette gjøres ved å arrangere konkurranser og bidra til å skape et sosialt miljø.
           Om du synest dette hørest spennende ut, så kan du bli medlem eller finne et lokalt miljø å bli kjent med.
           Lokale miljø i ditt nærområdet finner du i lokale arrangement-taben i menyen over.
+          <br></br>
+          
         </div>
         <div className="Element">
           <h2>Bli medlem</h2>
           <div>
-            Medlemskap i Norges kubeforbund koster 100 kroner i året. Ved å bli medlem støtter du arbeidet vårt slik at vi blant annet kan arrangere flere og større konkurranser.
-            Det er to måter å bli medlem:
+            Medlemskap i Norges kubeforbund koster 100 kroner i året. Ved å bli medlem støtter du arbeidet vårt slik at vi blant annet kan arrangere flere og større konkurranser. 
+            Medlemer for ofte rabatt på norske konkurranser.
             <br></br>
-            For de med Vipps: betal <span className="boldText">100 kroner</span> til 24441 og merk meldingen med<span className="boldText"> fullt navn, e-post, telefonnummer, kjønn, adresse, og fødselsdato.</span>
             <br></br>
-            For de uten Vipps: overføre <span className="boldText">100 kroner</span> til kontonummer 1503.13.61831 <span className="boldText">OG</span> Sende en epost til medlem@kubing.no med <span className="boldText">fullt navn, e-post, telefonnummer, kjønn, adresse, og fødselsdato.</span>
-          </div>
+            For å bli medlem må du gjøre to ting:
+            <br></br>
+            For de med Vipps: betal <span className="boldText">100 kroner</span> til 24441 og merk meldingen med navn.
+            <br></br>
+            For de uten Vipps: overføre <span className="boldText">100 kroner</span> til kontonummer 1503.13.61831.
+            <br></br>
+            Deretter send en epost til medlem@kubing.no med <span className="boldText">fullt navn, e-post, telefonnummer, kjønn, adresse, og fødselsdato.</span>
+            <br></br>
+            <br></br>
+            Om du er usikker på om du allerede er medlem, kan du sende mail til medlem@kubing.no og spørre.
+
+            </div>
         </div>
         <div className="element">
           <h2>Styret</h2>
