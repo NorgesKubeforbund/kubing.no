@@ -4,6 +4,7 @@ import Modal from 'react-modal';
 import { NavBar } from '../components/Header';
 import { compResponse} from '../types';
 import './Konkurranser.css';
+import { HashLink as Link } from 'react-router-hash-link';
 
 function Konkurranser() {
   const [loading, setLoading] = useState<boolean>(false);
@@ -45,7 +46,7 @@ function Konkurranser() {
       >
         <button
           className="modalCloseButton"
-          onClick={() => setModalVisible(!modalVisible)}>
+          >
         Lukk vindu
         </button>
         <div className='modalContent'>
@@ -142,11 +143,8 @@ const pastComps = () => {
       <NavBar/>
       <div className="Main">
         <div className="arrangere">
-          <button
-            className="modalOpenButton"
-            onClick={() => setModalVisible(!modalVisible)}>
-            Ønsker du å arrangere en konkurranse?
-          </button>
+          <br></br>
+        <Link to='#arrangereKonkurranse'>Ønsker du å arrangere en konkurranse?</Link>
           {modalVisible}
           {displayModal()}
         </div>
@@ -159,6 +157,55 @@ const pastComps = () => {
         <div className="Comps">
           {loading && <p>Loading data...</p>}
           {pastComps()}
+          <div>
+          <br></br>
+          <br></br>
+            <h1 id='arrangereKonkurranse' className='MainHeader'>Arrangere Konkurranse</h1>
+            Det er mange ting en burde tenke på før en arrangerer egen konkurranse. 
+            Først vil vi anbefale å være på noen konkurranser selv, slik at du vet hvordan ting blir gjennomført. 
+            WCA har mange ressurser som kan hjelpe til med å arrangere konkurranser. Disse kan du finne i linken under.
+            <br></br>
+            <br></br>
+            <a href="https://www.worldcubeassociation.org/organizer-guidelines">Organizer-Guidelines from WCA</a>
+            <br></br>
+            <br></br>
+            Etter at du har skaffet deg et overblikk over hvordan du arrangeren en konkurranse og laget en plan for hvordan du vil 
+            gjennomføre din konkurranse, må du ta kontakt med en delegat. 
+            <br></br>
+            Alle norske delegater er listet ut her:
+            <br></br>
+            <br></br>
+            <br></br>
+            <a href="mailto:ubredland@worldcubeassociation.org,vklungre@worldcubeassociation.org,ironmeadow@gmail.com">Delegater i Oslo - Kontakt</a>
+            <br></br>
+            <br></br>
+            Ulrik Bredland - <a href="https://www.worldcubeassociation.org/persons/2012BRED01">WCA-Profil</a>
+            <br></br>
+            Vidar Klungre - <a href="https://www.worldcubeassociation.org/persons/2008KLUN01">WCA-Profil</a>
+            <br></br>
+            Jakob Jernsletten - <a href="https://www.worldcubeassociation.org/persons/2018JERND01">WCA-Profil</a>
+            <br></br>
+            <br></br>
+            <hr></hr>
+            <br></br>
+            <a href="mailto:jbruun@worldcubeassociation.org,lfolde@worldcubeassociation.org">Delegater i Trondheim - Kontakt</a>
+            <br></br>
+            <br></br>
+            Lars Johan Folde - <a href="https://www.worldcubeassociation.org/persons/2018FOLDD01">WCA-Profil</a>
+            <br></br>
+            Jacob Oliver Bruun - <a href="https://www.worldcubeassociation.org/persons/2018BRUU01">WCA-Profil</a>
+            <br></br>
+            <br></br>
+            <hr></hr>
+            <br></br>
+            <a href="mailto:ejohnsen@worldcubeassociation.org">Delegater i Nord Dakota, USA - Kontakt</a>
+            <br></br>
+            <br></br>
+            Elmer Alexander Johnsen - <a href="https://www.worldcubeassociation.org/persons/2018JOHN03">WCA-Profil</a>
+            <br></br>
+            <br></br>
+            <hr></hr>
+          </div>
         </div>
       </div>
     </div>
