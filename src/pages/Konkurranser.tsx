@@ -1,6 +1,5 @@
 import React, { useEffect, useState, ComponentType } from 'react';
 import axios from 'axios';
-import Modal from 'react-modal';
 import { NavBar } from '../components/Header';
 import { compResponse} from '../types';
 import './Konkurranser.css';
@@ -10,7 +9,6 @@ function Konkurranser() {
   const [loading, setLoading] = useState<boolean>(false);
   const [compData, setCompData] = useState<compResponse[]>([]);
   const [arrData, setArrData] = useState<string[][]>([]);
-  const [modalVisible, setModalVisible] = useState<boolean>(false);
 
   const getCompData = async(): Promise<void> => {
     setLoading(true);
@@ -36,34 +34,6 @@ function Konkurranser() {
     getCompData();
   }, []);
 
-  const displayModal = () => {
-    return (
-      <Modal
-        isOpen={modalVisible}
-        onRequestClose={() => setModalVisible(!modalVisible)}
-        className="modalContainer"
-        ariaHideApp={false}
-      >
-        <button
-          className="modalCloseButton"
-          >
-        Lukk vindu
-        </button>
-        <div className='modalContent'>
-          {arrData.map((el: string[]) => {
-            return (
-              <div key={el[2]+'Div'}>
-                <p key={el[2]+'Text'}>{el[0]}</p>
-                {
-                  el[1] === "" ? <p>{el[2]}</p> : <a key={el[2]+'Link'} href={el[1]}>{el[2]}</a>
-                }
-              </div>
-            )
-          })}
-        </div>
-      </Modal>
-    )
-  }
 
   const commingComps = () => {
   return(
@@ -145,8 +115,6 @@ const pastComps = () => {
         <div className="arrangere">
           <br></br>
         <Link to='#arrangereKonkurranse'>Ønsker du å arrangere en konkurranse?</Link>
-          {modalVisible}
-          {displayModal()}
         </div>
         <h1 className='MainHeader'>Kommende Konkurranser</h1>
         <div className="Comps">
@@ -191,7 +159,7 @@ const pastComps = () => {
             <a href="mailto:jbruun@worldcubeassociation.org,lfolde@worldcubeassociation.org">Delegater i Trondheim - Kontakt</a>
             <br></br>
             <br></br>
-            Lars Johan Folde - <a href="https://www.worldcubeassociation.org/persons/2018FOLDD01">WCA-Profil</a>
+            Lars Johan Folde - <a href="https://www.worldcubeassociation.org/persons/2018FOLD01">WCA-Profil</a>
             <br></br>
             Jacob Oliver Bruun - <a href="https://www.worldcubeassociation.org/persons/2018BRUU01">WCA-Profil</a>
             <br></br>

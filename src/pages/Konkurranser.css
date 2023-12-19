@@ -61,10 +61,20 @@
   padding: 1%;
    
 }
-.compTable{
-  width: 70%;
-  margin: auto;
-  border-collapse: collapse;  
+@media (max-width: 1040px) {
+  .compTable{
+    width: 100%;
+    margin: auto;
+    border-collapse: collapse;  
+  }
+}
+@media (min-width: 1041px) {
+  .compTable{
+    width: 70%;
+    margin: auto;
+    /* margin: -40px; */
+    border-collapse: collapse;  
+  }
 }
 .comp {
   justify-content: center;

@@ -1,7 +1,15 @@
 body {
   background-color: #fcfcfc;
 }
-.Main {
-  margin: auto;
-  width: 70%;
+@media (max-width: 1040px) {
+  .Main {
+    margin: auto;
+    width: 93%;
+  }
+}
+@media (min-width: 1041px) {
+  .Main {
+    margin: auto;
+    width: 70%;
+  }
 }
