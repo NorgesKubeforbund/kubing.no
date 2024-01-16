@@ -4,6 +4,14 @@
   font-family: inherit;
   overflow-x: auto;
 }
+@media (max-width: 1040px) {
+  .form-control-message{
+    height: 100px;
+    width: 90%;
+    font-family: inherit;
+    overflow-x: auto;
+  }
+}
 .star{
   color: red;
 }
