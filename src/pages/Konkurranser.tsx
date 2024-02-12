@@ -151,7 +151,7 @@ const pastComps = () => {
             <br></br>
             Vidar Klungre - <a href="https://www.worldcubeassociation.org/persons/2008KLUN01">WCA-Profil</a>
             <br></br>
-            Jakob Jernsletten - <a href="https://www.worldcubeassociation.org/persons/2018JERND01">WCA-Profil</a>
+            Jakob Jernsletten - <a href="https://www.worldcubeassociation.org/persons/2018JERN01">WCA-Profil</a>
             <br></br>
             <br></br>
             <hr></hr>
