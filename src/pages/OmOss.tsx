@@ -94,7 +94,7 @@ function OmOss(): React.ReactElement<any, any> {
         <div className="element">
           <h2>Styret</h2>
           <div className="brreg">
-            {loading && <p>Loading data...</p>}
+            {loading && <p>Laster inn...</p>}
             {brregDataTable()}
           </div>
         </div>

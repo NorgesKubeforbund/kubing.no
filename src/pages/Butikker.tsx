@@ -62,7 +62,7 @@ function Butikker(): React.ReactElement<any, any> {
           </p>
         </div>
         <div className="mainBody">
-          {loading && <p>Loading data...</p>}
+          {loading && <p>Laster inn...</p>}
           <div>{shopElements()}</div>
         </div>
       </div>

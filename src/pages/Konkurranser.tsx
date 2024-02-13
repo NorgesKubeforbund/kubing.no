@@ -7,14 +7,17 @@ import { HashLink as Link } from 'react-router-hash-link';
 
 function Konkurranser() {
   const [loading, setLoading] = useState<boolean>(false);
-  const [compData, setCompData] = useState<compResponse[]>([]);
+  const [norwayCompData, setNorwayCompData] = useState<compResponse[]>([]);
+  const [worldCompData, setWorldCompData] = useState<compResponse[]>([]);
   const [arrData, setArrData] = useState<string[][]>([]);
 
   const getCompData = async(): Promise<void> => {
     setLoading(true);
     try {
       await axios.get(`${process.env.REACT_APP_KONKURRANSE_KEY}`)
-        .then(response => setCompData(response.data));
+        .then(response => setNorwayCompData(response.data));
+      await axios.get(`${process.env.REACT_APP_VERDENSKONKURRANSE_KEY}`)
+        .then(response => setWorldCompData(response.data));
       await axios.get(`${process.env.REACT_APP_ARRANGEREKONKURRASER_KEY}`)
         .then(response => setArrData(response.data.values));
       
@@ -34,8 +37,13 @@ function Konkurranser() {
     getCompData();
   }, []);
 
+  worldCompData.splice(1);
+  let compData = norwayCompData.concat(worldCompData);
+  compData.sort()
 
-  const commingComps = () => {
+  compData.sort((a, b) => new Date(a.start_date).getTime() - new Date(b.start_date).getTime());
+
+  const comingComps = () => {
   return(
     <table className="compTable">
       <thead>
@@ -81,7 +89,7 @@ const pastComps = () => {
           <th>Dato</th>
         </tr>
       </thead>
-      <tbody className="comp">{compData.map((comp: any) => {
+      <tbody className="comp">{compData.reverse().map((comp: any) => {
         let compDate;
         let compElStart = new Date(comp.start_date);
         let compElEnd = new Date(comp.end_date);
@@ -118,12 +126,12 @@ const pastComps = () => {
         </div>
         <h1 className='MainHeader'>Kommende Konkurranser</h1>
         <div className="Comps">
-          {loading && <p>Loading data...</p>}
-          {commingComps()}
+          {loading && <p>Laster inn...</p>}
+          {comingComps()}
         </div>
         <h1 className='MainHeader'>Tidligere Konkurranser</h1>
         <div className="Comps">
-          {loading && <p>Loading data...</p>}
+          {loading && <p>Laster inn...</p>}
           {pastComps()}
           <div>
           <br></br>

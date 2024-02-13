@@ -56,7 +56,7 @@ function Linker(): React.ReactElement<any, any> {
           <h1 className='MainHeader'>Lenker</h1>
         </div>
         <div className="mainBody">
-          {loading && <p>Loading data...</p>}
+          {loading && <p>Laster inn...</p>}
           <div>{linkElements()}</div>
         </div>
       </div>
