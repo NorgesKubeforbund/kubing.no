@@ -59,21 +59,21 @@ const ContactForm = (props: {serviceID: string}) => {
             Navn <span className="star">*</span>
           </label>
           <br></br>
-          <input className="form-control" type="text" id="name" placeholder="Ola Normann" required />
+          <input className="form-control" type="text" id="name" placeholder="Ditt navn..." required />
         </div>
         <div>
           <label className="form-label" htmlFor="email">
             Epost <span className="star">*</span>
           </label>
           <br></br>
-          <input className="form-control" type="email" id="email" placeholder="example@example.com" required />
+          <input className="form-control" type="email" id="email" placeholder="Din e-post..." required />
         </div>
         <div>
           <label className="form-label" htmlFor="message">
             Melding <span className="star">*</span>
           </label>
           <br></br>
-          <textarea className="form-control form-control-message" id="message" placeholder="din melding her" required />
+          <textarea className="form-control form-control-message" id="message" placeholder="Melding..." required />
         </div>
         <button className="btn btn-danger" type="submit">
           Send Mail
