@@ -142,7 +142,7 @@ function Rekorder(): React.ReactElement<any, any> {
           </button>
         </div>
         <div className="recordTable">
-          {loading ? 'loading' : displayTab()}
+          {loading ? 'Laster inn...' : displayTab()}
         </div>
         <br></br>
         <br></br>

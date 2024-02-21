@@ -97,7 +97,7 @@ function LokaleArrangement(): React.ReactElement<any, any> {
             på facebook-siden <a href='https://www.facebook.com/groups/NorskeSpeedcubers' target='_blank' rel='noopener'>Norske SpeedCubers</a> om det er noen kubere i nærheten av deg.
             Kanskje du kan bidra til å skape et tilbud for ditt lokalmiljø?
           </div>
-          {loading && <p>we are loading data</p>}
+          {loading && <p>Laster inn...</p>}
           {displayGroupedData()}
       </div>
     </div>
