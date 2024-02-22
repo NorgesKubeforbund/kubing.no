@@ -39,8 +39,6 @@ function Konkurranser() {
 
   worldCompData.splice(1);
   let compData = norwayCompData.concat(worldCompData);
-  compData.sort()
-
   compData.sort((a, b) => new Date(a.start_date).getTime() - new Date(b.start_date).getTime());
 
   const comingComps = () => {
