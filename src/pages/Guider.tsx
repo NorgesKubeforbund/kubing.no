@@ -36,7 +36,7 @@ function Guider(): React.ReactElement<any, any> {
               oversatt til norsk av Lars Johan Folde, og adaptert av Einar Martin Sandvik. 
             Den beskriver en av de enkleste metodene en kan bruke for å løse kuben.
             Metoden består av få, enkle algoritmer som gjøres gjentatte ganger. 
-            Du kan også laste ned en PDF-verson av guiden <button onClick={onButtonClick} className="PDFButton">
+            Du kan også laste ned en PDF-versjon av guiden <button onClick={onButtonClick} className="PDFButton">
                her.</button>
           </p>
           <h2>Guide på engelsk</h2>
