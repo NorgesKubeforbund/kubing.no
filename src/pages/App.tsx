@@ -1,47 +1,10 @@
-import React, { useEffect, useState }from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavBar } from '../components/Header';
 import './App.css';
-import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 
 function App(): React.ReactElement<any, any> {
-  const [loading, setLoading] = useState<boolean>(false);
-  const [sheetData, setSheetData] = useState<string[][]>([]);
-
-  const getSheetData = async(): Promise<void> => {
-    setLoading(true);
-    try {
-      await axios.get(`${process.env.REACT_APP_HJEM_KEY}`)
-        .then(response => setSheetData(response.data.values));
-    } catch (error) {
-      let message: string;
-      if (error instanceof Error) {
-        message = error.message;
-      } else {
-        message = String(error);
-      }
-      alert(message);
-    }
-    setLoading(false);
-  };
-  
-  useEffect(() => {
-    getSheetData();
-  }, []);
-
-
-  const homeElements = (): React.ReactElement<any, any> => {
-    return (
-      <div className="Main">
-        {sheetData.map((el: string[]) => (
-          <div className="Element" key={el[0]}>
-            <h2>{el[0]}</h2>
-            <p>{el[1]}</p>            
-          </div>                 
-        ))}
-      </div>
-    );
-  };
 
   return (
     <div className="App">
@@ -50,9 +13,31 @@ function App(): React.ReactElement<any, any> {
         <div className='Intro'>
           <h1 className='MainHeader'>Hjem</h1>
         </div>
-        <div className="MainBody">
-          {loading && <p>Laster inn...</p>}
-          <div className="HomeElements">{homeElements()}</div>
+        <div className='MainBody'>
+          <div className='HomeElements'>
+            <div className='Main'>
+              <h2>Velkommen</h2>
+              <body>
+                Velkommen til hjemmesiden til Norges kubeforbund.
+                Hvis du ønsker å lære deg å løse Rubiks kube, så har du kommet til riktig sted.
+                Vi har guider som beskriver hvordan dette gjøres.
+                Hvis du allerede kan løse kuben, og kan tenke deg å delta i konkurranser,
+                eller møte andre som driver med konkurransekubing,
+                så har du også kommet til riktig sted.
+                Her kan du finne informasjon om norske konkurranser og andre arrangementer.
+              </body>
+              <h2>Hva er 'speedcubing'?</h2>
+              <body>
+                Speedcubing er en sport hvor målet er å løse Rubiks kube og andre liknende puslespill på kortest mulig tid.
+                Flere ganger årlig arrangeres det konkurranser i Norge (og i resten av verden),
+                hvor deltakerne løser Rubiks kube på tid.
+              </body>
+              <h2>Kommende konkurranser</h2>
+              <body>
+                Kommende konkurranser finner du <Link to='/konkurranser'>her</Link>.
+              </body>
+            </div>
+          </div>
         </div>
       </div>
     </div>
