@@ -9,7 +9,6 @@ function Konkurranser() {
   const [loading, setLoading] = useState<boolean>(false);
   const [norwayCompData, setNorwayCompData] = useState<compResponse[]>([]);
   const [worldCompData, setWorldCompData] = useState<compResponse[]>([]);
-  const [arrData, setArrData] = useState<string[][]>([]);
 
   const getCompData = async(): Promise<void> => {
     setLoading(true);
