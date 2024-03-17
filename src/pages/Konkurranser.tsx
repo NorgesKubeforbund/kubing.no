@@ -18,8 +18,6 @@ function Konkurranser() {
         .then(response => setNorwayCompData(response.data));
       await axios.get(`${process.env.REACT_APP_VERDENSKONKURRANSE_KEY}`)
         .then(response => setWorldCompData(response.data));
-      await axios.get(`${process.env.REACT_APP_ARRANGEREKONKURRASER_KEY}`)
-        .then(response => setArrData(response.data.values));
       
     } catch (error) {
       let message: string;
