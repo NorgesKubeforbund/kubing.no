@@ -38,7 +38,7 @@ function Konkurranser() {
   let compData = norwayCompData.concat(worldCompData);
   compData.sort((a, b) => new Date(a.start_date).getTime() - new Date(b.start_date).getTime());
 
-  const upcomingComps = () => {
+  const comingComps = () => {
   return(
     <table className="compTable">
       <thead>
@@ -52,6 +52,7 @@ function Konkurranser() {
         let compDate;
         let compElStart = new Date(comp.start_date);
         let compElEnd = new Date(comp.end_date);
+        let compVenue = comp.venue.replace(/ *\([^)]*\) */g, "").replace("[", "").replace("]", "");
         if (Date.parse(comp.start_date) === Date.parse(comp.end_date)){
           compDate = compElStart.getDate() + " " + compElStart.toLocaleDateString("en-GB", {month: 'short'});
         }
@@ -63,7 +64,7 @@ function Konkurranser() {
           return(
             <tr className="compRow" key={comp.id}>
               <td className="compName"><a href={comp.url} className="compLinks">{comp.name}</a></td>
-              <td className="compCity">{comp.city}</td>
+              <td className="compCity">{compVenue}, {comp.city}</td>
               <td className="compDate">{compDate}</td>
             </tr>
           )
@@ -88,6 +89,7 @@ const pastComps = () => {
         let compDate;
         let compElStart = new Date(comp.start_date);
         let compElEnd = new Date(comp.end_date);
+        let compVenue = comp.venue.replace(/ *\([^)]*\) */g, "").replace("[", "").replace("]", "");
         if (Date.parse(comp.start_date) === Date.parse(comp.end_date)){
           compDate = compElStart.getDate() + " " + compElStart.toLocaleDateString("en-GB", {month: 'short'});
         }
@@ -99,7 +101,7 @@ const pastComps = () => {
           return(                                  
             <tr className="compRow" key={comp.id}>
               <td className="compName"><a href={comp.url} className="compLinks">{comp.name}</a></td>
-              <td className="compCity">{comp.city}</td>
+              <td className="compCity">{compVenue}, {comp.city}</td>
               <td className="compDate">{compDate}</td>
             </tr>
           )
@@ -122,7 +124,7 @@ const pastComps = () => {
         <h1 className='MainHeader'>Kommende Konkurranser</h1>
         <div className="Comps">
           {loading && <p>Laster inn...</p>}
-          {upcomingComps()}
+          {comingComps()}
         </div>
         <h1 className='MainHeader'>Tidligere Konkurranser</h1>
         <div className="Comps">
