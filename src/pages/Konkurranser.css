@@ -29,6 +29,9 @@
 .compCity {
   width: 30%;  
 }
+.venue {
+  font-style: italic;
+}
 .compDate {
   width: 30%;
 }

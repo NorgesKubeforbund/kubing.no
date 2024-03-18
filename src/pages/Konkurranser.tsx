@@ -101,7 +101,7 @@ const pastComps = () => {
           return(                                  
             <tr className="compRow" key={comp.id}>
               <td className="compName"><a href={comp.url} className="compLinks">{comp.name}</a></td>
-              <td className="compCity">{compVenue}, {comp.city}</td>
+              <td className="compCity"><span className="venue">{compVenue}</span>, {comp.city}</td>
               <td className="compDate">{compDate}</td>
             </tr>
           )
