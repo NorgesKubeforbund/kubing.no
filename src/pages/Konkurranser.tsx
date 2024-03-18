@@ -38,7 +38,7 @@ function Konkurranser() {
   let compData = norwayCompData.concat(worldCompData);
   compData.sort((a, b) => new Date(a.start_date).getTime() - new Date(b.start_date).getTime());
 
-  const comingComps = () => {
+  const upcomingComps = () => {
   return(
     <table className="compTable">
       <thead>
@@ -122,7 +122,7 @@ const pastComps = () => {
         <h1 className='MainHeader'>Kommende Konkurranser</h1>
         <div className="Comps">
           {loading && <p>Laster inn...</p>}
-          {comingComps()}
+          {upcomingComps()}
         </div>
         <h1 className='MainHeader'>Tidligere Konkurranser</h1>
         <div className="Comps">
