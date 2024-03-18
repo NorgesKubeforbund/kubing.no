@@ -49,7 +49,7 @@ function Konkurranser() {
         </tr>
       </thead>
       <tbody className="comp">{compData.map((comp: any) => {
-        let compDate;
+        let compDate: string;
         let compElStart = new Date(comp.start_date);
         let compElEnd = new Date(comp.end_date);
         if (Date.parse(comp.start_date) === Date.parse(comp.end_date)){
@@ -85,7 +85,7 @@ const pastComps = () => {
         </tr>
       </thead>
       <tbody className="comp">{compData.reverse().map((comp: any) => {
-        let compDate;
+        let compDate: string;
         let compElStart = new Date(comp.start_date);
         let compElEnd = new Date(comp.end_date);
         if (Date.parse(comp.start_date) === Date.parse(comp.end_date)){
