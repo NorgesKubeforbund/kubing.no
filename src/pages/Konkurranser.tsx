@@ -1,4 +1,4 @@
-import React, { useEffect, useState, ComponentType } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { NavBar } from '../components/Header';
 import { compResponse} from '../types';
