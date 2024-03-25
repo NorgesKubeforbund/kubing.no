@@ -1,0 +1,22 @@
+.App-footer {
+    z-index: 5;
+    background-color: #282c34;
+    min-height: 50px;
+    font-size: 1rem;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.footer-links {
+    display: flex;
+    align-items: center;
+}
+
+.footer-links .link {
+    margin: 0 10px;
+    color: white;
+    display: inline-block;
+    text-decoration: none;
+}

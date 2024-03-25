@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './Butikker.css';
-import {NavBar} from '../components/Header';
+import { NavBar } from '../components/Header';
+import { Footer } from '../components/Footer';
 
 
 function Butikker(): React.ReactElement<any, any> {
@@ -66,6 +67,7 @@ function Butikker(): React.ReactElement<any, any> {
           <div>{shopElements()}</div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

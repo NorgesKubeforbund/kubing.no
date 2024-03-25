@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { NavBar } from '../components/Header';
+import { Footer } from '../components/Footer';
 import './App.css';
 import { Link } from 'react-router-dom';
 
@@ -40,6 +41,7 @@ function App(): React.ReactElement<any, any> {
           </div>
         </div>
       </div>
+      <Footer/>
     </div>
   );
 }

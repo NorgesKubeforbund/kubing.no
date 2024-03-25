@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { NavBar } from '../components/Header';
+import { Footer } from '../components/Footer';
 import './Rekorder.css';
 import axios from 'axios';
 
@@ -147,6 +148,7 @@ function Rekorder(): React.ReactElement<any, any> {
         <br></br>
         <br></br>
       </div>
+      <Footer/>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import React, { useEffect, useState }from 'react';
 import axios from 'axios';
 import { NavBar } from '../components/Header';
+import { Footer } from '../components/Footer';
 import ContactForm from '../components/ContactForm'
 import './OmOss.css';
 import { brregResponse } from '../types';
@@ -99,10 +100,13 @@ function OmOss(): React.ReactElement<any, any> {
             {brregDataTable()}
           </div>
         </div>
-        <ContactForm serviceID={'service_onnkkgn'} />
+        <div id="kontaktOss">
+          <ContactForm serviceID={'service_onnkkgn'} />
+        </div>
         <br></br>
         <br></br>
       </div>
+      <Footer/>
     </div>
   );
 }
