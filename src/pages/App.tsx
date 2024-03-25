@@ -34,7 +34,7 @@ function App(): React.ReactElement<any, any> {
               </body>
               <h2>Kommende konkurranser</h2>
               <body>
-                Kommende konkurranser finner du <Link to='/konkurranser'>her</Link>.
+                Kommende konkurranser finner du <Link to='/konkurranser'>her.</Link>
               </body>
             </div>
           </div>

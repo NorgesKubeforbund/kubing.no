@@ -4,6 +4,7 @@ import { NavBar } from '../components/Header';
 import ContactForm from '../components/ContactForm'
 import './OmOss.css';
 import { brregResponse } from '../types';
+import { Link } from 'react-router-dom';
 
 function OmOss(): React.ReactElement<any, any> {
   const [loading, setLoading] = useState<boolean>(false);
@@ -67,7 +68,7 @@ function OmOss(): React.ReactElement<any, any> {
           Norges kubeforbund jobber med å fremme interessen for løsing av Rubiks kube og andre lignende puslespill i Norge.
           Dette gjøres ved å arrangere konkurranser og bidra til å skape et sosialt miljø.
           Om du synes dette høres spennende ut, kan du bli medlem eller finne et lokalt miljø å bli kjent med.
-          Lokale miljø i ditt nærområdet finner du i lokale arrangement-taben i menyen over.
+          Du kan finne en oversikt over lokale kubemiljø <Link to='/LokaleArrangement'>her.</Link>
           <br></br>
           
         </div>
