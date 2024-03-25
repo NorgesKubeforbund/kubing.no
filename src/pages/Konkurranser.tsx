@@ -135,21 +135,17 @@ const pastComps = () => {
           <br></br>
           <br></br>
             <h1 id='arrangereKonkurranse' className='MainHeader'>Arrangere Konkurranse</h1>
-            Det er mange ting en burde tenke på før en arrangerer egen konkurranse. 
-            Først vil vi anbefale å være på noen konkurranser selv, slik at du vet hvordan ting blir gjennomført. 
-            WCA har mange ressurser som kan hjelpe til med å arrangere konkurranser. Disse kan du finne i linken under.
+            Det er mye en burde tenke gjennom før en velger å arrangere sin egen konkurranse. 
+            Først vil vi anbefale å være på noen konkurranser selv, slik at du vet hvordan de gjennomføres. 
+            WCA har mange ressurser som kan hjelpe til med å arrangere konkurranser. Disse kan du finne via lenken under.
             <br></br>
             <br></br>
             <a href="https://www.worldcubeassociation.org/organizer-guidelines">Organizer-Guidelines from WCA</a>
             <br></br>
             <br></br>
-            Etter at du har skaffet deg et overblikk over hvordan du arrangeren en konkurranse og laget en plan for hvordan du vil 
-            gjennomføre din konkurranse, må du ta kontakt med en delegat. 
-            <br></br>
-            Alle norske delegater er listet ut her:
-            <br></br>
-            <br></br>
-            <br></br>
+            Etter at du har skaffet deg et overblikk over hvordan en arrangerer en konkurranse og laget en plan for hvordan du ønsker å 
+            gjennomføre din konkurranse, må du ta kontakt med en delegat. Alle norske delegater er listet nedenfor.
+            <h2>Norske delegater</h2>
             <a href="mailto:ubredland@worldcubeassociation.org,vklungre@worldcubeassociation.org,ironmeadow@gmail.com">Delegater i Oslo - Kontakt</a>
             <br></br>
             <br></br>
