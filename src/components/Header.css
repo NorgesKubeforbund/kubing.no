@@ -54,6 +54,8 @@
     font-family: 'Trebuchet MS';
     font-size: 1rem;
     margin: auto;
+    text-align: center;
+    text-decoration: none;
   }
   .NavBarResponsive {
     margin-left: auto;
@@ -78,6 +80,8 @@
     background-color: #282c34;
     color: white;
     border-style: hidden;
+    text-align: center;
+    text-decoration: none;
   }
   .NavBarResponsive {
     display: flex;
