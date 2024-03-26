@@ -17,9 +17,34 @@
     align-items: center;
 }
 
-.footer-links .link {
-    margin: 0 10px;
+.link {
     color: white;
-    display: inline-block;
     text-decoration: none;
+}
+
+.link:hover {
+    color: rgb(255, 0, 0);
+    cursor: pointer;
+    transition: color 0.4s;
+}
+
+@media (max-width: 1040px) {
+    .footer-links {
+        flex-direction: column;
+    }
+
+    .link {
+        margin: 5px 0;
+        display: flex;
+    }
+}
+
+@media (min-width: 1041px) {
+    .footer-links {
+        flex-direction: row;
+    }
+
+    .link {
+        margin: 0 15px;
+    }
 }
