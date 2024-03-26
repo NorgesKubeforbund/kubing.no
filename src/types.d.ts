@@ -91,13 +91,4 @@ export type brregResponse = {
   rekkefolge: number,
 };
 
-export type pagePaths = [
-  {name: string, path: string},
-  {name: string, path: string},
-  {name: string, path: string},
-  {name: string, path: string},
-  {name: string, path: string},
-  {name: string, path: string},
-  {name: string, path: string},
-  {name: string, path: string}
-];
+export type pagePaths = {name: string, path: string}[];
