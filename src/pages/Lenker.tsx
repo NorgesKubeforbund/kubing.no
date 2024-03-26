@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './Lenker.css';
+import ExternalLink from '../components/ExternalLink';
 
 function Linker(): React.ReactElement<any, any> {
   const [loading, setLoading] = useState<boolean>(false);
@@ -33,11 +34,11 @@ function Linker(): React.ReactElement<any, any> {
         {sheetData.map((el: string[]) => (
           <div className="Element" key={el[0]}>
             <h2>
-              <a href={el[1]} style={{textDecoration: "none", color: 'black'}}>{el[0]}</a>
+              <ExternalLink href={el[1]} className="HeaderLinks">{el[0]}</ExternalLink>
             </h2>
             <div>
               <p>
-                <a href={el[1]}>{el[2]}</a> 
+                <ExternalLink href={el[1]}>{el[2]}</ExternalLink> 
                 {el[3]}
               </p>
             </div>           

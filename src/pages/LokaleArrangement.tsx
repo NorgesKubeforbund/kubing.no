@@ -1,6 +1,7 @@
 import React, {useState, useEffect } from 'react';
 import axios from 'axios';
 import './LokaleArrangement.css';
+import ExternalLink from '../components/ExternalLink';
 
 function LokaleArrangement(): React.ReactElement<any, any> {
   const [loading, setLoading] = useState<boolean>(false);
@@ -69,12 +70,12 @@ function LokaleArrangement(): React.ReactElement<any, any> {
                     key={storage[1]+"Text"} 
                     className="arrText"
                   >
-                    <a 
+                    <ExternalLink 
                       key={storage[1]+"Link"} 
                       href={storage[1]} 
                       className="arrLink"
                     >{storage[0]}
-                    </a>
+                    </ExternalLink>
                   {" " + storage[2]}</p>
                 )
               })}
@@ -92,7 +93,7 @@ function LokaleArrangement(): React.ReactElement<any, any> {
             Ønsker du å finne andre kubere å løse sammen med? 
             Det finnes flere lokale arragement rundt omkring i landet som møtes jevnlig for å kube sammen.
             Mange av de største byene har tilbud, men du kan også spørre 
-            på facebook-siden <a href='https://www.facebook.com/groups/NorskeSpeedcubers' target='_blank' rel='noopener'>Norske SpeedCubers</a> om det er noen kubere i nærheten av deg.
+            på facebook-siden <ExternalLink href='https://www.facebook.com/groups/NorskeSpeedcubers'>Norske SpeedCubers</ExternalLink> om det er noen kubere i nærheten av deg.
             Kanskje du kan bidra til å skape et tilbud for ditt lokalmiljø?
           </div>
           {loading && <p>Laster inn...</p>}

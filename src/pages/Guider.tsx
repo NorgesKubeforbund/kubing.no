@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './Guider.css';
 import Nybegynnermetode from '../media/3x3-Begynnermetode.pdf';
+import ExternalLink from '../components/ExternalLink';
 
 function Guider(): React.ReactElement<any, any> {
   const onButtonClick = () => {
@@ -30,7 +31,7 @@ function Guider(): React.ReactElement<any, any> {
         <div className="guideContainer">
           <h2>Guide på norsk</h2>
           <p className="norskGuide">
-             <a href="https://einsan.github.io">Denne guiden</a> er skrevet av Ruwix.com,
+             <ExternalLink href="https://einsan.github.io">Denne guiden</ExternalLink> er skrevet av Ruwix.com,
               oversatt til norsk av Lars Johan Folde, og adaptert av Einar Martin Sandvik. 
             Den beskriver en av de enkleste metodene en kan bruke for å løse kuben.
             Metoden består av få, enkle algoritmer som gjøres gjentatte ganger. 
@@ -39,7 +40,7 @@ function Guider(): React.ReactElement<any, any> {
           </p>
           <h2>Guide på engelsk</h2>
           <p className="engelskGuide">
-            Det finnes flere guider for nybegynnere på engelsk, mange av de er på YouTube. En av de finner du <a href="https://www.youtube.com/watch?v=7Ron6MN45LY">her.</a>
+            Det finnes flere guider for nybegynnere på engelsk, mange av de er på YouTube. En av de finner du <ExternalLink href="https://www.youtube.com/watch?v=7Ron6MN45LY">her.</ExternalLink>
           </p>
 
         </div>

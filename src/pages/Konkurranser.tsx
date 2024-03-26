@@ -3,6 +3,7 @@ import axios from 'axios';
 import { compResponse } from '../types';
 import './Konkurranser.css';
 import { HashLink as Link } from 'react-router-hash-link';
+import ExternalLink from '../components/ExternalLink';
 
 function Konkurranser() {
   const [loading, setLoading] = useState<boolean>(false);
@@ -61,7 +62,7 @@ function Konkurranser() {
           if (Date.parse(comp.end_date) > Date.now()) {
             return (
               <tr className="compRow" key={comp.id}>
-                <td className="compName"><a href={comp.url} className="compLinks">{comp.name}</a></td>
+                <td className="compName"><ExternalLink href={comp.url} className="compLinks">{comp.name}</ExternalLink></td>
                 <td className="compCity">{comp.city}</td>
                 <td className="compDate">{compDate}</td>
               </tr>
@@ -97,7 +98,7 @@ function Konkurranser() {
           if (Date.parse(comp.end_date) < Date.now()) {
             return (
               <tr className="compRow" key={comp.id}>
-                <td className="compName"><a href={comp.url} className="compLinks">{comp.name}</a></td>
+                <td className="compName"><ExternalLink href={comp.url} className="compLinks">{comp.name}</ExternalLink></td>
                 <td className="compCity">{comp.city}</td>
                 <td className="compDate">{compDate}</td>
               </tr>
@@ -120,38 +121,38 @@ function Konkurranser() {
         WCA har mange ressurser som kan hjelpe til med å arrangere konkurranser. Disse kan du finne via lenken under.
         <br></br>
         <br></br>
-        <a href="https://www.worldcubeassociation.org/organizer-guidelines">Organizer-Guidelines from WCA</a>
+        <ExternalLink href="https://www.worldcubeassociation.org/organizer-guidelines">Organizer-Guidelines from WCA</ExternalLink>
         <br></br>
         <br></br>
         Etter at du har skaffet deg et overblikk over hvordan en arrangerer en konkurranse og laget en plan for hvordan du ønsker å
         gjennomføre din konkurranse, må du ta kontakt med en delegat. Alle norske delegater er listet nedenfor.
         <h2>Norske delegater</h2>
-        <a href="mailto:ubredland@worldcubeassociation.org,vklungre@worldcubeassociation.org,ironmeadow@gmail.com">Delegater i Oslo - Kontakt</a>
+        <ExternalLink href="mailto:ubredland@worldcubeassociation.org,vklungre@worldcubeassociation.org,ironmeadow@gmail.com">Delegater i Oslo - Kontakt</ExternalLink>
         <br></br>
         <br></br>
-        Ulrik Bredland - <a href="https://www.worldcubeassociation.org/persons/2012BRED01">WCA-Profil</a>
+        Ulrik Bredland - <ExternalLink href="https://www.worldcubeassociation.org/persons/2012BRED01">WCA-Profil</ExternalLink>
         <br></br>
-        Vidar Klungre - <a href="https://www.worldcubeassociation.org/persons/2008KLUN01">WCA-Profil</a>
+        Vidar Klungre - <ExternalLink href="https://www.worldcubeassociation.org/persons/2008KLUN01">WCA-Profil</ExternalLink>
         <br></br>
-        Jakob Jernsletten - <a href="https://www.worldcubeassociation.org/persons/2018JERN01">WCA-Profil</a>
-        <br></br>
-        <br></br>
-        <hr></hr>
-        <br></br>
-        <a href="mailto:jbruun@worldcubeassociation.org,lfolde@worldcubeassociation.org">Delegater i Trondheim - Kontakt</a>
-        <br></br>
-        <br></br>
-        Lars Johan Folde - <a href="https://www.worldcubeassociation.org/persons/2018FOLD01">WCA-Profil</a>
-        <br></br>
-        Jacob Oliver Bruun - <a href="https://www.worldcubeassociation.org/persons/2018BRUU01">WCA-Profil</a>
+        Jakob Jernsletten - <ExternalLink href="https://www.worldcubeassociation.org/persons/2018JERN01">WCA-Profil</ExternalLink>
         <br></br>
         <br></br>
         <hr></hr>
         <br></br>
-        <a href="mailto:ejohnsen@worldcubeassociation.org">Delegater i Nord Dakota, USA - Kontakt</a>
+        <ExternalLink href="mailto:jbruun@worldcubeassociation.org,lfolde@worldcubeassociation.org">Delegater i Trondheim - Kontakt</ExternalLink>
         <br></br>
         <br></br>
-        Elmer Alexander Johnsen - <a href="https://www.worldcubeassociation.org/persons/2018JOHN03">WCA-Profil</a>
+        Lars Johan Folde - <ExternalLink href="https://www.worldcubeassociation.org/persons/2018FOLD01">WCA-Profil</ExternalLink>
+        <br></br>
+        Jacob Oliver Bruun - <ExternalLink href="https://www.worldcubeassociation.org/persons/2018BRUU01">WCA-Profil</ExternalLink>
+        <br></br>
+        <br></br>
+        <hr></hr>
+        <br></br>
+        <ExternalLink href="mailto:ejohnsen@worldcubeassociation.org">Delegater i Nord Dakota, USA - Kontakt</ExternalLink>
+        <br></br>
+        <br></br>
+        Elmer Alexander Johnsen - <ExternalLink href="https://www.worldcubeassociation.org/persons/2018JOHN03">WCA-Profil</ExternalLink>
         <br></br>
         <br></br>
         <hr></hr>

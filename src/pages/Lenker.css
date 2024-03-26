@@ -4,3 +4,8 @@ body {
 .MainHeader {
   color: #d30000;
 }
+.HeaderLinks {
+  color: black;
+  background-color: transparent;
+  text-decoration: none;
+}
