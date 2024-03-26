@@ -1,7 +1,5 @@
 import React, { useEffect, useState }from 'react';
 import axios from 'axios';
-import { NavBar } from '../components/Header';
-import { Footer } from '../components/Footer';
 import ContactForm from '../components/ContactForm'
 import './OmOss.css';
 import { brregResponse } from '../types';
@@ -62,7 +60,6 @@ function OmOss(): React.ReactElement<any, any> {
   //render
   return (
     <div className="OmOss">
-      <NavBar/>
       <div className="Main">
         <div className="intro">
           <h1 className="MainHeader">Om oss</h1>
@@ -106,7 +103,6 @@ function OmOss(): React.ReactElement<any, any> {
         <br></br>
         <br></br>
       </div>
-      <Footer/>
     </div>
   );
 }

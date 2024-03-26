@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { NavBar } from '../components/Header';
-import { Footer } from '../components/Footer';
 import './Lenker.css';
 
 function Linker(): React.ReactElement<any, any> {
@@ -51,7 +49,6 @@ function Linker(): React.ReactElement<any, any> {
 
   return (
     <div className="Eksterne Ressurser">
-      <NavBar/>
       <div className='Main'>
         <div className='Intro'>
           <h1 className='MainHeader'>Lenker</h1>
@@ -61,7 +58,6 @@ function Linker(): React.ReactElement<any, any> {
           <div>{linkElements()}</div>
         </div>
       </div>
-      <Footer/>
     </div>
   );
 };

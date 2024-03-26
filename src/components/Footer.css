@@ -7,6 +7,9 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    /* remove commment to make footer sticky
+    position: sticky;
+    bottom: 0; */
 }
 
 .footer-links {

@@ -9,6 +9,7 @@ import OmOss from './pages/OmOss';
 import Rekorder from './pages/Rekorder';
 import Lenker from './pages/Lenker';
 import LokaleArrangement from './pages/LokaleArrangement';
+import Layout from './components/Layout';
 
 import {
   createBrowserRouter,
@@ -17,37 +18,43 @@ import {
 
 const router = createBrowserRouter([
   {
-    path: "/",
-    element: <App/>,
-  },
-  {
-    path: "Butikker",
-    element: <Butikker/>,
-  },
-  {
-    path: "Guider",
-    element: <Guider/>,
-  },
-  {
-    path: "Konkurranser",
-    element: <Konkurranser/>,
-  },
-  {
-    path: "OmOss",
-    element: <OmOss/>,
-  },
-  {
-    path: "Rekorder",
-    element: <Rekorder/>,
-  },
-  {
-    path: "Lenker",
-    element: <Lenker/>,
-  },
-  {
-    path: "LokaleArrangement",
-    element: <LokaleArrangement/>,
-  },
+    path: '/',
+    element: <Layout />,
+    children: [
+      {
+        index: true,
+        element: <App />,
+      },
+      {
+        path: "Butikker",
+        element: <Butikker />,
+      },
+      {
+        path: "Guider",
+        element: <Guider />,
+      },
+      {
+        path: "Konkurranser",
+        element: <Konkurranser />,
+      },
+      {
+        path: "OmOss",
+        element: <OmOss />,
+      },
+      {
+        path: "Rekorder",
+        element: <Rekorder />,
+      },
+      {
+        path: "Lenker",
+        element: <Lenker />,
+      },
+      {
+        path: "LokaleArrangement",
+        element: <LokaleArrangement />,
+      },
+    ]
+  }
 ]);
 
 const root = ReactDOM.createRoot(
@@ -56,6 +63,6 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-    <RouterProvider router={router}/>
+    <RouterProvider router={router} />
   </React.StrictMode>
 );

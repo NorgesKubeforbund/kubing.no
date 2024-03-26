@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { NavBar } from '../components/Header';
-import { Footer } from '../components/Footer';
 import './Guider.css';
 import Nybegynnermetode from '../media/3x3-Begynnermetode.pdf';
 
@@ -21,7 +19,6 @@ function Guider(): React.ReactElement<any, any> {
   }
   return (
     <div className="Guider">
-      <NavBar/>
       <div className="Main">
         <div className="Intro">
           <h1 className="MainHeader">Guider</h1>
@@ -47,7 +44,6 @@ function Guider(): React.ReactElement<any, any> {
 
         </div>
         </div>
-      <Footer/>
     </div>
   );
 }

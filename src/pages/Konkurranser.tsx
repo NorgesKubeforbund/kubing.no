@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { NavBar } from '../components/Header';
-import { Footer } from '../components/Footer';
 import { compResponse } from '../types';
 import './Konkurranser.css';
 import { HashLink as Link } from 'react-router-hash-link';
@@ -164,7 +162,6 @@ function Konkurranser() {
   //render
   return (
     <div className="Konkurranser">
-      <NavBar />
       <div className="Main">
         <div className="arrangere">
           <br></br>
@@ -184,7 +181,6 @@ function Konkurranser() {
           </div>
         </div>
       </div>
-      <Footer/>
     </div>
   )
 }

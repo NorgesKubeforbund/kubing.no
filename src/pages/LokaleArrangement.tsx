@@ -1,7 +1,5 @@
 import React, {useState, useEffect } from 'react';
 import axios from 'axios';
-import { NavBar } from '../components/Header';
-import { Footer } from '../components/Footer';
 import './LokaleArrangement.css';
 
 function LokaleArrangement(): React.ReactElement<any, any> {
@@ -88,7 +86,6 @@ function LokaleArrangement(): React.ReactElement<any, any> {
 
   return (
     <div className="LokaleArrangement">
-        <NavBar/>
         <div className='Main'>
           <div className='Intro'>
             <h1 className='MainHeader'> Lokale Arrangement</h1>
@@ -101,7 +98,6 @@ function LokaleArrangement(): React.ReactElement<any, any> {
           {loading && <p>Laster inn...</p>}
           {displayGroupedData()}
       </div>
-      <Footer/>
     </div>
   );
 }
