@@ -170,8 +170,8 @@ function Konkurranser() {
         </div>
         <h1 className='MainHeader'>Kommende Konkurranser</h1>
         <div className="Comps">
-          {loading && <p>Laster inn...</p>}
           {upcomingComps()}
+          {loading && <p>Laster inn...</p>}
         </div>
         <h1 className='MainHeader'>Tidligere Konkurranser</h1>
         <div className="Comps">
