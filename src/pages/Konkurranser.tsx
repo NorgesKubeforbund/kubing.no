@@ -175,8 +175,8 @@ function Konkurranser() {
         </div>
         <h1 className='MainHeader'>Tidligere Konkurranser</h1>
         <div className="Comps">
-          {loading && <p>Laster inn...</p>}
           {pastComps()}
+          {loading && <p>Laster inn...</p>}
           <div className="delegateList">
             {arrangereKonkurranse()}
           </div>
