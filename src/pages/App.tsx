@@ -32,7 +32,9 @@ function App(): React.ReactElement<any, any> {
           </div>
         </div>
         <div className='column'>
-          <h2 className='CompetitionHeader'>Kommende Konkurranser</h2>
+          <h2 className='CompetitionHeader'>
+            <a className='CompetitionHeader' href='konkurranser'>Kommende Konkurranser</a>
+          </h2>
           <body>
             {CompetitionTable()}
           </body>
