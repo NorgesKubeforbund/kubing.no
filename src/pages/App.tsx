@@ -24,7 +24,7 @@ function App(): React.ReactElement<any, any> {
               <br></br>
               <h2 className='HomeHeader'>Hva er speedkubing?</h2>
               <body className='content'>
-                Speedcubing er en sport hvor målet er å løse Rubiks kube og andre liknende puslespill på kortest mulig tid.
+                Speedkubing er en sport hvor målet er å løse Rubiks kube og andre liknende puslespill på kortest mulig tid.
                 Flere ganger årlig arrangeres det konkurranser i Norge (og i resten av verden),
                 hvor deltakerne løser Rubiks kube på tid.
               </body>
@@ -32,9 +32,7 @@ function App(): React.ReactElement<any, any> {
           </div>
         </div>
         <div className='column'>
-          <h2 className='CompetitionHeader'>
             <a className='CompetitionHeader' href='konkurranser'>Kommende Konkurranser</a>
-          </h2>
           <body>
             {CompetitionTable()}
           </body>
