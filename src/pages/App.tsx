@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import './App.css';
-import { Link } from 'react-router-dom';
+import { CompetitionTable } from '../components/CompetitionTable';
 
 
 function App(): React.ReactElement<any, any> {
@@ -8,14 +8,11 @@ function App(): React.ReactElement<any, any> {
   return (
     <div className="App">
       <div className='Main'>
-        <div className='Intro'>
-          <h1 className='MainHeader'>Hjem</h1>
-        </div>
-        <div className='MainBody'>
+        <div className='column'>
           <div className='HomeElements'>
             <div className='Main'>
-              <h2>Velkommen</h2>
-              <body>
+              <h2 className='HomeHeader'>Norges Kubeforbund</h2>
+              <body className='content'>
                 Velkommen til hjemmesiden til Norges kubeforbund.
                 Hvis du ønsker å lære deg å løse Rubiks kube, så har du kommet til riktig sted.
                 Vi har guider som beskriver hvordan dette gjøres.
@@ -24,18 +21,21 @@ function App(): React.ReactElement<any, any> {
                 så har du også kommet til riktig sted.
                 Her kan du finne informasjon om norske konkurranser og andre arrangementer.
               </body>
-              <h2>Hva er 'speedcubing'?</h2>
-              <body>
+              <br></br>
+              <h2 className='HomeHeader'>Hva er speedkubing?</h2>
+              <body className='content'>
                 Speedcubing er en sport hvor målet er å løse Rubiks kube og andre liknende puslespill på kortest mulig tid.
                 Flere ganger årlig arrangeres det konkurranser i Norge (og i resten av verden),
                 hvor deltakerne løser Rubiks kube på tid.
               </body>
-              <h2>Kommende konkurranser</h2>
-              <body>
-                Kommende konkurranser finner du <Link to='/konkurranser'>her.</Link>
-              </body>
             </div>
           </div>
+        </div>
+        <div className='column'>
+          <h2 className='CompetitionHeader'>Kommende Konkurranser</h2>
+          <body>
+            {CompetitionTable()}
+          </body>
         </div>
       </div>
     </div>
