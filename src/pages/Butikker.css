@@ -1,10 +1,23 @@
+@media (max-width: 1040px) {
+  .Main {
+    align-items: center;
+    text-align: center;
+    width: 93%;
+    font-size: 20px;
+  }
+}
+
+@media (min-width: 1041px) {
+  .Main {
+    align-items: center;
+    text-align: center;
+    width: 70%;
+    font-size: 20px;
+  }
+}
+
 body {
   background-color: #fcfcfc;
-}
-.Main {
-  align-items: center;
-  text-align: center;
-  font-size: 20px;
 }
 .MainHeader {
   color: #d30000;
