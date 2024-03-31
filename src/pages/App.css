@@ -5,11 +5,50 @@ body {
   .Main {
     margin: auto;
     width: 93%;
+    padding-bottom: 20px;
   }
+
+  .HomeHeader {
+    color: #d30000;
+  }
+
+  .CompetitionHeader {
+    color: #d30000;
+  }
+
 }
 @media (min-width: 1041px) {
   .Main {
     margin: auto;
-    width: 70%;
+    width: 93%;
+    padding-bottom: 20px;
   }
+
+  .HomeHeader {
+    color: #d30000;
+    justify-content: left;
+    text-align: justify;
+  }
+
+  .CompetitionHeader {
+    color: #d30000;
+  }
+
+  .content {
+    justify-content: left;
+    text-align: justify;
+  }
+
+  .column {
+    float: left;
+    width: 50%;
+  }
+
+  /* Clear floats after the columns */
+  .row:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+
 }
