@@ -31,7 +31,7 @@ function Butikker(): React.ReactElement<any, any> {
 
   const shopElements = (): React.ReactElement<any, any> => {
     return (
-      <div className="Main">
+      <div className="Butikker">
           {
           sheetData.map((el: string[]) => (
               <div className="Element" key={el[0]}>
@@ -52,7 +52,7 @@ function Butikker(): React.ReactElement<any, any> {
 
   return (
     <div className="Butikker">
-      <div className='Main'>
+      <div className='Butikker'>
         <div className='Intro'>
           <h1 className='MainHeader'>Butikker</h1>
           <p>

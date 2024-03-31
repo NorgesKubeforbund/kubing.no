@@ -1,5 +1,6 @@
 @media (max-width: 1040px) {
-  .Main {
+  .Butikker {
+    margin: auto;
     align-items: center;
     text-align: center;
     width: 93%;
@@ -8,10 +9,11 @@
 }
 
 @media (min-width: 1041px) {
-  .Main {
+  .Butikker {
+    margin: auto;
     align-items: center;
     text-align: center;
-    width: 70%;
+    width: 93%;
     font-size: 20px;
   }
 }
