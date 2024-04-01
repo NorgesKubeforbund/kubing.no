@@ -7,99 +7,89 @@ function LokaleArrangement(): React.ReactElement<any, any> {
 
   const displayGroupedData = () => {
 
-    const data: string[][] = [
-      [
-        "Oslo-Viken",
-        "Cube Drammen",
-        "https://www.facebook.com/groups/529099402302831/",
-        "har tilbud i Drammen."
-      ],
-      [
-        "Oslo-Viken",
-        "Kubing i Bærum",
-        "https://www.facebook.com/groups/2430272227122282/",
-        "har tilbud i Bærum."
-      ],
-      [
-        "Oslo-Viken",
-        "Romerike SpeedCubers",
-        "https://spond.com/landing/group/TSRZF",
-        "har tilbud i Lillestrøm."
-      ],
-      [
-        "Rogaland",
-        "Sandnes SpeedCubers",
-        "https://www.facebook.com/groups/1658988921015490",
-        "har tilbud i Sandnes."
-      ],
-      [
-        "Trøndelag",
-        "Nidaros Kubing",
-        "https://www.nidaroskubing.org",
-        "har tilbud på Flatåsen i Trondheim."
-      ],
-      [
-        "Trøndelag",
-        "NTNUI Speedcubing",
-        "https://www.facebook.com/NTNUISpeedcubing",
-        "har tilbud for studenter ved NTNU i Trondheim."
-      ],
-      [
-        "Vestland",
-        "Bergen Speedcubing",
-        "https://www.facebook.com/groups/773142427894936",
-        "har tilbud i Bergen."
-      ]
+    type groupedData = {
+      fylke: string;
+      arrName: string;
+      arrLink: string;
+      arrText: string;
+    };
+
+    const data: groupedData[] = [
+      {
+        fylke: "Oslo-Viken",
+        arrName: "Cube Drammen",
+        arrLink: "https://www.facebook.com/groups/529099402302831/",
+        arrText: "har tilbud i Drammen."
+      },
+      {
+        fylke: "Oslo-Viken",
+        arrName: "Kubing i Bærum",
+        arrLink: "https://www.facebook.com/groups/2430272227122282/",
+        arrText: "har tilbud i Bærum."
+      },
+      {
+        fylke: "Oslo-Viken",
+        arrName: "Romerike SpeedCubers",
+        arrLink: "https://spond.com/landing/group/TSRZF",
+        arrText: "har tilbud i Lillestrøm."
+      },
+      {
+        fylke: "Rogaland",
+        arrName: "Sandnes SpeedCubers",
+        arrLink: "https://www.facebook.com/groups/1658988921015490",
+        arrText: "har tilbud i Sandnes."
+      },
+      {
+        fylke: "Trøndelag",
+        arrName: "Nidaros Kubing",
+        arrLink: "https://www.nidaroskubing.org",
+        arrText: "har tilbud på Flatåsen i Trondheim."
+      },
+      {
+        fylke: "Trøndelag",
+        arrName: "NTNUI Speedcubing",
+        arrLink: "https://www.facebook.com/NTNUISpeedcubing",
+        arrText: "har tilbud for studenter ved NTNU i Trondheim."
+      },
+      {
+        fylke: "Vestland",
+        arrName: "Bergen Speedcubing",
+        arrLink: "https://www.facebook.com/groups/773142427894936",
+        arrText: "har tilbud i Bergen."
+      }
     ];
 
-    const parseData = (apiData: string[][]) => {
-      let newObj: {
-        fylke: string;
-        arrName: string;
-        arrLink: string;
-        arrText: string
-      }[] = [];
-      for (let i = 0; i < apiData.length; ++i) {
-        newObj.push({
-          fylke: apiData[i][0],
-          arrName: apiData[i][1],
-          arrLink: apiData[i][2],
-          arrText: apiData[i][3],
-        });
-      };
-      const resultArr = newObj.reduce(function (r: any, a) {
-        r[a.fylke] = r[a.fylke] || [];
-        r[a.fylke].push({
-          arrName: a.arrName,
-          arrLink: a.arrLink,
-          arrtext: a.arrText
-        });
-        return r;
-      }, Object.create(null));
-      return resultArr;
+    const parseData = (apiData: groupedData[]) => {
+      const result = apiData.reduce((resultObj, item) => {
+        if (!resultObj[item.fylke]) {
+          resultObj[item.fylke] = [];
+        }
+        resultObj[item.fylke].push(item);
+        return resultObj;
+      }, {} as Record<string, groupedData[]>);
+      return result;
     };
     const groupedData = parseData(data);
 
     return (
       <div key={"groupDataContainer"} className="allLokaleContainer">
-        {Object.keys(groupedData).map((a, i) => {
+         {Object.entries(groupedData).map(([fylke, entries]) => {
           return (
-            <div key={a + "Container"} className="individualContainer">
-              <h2 key={a + "Title"} className="arrTitle">{a}</h2>
-              {Object.values(groupedData[a]).map((el: any) => {
-                const storage: string[] = Object.values(el);
+            <div key={fylke + "Container"} className="individualContainer">
+              <h2 key={fylke + "Title"} className="arrTitle">{fylke}</h2>
+              {entries.map((el) => {
                 return (
                   <p
-                    key={storage[1] + "Text"}
+                    key={el.arrLink + "Text"}
                     className="arrText"
                   >
                     <ExternalLink
-                      key={storage[1] + "Link"}
-                      href={storage[1]}
+                      key={el.arrLink + "Link"}
+                      href={el.arrLink}
                       className="arrLink"
-                    >{storage[0]}
+                    >{el.arrName}
                     </ExternalLink>
-                    {" " + storage[2]}</p>
+                    {" " + el.arrText}</p>
                 )
               })}
             </div>
