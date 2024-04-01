@@ -85,6 +85,7 @@ function Konkurranser() {
           </tr>
         </thead>
         <tbody className="comp">{compData.reverse().map((comp: any) => {
+          compData = compData.splice(Math.min(compData.length, 14));
           let compDate: string;
           let compElStart = new Date(comp.start_date);
           let compElEnd = new Date(comp.end_date);
