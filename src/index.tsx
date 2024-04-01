@@ -2,13 +2,15 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './pages/App';
-import Butikker from './pages/Butikker';
-import Guider from './pages/Guider';
 import Konkurranser from './pages/Konkurranser';
-import OmOss from './pages/OmOss';
+import Ressurser from './pages/Ressurser';
+import Butikker from './pages/Ressurser/Butikker';
+import Guider from './pages/Ressurser/Guider';
+import Lenker from './pages/Ressurser/Lenker';
+import LokaleArrangement from './pages/Ressurser/LokaleArrangement';
 import Rekorder from './pages/Rekorder';
-import Lenker from './pages/Lenker';
-import LokaleArrangement from './pages/LokaleArrangement';
+import OmOss from './pages/OmOss';
+import BliMedlem from './pages/BliMedlem';
 import Layout from './components/Layout';
 
 import {
@@ -26,32 +28,40 @@ const router = createBrowserRouter([
         element: <App />,
       },
       {
-        path: "Butikker",
-        element: <Butikker />,
-      },
-      {
-        path: "Guider",
-        element: <Guider />,
-      },
-      {
         path: "Konkurranser",
         element: <Konkurranser />,
       },
       {
-        path: "OmOss",
-        element: <OmOss />,
+        path: "Ressurser",
+        element: <Ressurser />,
+      },
+      {
+        path: "Ressurser/Butikker",
+        element: <Butikker />,
+      },
+      {
+        path: "Ressurser/Guider",
+        element: <Guider />,
+      },
+      {
+        path: "Ressurser/Lenker",
+        element: <Lenker />,
+      },
+      {
+        path: "Ressurser/LokaleArrangement",
+        element: <LokaleArrangement />,
       },
       {
         path: "Rekorder",
         element: <Rekorder />,
       },
       {
-        path: "Lenker",
-        element: <Lenker />,
+        path: "OmOss",
+        element: <OmOss />,
       },
       {
-        path: "LokaleArrangement",
-        element: <LokaleArrangement />,
+        path: "BliMedlem",
+        element: <BliMedlem />,
       },
     ]
   }

@@ -122,7 +122,7 @@ function Rekorder(): React.ReactElement<any, any> {
     <div className="Rekorder">
       <div className="Main RekorderBody">
         <div className="intro">
-          <h1 className="MainHeader">Norske rekorder</h1>
+          <h1 className="MainHeader">Norske Rekorder</h1>
           Her er en liste over rekordene i Norge og hvem som har de. 
           Vi har også oversikt over de uoffisielle rekordene som ikke er satt i konkurranse, 
           og noen eventer som WCA ikke holder styr på. 

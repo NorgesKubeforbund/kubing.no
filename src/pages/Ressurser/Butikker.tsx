@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './Butikker.css';
-import ExternalLink from '../components/ExternalLink';
+import ExternalLink from '../../components/ExternalLink';
 
 
 function Butikker(): React.ReactElement<any, any> {

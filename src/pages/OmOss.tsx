@@ -1,4 +1,4 @@
-import React, { useEffect, useState }from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import ContactForm from '../components/ContactForm'
 import './OmOss.css';
@@ -9,7 +9,7 @@ function OmOss(): React.ReactElement<any, any> {
   const [loading, setLoading] = useState<boolean>(false);
   const [brregData, setBrregData] = useState<brregResponse[]>([]);
 
-  const getBrregData = async(): Promise<void> => {
+  const getBrregData = async (): Promise<void> => {
     setLoading(true);
     try {
       await axios.get(`${process.env.REACT_APP_OMOSS_KEY}`)
@@ -38,12 +38,12 @@ function OmOss(): React.ReactElement<any, any> {
         <tbody>
           {brregData.map((el: brregResponse) => {
             let mellomNavn = "";
-            if(el.person.navn.mellomnavn !== undefined){    
+            if (el.person.navn.mellomnavn !== undefined) {
               mellomNavn = el.person.navn.mellomnavn;
             }
-            return(
+            return (
               <tr key={el.person.fodselsdato}>
-                <td className='fornavn'>{el.person.navn.fornavn + " " + mellomNavn + " " + el.person.navn.etternavn }</td> 
+                <td className='fornavn'>{el.person.navn.fornavn + " " + mellomNavn + " " + el.person.navn.etternavn}</td>
                 <td className={el.type.beskrivelse}>{el.type.beskrivelse}</td>
               </tr>
             )
@@ -62,33 +62,12 @@ function OmOss(): React.ReactElement<any, any> {
     <div className="OmOss">
       <div className="Main">
         <div className="intro">
-          <h1 className="MainHeader">Om oss</h1>
+          <h1 className="MainHeader">Om Oss</h1>
           Norges kubeforbund jobber med å fremme interessen for løsing av Rubiks kube og andre lignende puslespill i Norge.
           Dette gjøres ved å arrangere konkurranser og bidra til å skape et sosialt miljø.
           Om du synes dette høres spennende ut, kan du bli medlem eller finne et lokalt miljø å bli kjent med.
-          Du kan finne en oversikt over lokale kubemiljø <Link to='/LokaleArrangement'>her.</Link>
+          Du kan medlem deg inn <Link to='/BliMedlem'>her</Link> og finne en oversikt over lokale kubemiljø <Link to='/Ressurser/LokaleArrangement'>her.</Link>
           <br></br>
-          
-        </div>
-        <div className="Element">
-          <h2>Bli medlem</h2>
-          <div>
-            Medlemskap i Norges kubeforbund koster 100 kroner i året. Ved å bli medlem støtter du arbeidet vårt slik at vi blant annet kan arrangere flere og større konkurranser. 
-            Medlem får ofte rabatt på norske konkurranser.
-            <br></br>
-            <br></br>
-            For å bli medlem må du gjøre to ting:
-            <br></br>
-            For de med Vipps: betal <span className="boldText">100 kroner</span> til 24441 og merk meldingen med navn.
-            <br></br>
-            For de uten Vipps: overfør <span className="boldText">100 kroner</span> til kontonummer 1503.13.61831.
-            <br></br>
-            Deretter send en epost til medlem@kubing.no med <span className="boldText">fullt navn, e-post, telefonnummer, kjønn, adresse, og fødselsdato.</span>
-            <br></br>
-            <br></br>
-            Om du er usikker på om du allerede er medlem, kan du sende mail til <a href="mailto:medlem@kubing.no">medlem@kubing.no</a> og spørre.
-
-            </div>
         </div>
         <div className="element">
           <h2>Styret</h2>
