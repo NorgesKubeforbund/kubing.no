@@ -41,6 +41,10 @@
     clear: both;
   }
 }
+.arrangereLink {
+  color: #30549E;
+  text-decoration: none;
+}
 .comp {
   justify-content: center;
   align-items: center;
@@ -49,10 +53,12 @@
   transition: background-color 0.2s;
 }
 .compRow:nth-child(odd) {
-  background-color: #e2e2e2;  
+  background-color: #e2e2e2;
 }
 .compName {
   width: 30%;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 .compCity {
   width: 30%;  
@@ -71,7 +77,7 @@
   color: #d30000;
 }
 .delegateContact {
-  color: #000000;
+  color: #30549E;
   text-decoration: none;
 }
 .delegate {

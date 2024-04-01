@@ -121,7 +121,7 @@ function Konkurranser() {
         WCA har mange ressurser som kan hjelpe til med å arrangere konkurranser. Disse kan du finne via lenken under.
         <br></br>
         <br></br>
-          <ExternalLink href="https://www.worldcubeassociation.org/organizer-guidelines">Organizer-Guidelines from WCA</ExternalLink>
+          <ExternalLink className='arrangereLink' href="https://www.worldcubeassociation.org/organizer-guidelines">Organizer-Guidelines from WCA</ExternalLink>
           <br></br>
           <br></br>
           Etter at du har skaffet deg et overblikk over hvordan en arrangerer en konkurranse og laget en plan for hvordan du ønsker å
@@ -169,7 +169,7 @@ function Konkurranser() {
       <div className="Main">
         <div className="arrangere">
           <br></br>
-          <Link to='#arrangereKonkurranse'>Ønsker du å arrangere en konkurranse?</Link>
+          <Link className='arrangereLink' to='#arrangereKonkurranse'>Ønsker du å arrangere en konkurranse?</Link>
         </div>
         <h1 className='MainHeader'>Kommende Konkurranser</h1>
         <div className="Comps">
