@@ -4,45 +4,55 @@ import './Lenker.css';
 import ExternalLink from '../../components/ExternalLink';
 
 function Linker(): React.ReactElement<any, any> {
-  const [loading, setLoading] = useState<boolean>(false);
-  const [sheetData, setSheetData] = useState<string[][]>([]);
-
-  const getSheetData = async(): Promise<void> => {
-    setLoading(true);
-    try {
-      await axios.get(`${process.env.REACT_APP_LINKER_KEY}`)
-        .then(response => setSheetData(response.data.values));
-    } catch (error) {
-      let message: string;
-      if (error instanceof Error) {
-        message = error.message;
-      } else {
-        message = String(error);
-      }
-      alert(message);
+  type website = { name: string, href: string, linkText: string, description: string };
+  const sheetData: website[] = [
+    {
+      name: "WCA",
+      href: "https://www.worldcubeassociation.org",
+      linkText: "WCA",
+      description: " sine hjemmesider inneholder resultater og informasjon om alle offisielle konkurranser i hele verden. Du kan også finne profilen til alle som har deltatt på konkurranser."
+    },
+    {
+      name: "WCA Live",
+      href: "https://live.worldcubeassociation.org",
+      linkText: "WCA Live",
+      description: " viser resultater fra pågående konkurranser. Om du deltar på en konkurranse kan du bruke denne siden for å få oversikt om du har gått videre eller ikke."
+    },
+    {
+      name: "Norske Speedcubers på Facebook",
+      href: "https://www.facebook.com/groups/NorskeSpeedcubers",
+      linkText: "Norske Speedcubers",
+      description: " er den offisielle Facebook-siden for det norske kubemiljøet. Her kan du få kontakt med en stor del av kubemiljøet."
+    },
+    {
+      name: "NKF på YouTube",
+      href: "https://www.youtube.com/channel/UCfznV1sSz1o5FJAzmR87ijg",
+      linkText: "NKF",
+      description: " er også på YouTube. Her legges det stadig vekk ut videoer."
+    },
+    {
+      name: "NKF på Discord",
+      href: "https://discord.gg/6y6s8vB3Z4",
+      linkText: "NKF",
+      description: " er også på Discord. Her kan du få kontakt med en stor del av kubemiljøet."
     }
-    setLoading(false);
-  }
-  
-  useEffect(() => {
-    getSheetData();
-  }, []);
+  ];
 
   const linkElements = (): React.ReactElement<any, any> => {
     return (
       <div className="Main">
-        {sheetData.map((el: string[]) => (
-          <div className="Element" key={el[0]}>
+        {sheetData.map((el: website) => (
+          <div className="Element" key={el['name']}>
             <h2>
-              <ExternalLink href={el[1]} className="HeaderLinks">{el[0]}</ExternalLink>
+              <ExternalLink href={el[1]} className="HeaderLinks">{el['name']}</ExternalLink>
             </h2>
             <div>
               <p>
-                <ExternalLink href={el[1]}>{el[2]}</ExternalLink> 
-                {el[3]}
+                <ExternalLink href={el['href']}>{el['linkText']}</ExternalLink>
+                {el['description']}
               </p>
-            </div>           
-          </div>                 
+            </div>
+          </div>
         ))}
       </div>
     );
@@ -55,7 +65,6 @@ function Linker(): React.ReactElement<any, any> {
           <h1 className='MainHeader'>Lenker</h1>
         </div>
         <div className="mainBody">
-          {loading && <p>Laster inn...</p>}
           <div>{linkElements()}</div>
         </div>
       </div>
