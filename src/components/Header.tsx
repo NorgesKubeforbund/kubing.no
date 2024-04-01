@@ -11,8 +11,8 @@ export const NavBar = (): React.ReactElement<any, any> => {
     { name: 'Konkurranser', path: '/Konkurranser' },
     { name: 'Ressurser', path: '/Ressurser' },
     { name: 'Norske Rekorder', path: '/Rekorder' },
-    { name: 'Om Oss', path: '/OmOss' },
     { name: 'Bli Medlem', path: '/BliMedlem' },
+    { name: 'Om Oss', path: '/OmOss' },
   ];
 
   const dropDown = (): void => {
