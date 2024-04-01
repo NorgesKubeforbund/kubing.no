@@ -1,0 +1,34 @@
+@media (max-width: 1040px) {
+  .guideContainer {
+    margin: auto;
+    align-items: center;
+    text-align: center;
+    width: 93%;
+    font-size: 20px;
+  }
+}
+
+@media (min-width: 1041px) {
+  .guideContainer {
+    margin: auto;
+    align-items: center;
+    text-align: center;
+    width: 70%;
+    font-size: 20px;
+  }
+}
+
+
+.PDFButton{
+  background: inherit;
+  border: none;
+  padding: 0!important;
+  color: #069;
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.cube1{
+  width: 100px;
+  height: 100px;
+}

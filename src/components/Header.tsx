@@ -9,12 +9,10 @@ export const NavBar = (): React.ReactElement<any, any> => {
   const pages: pagePaths = [
     { name: 'Hjem', path: '/' },
     { name: 'Konkurranser', path: '/Konkurranser' },
-    { name: 'Butikker', path: '/Butikker' },
-    { name: 'Guider', path: '/Guider' },
-    { name: 'Lenker', path: '/Lenker' },
+    { name: 'Ressurser', path: '/Ressurser' },
     { name: 'Norske Rekorder', path: '/Rekorder' },
-    { name: 'Lokale Arrangement', path: '/LokaleArrangement' },
     { name: 'Om Oss', path: '/OmOss' },
+    { name: 'Bli Medlem', path: '/BliMedlem' },
   ];
 
   const dropDown = (): void => {

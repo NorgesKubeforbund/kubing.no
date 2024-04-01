@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './Lenker.css';
-import ExternalLink from '../components/ExternalLink';
+import ExternalLink from '../../components/ExternalLink';
 
 function Linker(): React.ReactElement<any, any> {
   const [loading, setLoading] = useState<boolean>(false);

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import './Butikker.css';
-import ExternalLink from '../components/ExternalLink';
+import ExternalLink from '../../components/ExternalLink';
 
 
 function Butikker(): React.ReactElement<any, any> {
@@ -31,7 +31,7 @@ function Butikker(): React.ReactElement<any, any> {
 
   const shopElements = (): React.ReactElement<any, any> => {
     return (
-      <div className="Main">
+      <div className="Butikker">
           {
           sheetData.map((el: string[]) => (
               <div className="Element" key={el[0]}>
@@ -52,7 +52,7 @@ function Butikker(): React.ReactElement<any, any> {
 
   return (
     <div className="Butikker">
-      <div className='Main'>
+      <div className='Butikker'>
         <div className='Intro'>
           <h1 className='MainHeader'>Butikker</h1>
           <p>
