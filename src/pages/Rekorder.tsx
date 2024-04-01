@@ -61,7 +61,7 @@ function Rekorder(): React.ReactElement<any, any> {
     const WCATable = (): React.ReactElement<any, any> => {
       return (
         <table className="NRTable">
-          <tbody>
+          <tbody className='tableRow'>
             {norgesRekorder.map((el: string[]) => (
             <tr key={el[0]} className="recordRow">
               <th className="Cell">{el[0]}</th>

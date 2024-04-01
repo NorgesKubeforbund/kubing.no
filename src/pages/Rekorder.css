@@ -3,8 +3,12 @@
   align-items: center;
   width: 70%;
 }
-.recordRow:nth-child(even) {
+.recordRow:nth-child(odd) {
   background-color: #e2e2e2;
+}
+.Cell {
+  padding-bottom: 10px;
+  padding-top: 10px;
 }
 .tab{
   display: inline-block;
