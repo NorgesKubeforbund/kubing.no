@@ -35,7 +35,7 @@ function App(): React.ReactElement<any, any> {
           <h2>
             <a className='CompetitionHeader' href='konkurranser'>Kommende Konkurranser</a>
           </h2>
-          <body>
+          <body className='competitions'>
             {CompetitionTable()}
           </body>
         </div>

@@ -25,6 +25,8 @@
 }
 .compName {
   width: 30%;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 .compCity {
   width: 30%;

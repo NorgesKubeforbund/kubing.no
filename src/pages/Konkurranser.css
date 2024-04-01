@@ -4,6 +4,17 @@
     margin: auto;
     border-collapse: collapse;  
   }
+  .delegateList {
+    margin: auto;
+    width: 93%;
+    justify-content: center;
+    align-items: center;
+  }
+  .delegateColumn {
+    float: left;
+    width: 100%;
+    padding-bottom: 60px;
+  }
 }
 @media (min-width: 1041px) {
   .compTable{
@@ -12,6 +23,27 @@
     /* margin: -40px; */
     border-collapse: collapse;  
   }
+  .delegateList {
+    margin: auto;
+    width: 70%;
+    justify-content: center;
+    align-items: center;
+  }
+  .delegateColumn {
+    float: left;
+    width: 33%;
+  }
+
+  /* Clear floats after the columns */
+  .row:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}
+.arrangereLink {
+  color: #30549E;
+  text-decoration: none;
 }
 .comp {
   justify-content: center;
@@ -21,10 +53,12 @@
   transition: background-color 0.2s;
 }
 .compRow:nth-child(odd) {
-  background-color: #e2e2e2;  
+  background-color: #e2e2e2;
 }
 .compName {
   width: 30%;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 .compCity {
   width: 30%;  
@@ -38,6 +72,17 @@
 }
 .compRow:hover {
   background-color: #c2c2c2;
+}
+.delegateHeader {
+  color: #d30000;
+}
+.delegateContact {
+  color: #30549E;
+  text-decoration: none;
+}
+.delegate {
+  color: #000000;
+  text-decoration: none;
 }
 .Main {
   margin-bottom: 10%;
