@@ -5,43 +5,48 @@ import ExternalLink from '../../components/ExternalLink';
 
 
 function Butikker(): React.ReactElement<any, any> {
-  const [loading, setLoading] = useState<boolean>(false);
-  const [sheetData, setSheetData] = useState<string[][]>([]);
-
-  const getSheetData = async(): Promise<void> => {
-    setLoading(true);
-    try {
-      await axios.get(`${process.env.REACT_APP_BUTIKKER_KEY}`)
-        .then(response => setSheetData(response.data.values))
-    } catch (error) {
-      let message: string;
-      if (error instanceof Error) {
-        message = error.message;
-      } else {
-        message = String(error);
-      }
-      alert(message);
+  type store = {name: string, href: string, description: string};
+  const sheetData: store[] = [
+    {
+      name: "Cuboss",
+      href: "https://cuboss.se",
+      description:" er en kubebutikk lokalisert i Sverige. De har et bra utvalg og kort leveringstid."
+    },
+    {
+      name: "Kuber og Kort",
+      href: "https://kuberogkort.no",
+      description: " er den nyeste kubebutikken i Norge. De har kort leveringstid og ingen importkostnader."
+    },
+    {
+      name: "Nordicube",
+      href: "https://nordicube.com",
+      description: " er den eldste norske kubebutikken. De har kort leveringstid og ingen importkostnader. "
+    },
+    {
+      name: "SpeedCubeShop",
+      href: "https://speedcubeshop.com",
+      description: " er en kubebutikk lokalisert i USA. De har et stort utvalg, men kan ha noe lang leveringstid siden kubene kommer fra USA."
+    },
+    {
+      name: "The Cubicle",
+      href: "https://www.thecubicle.com",
+      description: " er en kubebutikk lokalisert i USA. De har et stort utvalg, men også lengre leveringstid siden kubene sendes fra USA."
     }
-    setLoading(false);
-  };
-  
-  useEffect(() => {
-    getSheetData();
-  }, []);
+  ];
 
   const shopElements = (): React.ReactElement<any, any> => {
     return (
       <div className="Butikker">
           {
-          sheetData.map((el: string[]) => (
-              <div className="Element" key={el[0]}>
+          sheetData.map((el: store) => (
+              <div className="Element" key={el['name']}>
                 <h2>
-                  <ExternalLink href={el[1]} className="HeaderLinks">{el[0]}</ExternalLink>
+                  <ExternalLink href={el['href']} className="HeaderLinks">{el['name']}</ExternalLink>
                 </h2>
                 <div>
                   <p className='butikkDetails'>
-                    <ExternalLink href={el[1]}>{el[2]}</ExternalLink>
-                    {el[3]}
+                    <ExternalLink href={el['href']}>{el['name']}</ExternalLink>
+                    {el['description']}
                   </p>
                 </div>           
               </div>                 
@@ -52,7 +57,7 @@ function Butikker(): React.ReactElement<any, any> {
 
   return (
     <div className="Butikker">
-      <div className='Butikker'>
+      <div className='Main'>
         <div className='Intro'>
           <h1 className='MainHeader'>Butikker</h1>
           <p>
@@ -61,7 +66,6 @@ function Butikker(): React.ReactElement<any, any> {
           </p>
         </div>
         <div className="mainBody">
-          {loading && <p>Laster inn...</p>}
           <div>{shopElements()}</div>
         </div>
       </div>
