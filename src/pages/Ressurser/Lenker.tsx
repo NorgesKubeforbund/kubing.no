@@ -59,7 +59,7 @@ function Linker(): React.ReactElement<any, any> {
   };
 
   return (
-    <div className="Eksterne Ressurser">
+    <div className="EksterneRessurser">
       <div className='Main'>
         <div className='Intro'>
           <h1 className='MainHeader'>Lenker</h1>

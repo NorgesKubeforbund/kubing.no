@@ -57,7 +57,7 @@ function Butikker(): React.ReactElement<any, any> {
 
   return (
     <div className="Butikker">
-      <div className='Butikker'>
+      <div className='Main'>
         <div className='Intro'>
           <h1 className='MainHeader'>Butikker</h1>
           <p>

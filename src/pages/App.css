@@ -2,11 +2,6 @@ body {
   background-color: #fcfcfc;
 }
 @media (max-width: 1040px) {
-  .Main {
-    margin: auto;
-    width: 93%;
-    padding-bottom: 20px;
-  }
 
   .HomeHeader {
     color: #d30000;
@@ -19,11 +14,6 @@ body {
 
 }
 @media (min-width: 1041px) {
-  .Main {
-    margin: auto;
-    width: 93%;
-    padding-bottom: 20px;
-  }
 
   .HomeHeader {
     color: #d30000;
