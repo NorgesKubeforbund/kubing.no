@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import './Guider.css';
 import Nybegynnermetode from '../../media/3x3-Begynnermetode.pdf';
 import ExternalLink from '../../components/ExternalLink';
