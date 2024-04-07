@@ -9,7 +9,7 @@ function Butikker(): React.ReactElement<any, any> {
   const sheetData: store[] = [
     {
       name: "Cuboss",
-      href: "https://cuboss.se",
+      href: "https://cuboss.com/no",
       description:" er en kubebutikk lokalisert i Sverige. De har et bra utvalg og kort leveringstid."
     },
     {
