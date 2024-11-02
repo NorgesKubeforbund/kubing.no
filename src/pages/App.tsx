@@ -1,10 +1,9 @@
 import React from 'react';
 import './App.css';
-import { CompetitionTable } from '../components/CompetitionTable';
+import UpcomingComps from '../components/UpcomingComps';
 
 
 function App(): React.ReactElement<any, any> {
-
   return (
     <div className="App">
       <div className='Main'>
@@ -36,7 +35,7 @@ function App(): React.ReactElement<any, any> {
             <a className='CompetitionHeader' href='konkurranser'>Kommende Konkurranser</a>
           </h2>
           <body className='competitions'>
-            {CompetitionTable()}
+          <UpcomingComps />
           </body>
         </div>
       </div>
