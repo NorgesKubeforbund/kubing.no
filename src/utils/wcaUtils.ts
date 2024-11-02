@@ -2,6 +2,7 @@
 import axios from 'axios';
 import { compResponse } from '../types';
 import { isCacheValid } from './dateUtils';
+import { wcaURLs } from 'src/config/urls';
 
 export const getNorwayCompData = async (
   setLoading: (loading: boolean) => void,
@@ -21,7 +22,7 @@ export const getNorwayCompData = async (
   } else {
     try {
       const localCompsResponse = await axios.get(
-        `${process.env.REACT_APP_KONKURRANSE_KEY}`
+        wcaURLs.NORWEGIAN_COMPETITIONS
       );
       localCompsResponse.data.sort(
         (a, b) =>

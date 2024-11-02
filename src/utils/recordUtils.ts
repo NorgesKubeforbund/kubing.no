@@ -1,5 +1,6 @@
 import axios from "axios";
 import { isCacheValid } from "./dateUtils";
+import { googleSheetsURLs } from "src/config/urls";
 
 export const getOfficialRecords = async (
   setLoading: (loading: boolean) => void,
@@ -20,7 +21,7 @@ export const getOfficialRecords = async (
   } else {
     try {
       const recordsResponse = await axios.get(
-        `${process.env.REACT_APP_NORSKEREKORDERWCA_KEY}`
+        googleSheetsURLs.OFFICIAL_RECORDS
       );
       setOfficialRecords(recordsResponse.data.values);
       localStorage.setItem(
@@ -60,7 +61,7 @@ export const getUnofficialRecords = async (
   } else {
     try {
       const recordsResponse = await axios.get(
-        `${process.env.REACT_APP_NORSKEREKORDER_KEY}`
+        googleSheetsURLs.UNOFFICIAL_RECORDS
       );
       setUnofficialRecords(recordsResponse.data.values);
       localStorage.setItem(
@@ -79,7 +80,7 @@ export const getUnofficialRecords = async (
     }
   }
   setLoading(false);
-}
+};
 
 export const getNonWcaRecords = async (
   setLoading: (loading: boolean) => void,
@@ -100,7 +101,7 @@ export const getNonWcaRecords = async (
   } else {
     try {
       const recordsResponse = await axios.get(
-        `${process.env.REACT_APP_NORSKEREKORDERNONWCA_KEY}`
+        googleSheetsURLs.NON_WCA_RECORDS
       );
       setNonWcaRecords(recordsResponse.data.values);
       localStorage.setItem(
@@ -119,4 +120,4 @@ export const getNonWcaRecords = async (
     }
   }
   setLoading(false);
-}
+};
