@@ -1,6 +1,7 @@
 import axios from "axios";
 import { brregResponse } from "../types";
 import { isCacheValid } from "./dateUtils";
+import { brregURLs } from "src/config/urls";
 
 export const getBrregData = async (
   setLoading: (loading: boolean) => void,
@@ -19,7 +20,7 @@ export const getBrregData = async (
   } else {
     try {
       const brregResponse = await axios.get(
-        `${process.env.REACT_APP_OMOSS_KEY}`
+        brregURLs.STYREMEDLEM
       );
       setBrregData(brregResponse.data.rollegrupper[1].roller);
       localStorage.setItem(
