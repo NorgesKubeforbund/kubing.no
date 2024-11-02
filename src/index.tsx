@@ -1,26 +1,23 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './pages/App';
-import Konkurranser from './pages/Konkurranser';
-import Ressurser from './pages/Ressurser';
-import Butikker from './pages/Ressurser/Butikker';
-import Guider from './pages/Ressurser/Guider';
-import Lenker from './pages/Ressurser/Lenker';
-import LokaleArrangement from './pages/Ressurser/LokaleArrangement';
-import Rekorder from './pages/Rekorder';
-import OmOss from './pages/OmOss';
-import BliMedlem from './pages/BliMedlem';
-import Layout from './components/Layout';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import App from "./pages/App";
+import Konkurranser from "./pages/Konkurranser";
+import Ressurser from "./pages/Ressurser";
+import Butikker from "./pages/Ressurser/Butikker";
+import Guider from "./pages/Ressurser/Guider";
+import Lenker from "./pages/Ressurser/Lenker";
+import LokaleArrangement from "./pages/Ressurser/LokaleArrangement";
+import Rekorder from "./pages/Rekorder";
+import OmOss from "./pages/OmOss";
+import BliMedlem from "./pages/BliMedlem";
+import Layout from "./components/Layout";
 
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: "/",
     element: <Layout />,
     children: [
       {
@@ -68,7 +65,7 @@ const router = createBrowserRouter([
 ]);
 
 const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
+  document.getElementById("root") as HTMLElement
 );
 
 root.render(

@@ -6,6 +6,9 @@
 .recordRow:nth-child(odd) {
   background-color: #e2e2e2;
 }
+.boldRow {
+  font-weight: bold;
+}
 .Cell {
   padding-bottom: 10px;
   padding-top: 10px;
