@@ -20,7 +20,7 @@ export const getOfficialRecords = async (
   } else {
     try {
       const recordsResponse = await axios.get(
-        `${process.env.REACT_APP_NORSKEREKORDERWCA_KEY}`
+        `${process.env.REACT_APP_NORSKEREKORDER_KEY}` // TODO: Add the correct URL
       );
       setOfficialRecords(recordsResponse.data.values);
       localStorage.setItem(
@@ -60,7 +60,7 @@ export const getUnofficialRecords = async (
   } else {
     try {
       const recordsResponse = await axios.get(
-        `${process.env.REACT_APP_NORSKEREKORDER_KEY}`
+        `${process.env.REACT_APP_NORSKEREKORDERWCA_KEY}` // TODO: Add the correct URL
       );
       setUnofficialRecords(recordsResponse.data.values);
       localStorage.setItem(
