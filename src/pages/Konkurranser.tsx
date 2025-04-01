@@ -4,6 +4,13 @@ import UpcomingComps from "src/components/UpcomingComps";
 import PastComps from "src/components/PastComps";
 
 function Konkurranser() {
+  let i = 0;
+  const easterEgg = (): void => {
+      i++;
+      if (i > 10) {
+          alert("Lars Johan is the coolest of them ;)");
+      }
+  }
   const arrangereKonkurranse = () => {
     return (
       <div className="delegateList">
@@ -33,7 +40,7 @@ function Konkurranser() {
         listet nedenfor.
         <br></br>
         <br></br>
-        <h2 className="delegateHeader">Norske Delegater</h2>
+        <h2 className="delegateHeader" onClick={() => { easterEgg() }}>Norske Delegater</h2>
         <div className="delegateColumn">
           <strong>
             <ExternalLink
@@ -97,7 +104,7 @@ function Konkurranser() {
               className="delegateContact"
               href="mailto:ejohnsen@worldcubeassociation.org"
             >
-              Delegater i Nord Dakota, USA - Kontakt
+              Delegater i Georgia, USA - Kontakt
             </ExternalLink>
           </strong>
           <br></br>
