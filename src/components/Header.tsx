@@ -31,7 +31,7 @@ export const NavBar = (): React.ReactElement<any, any> => {
         <img src={image} className="Logo" alt="logo" />
       </div>
       <a className="LogoName">Norges Kubeforbund</a>
-      <div className="NavBar" id="NavBarFull">
+      <div className="NavBar" id="NavBarFull" onClick={() => { dropDown() }}>
         {pages.map((pg) => (
           <NavLink
             key={pg['name']}
