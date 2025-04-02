@@ -41,7 +41,7 @@ function Konkurranser() {
         <br></br>
         <br></br>
         <h2 className="delegateHeader" onClick={() => { easterEgg() }}>Norske Delegater</h2>
-        <div className="delegateColumn">
+        <div className="arrangereKonkurranse">
           <strong>
             <ExternalLink
               className="delegateContact"
@@ -72,7 +72,8 @@ function Konkurranser() {
             Jakob Jernsletten
           </ExternalLink>
         </div>
-        <div className="delegateColumn">
+          <br></br>
+        <div className="arrangereKonkurranse">
           <strong>
             <ExternalLink
               className="delegateContact"
@@ -96,7 +97,8 @@ function Konkurranser() {
             Jacob Oliver Bruun
           </ExternalLink>
         </div>
-        <div className="delegateColumn">
+          <br></br>
+        <div className="arrangereKonkurranse">
           <strong>
             <ExternalLink
               className="delegateContact"
@@ -113,7 +115,8 @@ function Konkurranser() {
             Lars Ulveseth
           </ExternalLink>
         </div>
-        <div className="delegateColumn">
+          <br></br>
+        <div className="arrangereKonkurranse">
           <strong>
             <ExternalLink
               className="delegateContact"
