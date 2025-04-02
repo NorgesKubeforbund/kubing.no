@@ -51,7 +51,6 @@ function Konkurranser() {
             </ExternalLink>
           </strong>
           <br></br>
-          <br></br>
           <ExternalLink
             className="delegate"
             href="https://www.worldcubeassociation.org/persons/2012BRED01"
@@ -83,7 +82,6 @@ function Konkurranser() {
             </ExternalLink>
           </strong>
           <br></br>
-          <br></br>
           <ExternalLink
             className="delegate"
             href="https://www.worldcubeassociation.org/persons/2018FOLD01"
@@ -102,12 +100,28 @@ function Konkurranser() {
           <strong>
             <ExternalLink
               className="delegateContact"
+              href="mailto:wca@ulveseth.com,lfolde@worldcubeassociation.org"
+            >
+              Delegater i Bergen - Kontakt
+            </ExternalLink>
+          </strong>
+          <br></br>
+          <ExternalLink
+            className="delegate"
+            href="https://www.worldcubeassociation.org/persons/2018ULVE01"
+          >
+            Lars Ulveseth
+          </ExternalLink>
+        </div>
+        <div className="delegateColumn">
+          <strong>
+            <ExternalLink
+              className="delegateContact"
               href="mailto:ejohnsen@worldcubeassociation.org"
             >
               Delegater i Georgia, USA - Kontakt
             </ExternalLink>
           </strong>
-          <br></br>
           <br></br>
           <ExternalLink
             className="delegate"
