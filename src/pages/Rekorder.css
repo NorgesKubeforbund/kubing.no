@@ -1,7 +1,16 @@
-.RekorderBody{
-  margin: auto;
-  align-items: center;
-  width: 70%;
+@media (max-width: 1040px) {
+  .RekorderBody{
+    margin: auto;
+    align-items: center;
+    width: 93%;
+  }
+}
+@media (min-width: 1041px) {
+  .RekorderBody{
+    margin: auto;
+    align-items: center;
+    width: 70%;
+  }
 }
 .recordRow:nth-child(odd) {
   background-color: #e2e2e2;
