@@ -3,7 +3,7 @@ import { isCacheValid } from "./dateUtils";
 
 export const getOfficialRecords = async (
   setLoading: (loading: boolean) => void,
-  setOfficialRecords: (data: string[][]) => void,
+  setOfficialRecords: (data: string[][] | null) => void,
   cacheDuration: number
 ): Promise<void> => {
   setLoading(true);
@@ -29,13 +29,8 @@ export const getOfficialRecords = async (
       );
       localStorage.setItem("officialRecordsTimestamp", Date.now().toString());
     } catch (error) {
-      let message: string;
-      if (error instanceof Error) {
-        message = error.message;
-      } else {
-        message = String(error);
-      }
-      alert(message);
+      setOfficialRecords(null)
+      console.error(error)
     }
   }
   setLoading(false);
@@ -43,7 +38,7 @@ export const getOfficialRecords = async (
 
 export const getUnofficialRecords = async (
   setLoading: (loading: boolean) => void,
-  setUnofficialRecords: (data: string[][]) => void,
+  setUnofficialRecords: (data: string[][] | null) => void,
   cacheDuration: number
 ): Promise<void> => {
   setLoading(true);
@@ -69,13 +64,8 @@ export const getUnofficialRecords = async (
       );
       localStorage.setItem("unofficialRecordsTimestamp", Date.now().toString());
     } catch (error) {
-      let message: string;
-      if (error instanceof Error) {
-        message = error.message;
-      } else {
-        message = String(error);
-      }
-      alert(message);
+      setUnofficialRecords(null)
+      console.error(error)
     }
   }
   setLoading(false);
@@ -83,7 +73,7 @@ export const getUnofficialRecords = async (
 
 export const getNonWcaRecords = async (
   setLoading: (loading: boolean) => void,
-  setNonWcaRecords: (data: string[][]) => void,
+  setNonWcaRecords: (data: string[][] | null) => void,
   cacheDuration: number
 ): Promise<void> => {
   setLoading(true);
@@ -109,13 +99,8 @@ export const getNonWcaRecords = async (
       );
       localStorage.setItem("nonWcaRecordsTimestamp", Date.now().toString());
     } catch (error) {
-      let message: string;
-      if (error instanceof Error) {
-        message = error.message;
-      } else {
-        message = String(error);
-      }
-      alert(message);
+      setNonWcaRecords(null)
+      console.error(error)
     }
   }
   setLoading(false);
