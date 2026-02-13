@@ -21,10 +21,10 @@ export const getBrregData = async (
       const brregResponse = await axios.get(
         `${process.env.REACT_APP_OMOSS_KEY}`
       );
-      setBrregData(brregResponse.data.rollegrupper[1].roller);
+      setBrregData(brregResponse.data.rollegrupper[0].roller);
       localStorage.setItem(
         "brregData",
-        JSON.stringify(brregResponse.data.rollegrupper[1].roller)
+        JSON.stringify(brregResponse.data.rollegrupper[0].roller)
       );
       localStorage.setItem("brregDataTimestamp", Date.now().toString());
     } catch (error) {

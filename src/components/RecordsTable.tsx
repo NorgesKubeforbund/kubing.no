@@ -2,57 +2,78 @@ import React, { useEffect, useState } from 'react';
 import { getOfficialRecords, getUnofficialRecords, getNonWcaRecords } from 'src/utils/recordUtils';
 
 interface TableProps {
-  data: string[][];
+  data: string[][] | null;
 }
 const WCATable: React.FC<TableProps> = ({ data }) => (
-  <table className="NRTable">
-    <tbody className='tableRow'>
-      {data.map((el: string[], index: number) => (
-        <tr key={el[0]} className={index === 0 ? "recordRow boldRow" : "recordRow"}>
-          {el.map((cell, cellIndex) => (
-            <td key={cellIndex} className="Cell">{cell}</td>
+  data ?
+    <div className="recordTable">
+      <table className="NRTable">
+        <tbody className='tableRow'>
+          {data.map((el: string[], index: number) => (
+            <tr key={el[0]} className={index === 0 ? "recordRow boldRow" : "recordRow"}>
+              {el.map((cell, cellIndex) => (
+                <td key={cellIndex} className="Cell">{cell}</td>
+              ))}
+            </tr>
           ))}
-        </tr>
-      ))}
-    </tbody>
-  </table>
+        </tbody>
+      </table>
+    </div>
+    :
+    <div style={{paddingTop: 8}}>
+      Noe gikk galt...
+    </div>
 );
 
 const UnrWCATable: React.FC<TableProps> = ({ data }) => (
-  <table className="NRTable">
-    <tbody>
-      {data.map((el: string[], index: number) => (
-        <tr key={el[0]} className={index === 0 ? "recordRow boldRow" : "recordRow"}>
-          {el.map((cell, cellIndex) => (
-            <td key={cellIndex} className="Cell">{cell}</td>
+  data ?
+    <div className="recordTable">
+      <table className="NRTable">
+        <tbody>
+          {data.map((el: string[], index: number) => (
+            <tr key={el[0]} className={index === 0 ? "recordRow boldRow" : "recordRow"}>
+              {el.map((cell, cellIndex) => (
+                <td key={cellIndex} className="Cell">{cell}</td>
+              ))}
+            </tr>
           ))}
-        </tr>
-      ))}
-    </tbody>
-  </table>
+        </tbody>
+      </table>
+    </div>
+    :
+    <div style={{paddingTop: 8}}>
+      Noe gikk galt...
+    </div>
 );
 
 const UnrNonWCATable: React.FC<TableProps> = ({ data }) => (
-  <table className="NRTable">
-    <tbody>
-      {data.map((el: string[], index: number) => (
-        <tr key={el[0]} className={index === 0 ? "recordRow boldRow" : "recordRow"}>
-          {el.map((cell, cellIndex) => (
-            <td key={cellIndex} className="Cell">{cell}</td>
+  data ?
+    <div className="recordTable">
+      <table className="NRTable">
+        <tbody>
+          {data.map((el: string[], index: number) => (
+            <tr key={el[0]} className={index === 0 ? "recordRow boldRow" : "recordRow"}>
+              {el.map((cell, cellIndex) => (
+                <td key={cellIndex} className="Cell">{cell}</td>
+              ))}
+            </tr>
           ))}
-        </tr>
-      ))}
-    </tbody>
-  </table>
+        </tbody>
+      </table>
+    </div>
+    :
+    <div style={{paddingTop: 8}}>
+      Noe gikk galt...
+    </div>
 );
 
 type TabName = 'official' | 'unofficial' | 'nonWca';
 
 const RecordsTable: React.FC = () => {
-  const [loading, setLoading] = useState<boolean>(false);
-  const [officialRecords, setOfficialRecords] = useState<string[][]>([]);
-  const [unofficialRecords, setUnofficialRecords] = useState<string[][]>([]);
-  const [nonWcaRecords, setNonWcaRecords] = useState<string[][]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [officialRecords, setOfficialRecords] = useState<string[][] | null>([]);
+  const [unofficialRecords, setUnofficialRecords] = useState<string[][] | null>([]);
+  const [nonWcaRecords, setNonWcaRecords] = useState<string[][] | null>([]);
   const [activeTab, setActiveTab] = useState<TabName>('official');
   const cacheDuration = 7 * 24 * 60 * 60 * 1000; // 1 week
 
@@ -98,9 +119,7 @@ const RecordsTable: React.FC = () => {
         <TabButton tabName="unofficial" label="Uoffisielle Rekorder" />
         <TabButton tabName="nonWca" label="Ikke-WCA Rekorder" />
       </div>
-      <div className="recordTable">
-        {loading ? 'Laster inn...' : displayTab()}
-      </div>
+      {loading ? 'Laster inn...' : displayTab()}
     </div>
   );
 };
