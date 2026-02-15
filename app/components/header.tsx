@@ -3,15 +3,15 @@
 import Link from "next/link";
 import Image from "next/image";
 import logo from "@/public/NKF_Logo_trans.png"
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
+import { resourceLinks } from "../ressurser/page";
 
 export type PagePath = { name: string, path: string };
 
 const pages: PagePath[] = [
   { name: "Hjem", path: "/" },
   { name: "Konkurranser", path: "/konkurranser" },
-  { name: "Ressurser", path: "/ressurser" },
   { name: "Norske Rekorder", path: "/rekorder" },
   { name: "Bli Medlem", path: "/bli-medlem" },
   { name: "Om Oss", path: "/om-oss" },
@@ -19,7 +19,20 @@ const pages: PagePath[] = [
 
 function Header() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isResourcesOpen, setIsResourcesOpen] = useState<boolean>(false);
   const pathname = usePathname();
+  const popoverRef = useRef<HTMLDivElement | null>(null);
+  const resourcesButtonRef = useRef<HTMLButtonElement | null>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (popoverRef.current && !popoverRef.current.contains(event.target as Node) && (resourcesButtonRef.current !== event.target)) {
+        setIsResourcesOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <header className="flex flex-col lg:flex-row justify-between h-auto p-4 bg-background-secondary text-white">
@@ -30,6 +43,7 @@ function Header() {
           onClick={() => setIsOpen(false)}
         >
           <Image
+            loading="eager"
             src={logo}
             alt="Norges Kubeforbund sin logo"
             className="w-auto h-auto"
@@ -41,7 +55,12 @@ function Header() {
         </Link>
         <div className="lg:hidden flex items-center">
           <button
-            onClick={() => setIsOpen(!isOpen)}
+            onClick={() => {
+              setIsOpen(!isOpen)
+              if (isOpen) {
+                setIsResourcesOpen(false)
+              }
+            }}
             className="cursor-pointer group hover:ring-2 p-1.5 rounded-sm ring-gray-400"
           >
             <div className="space-y-1.5">
@@ -58,11 +77,45 @@ function Header() {
             <Link
               key={page.name}
               href={page.path}
-              className={`hover:text-accent-text ${page.path.split("/").at(1) === pathname.split("/").at(1) ? "text-accent-text" : ""}`}
-              onClick={() => setIsOpen(false)}
+              className={`hover:text-accent-text ${page.path.split("/").at(1) === pathname.split("/").at(1) && !isResourcesOpen ? "text-accent-text" : ""}`}
+              onClick={() => {
+                setIsOpen(false)
+                setIsResourcesOpen(false)
+              }}
             >
               {page.name}
             </Link>)}
+          <div className="relative inline-block">
+            <button
+              ref={resourcesButtonRef}
+              className={`hover:text-accent-text cursor-pointer text-left ${"ressurser" === pathname.split("/").at(1) || isResourcesOpen
+                ? "text-accent-text"
+                : ""
+                }`}
+              onClick={() => setIsResourcesOpen(!isResourcesOpen)}
+            >
+              Ressurser
+            </button>
+            {isResourcesOpen && (
+              <div ref={popoverRef} className="absolute left-1/2 lg:left-0 -translate-x-[60%] translate-y-4 w-64 lg:w-48 rounded-xl bg-background-secondary border-4 lg:border-2 border-white p-4 z-50 shadow-md">
+                <div className="flex flex-col gap-2 text-center">
+                  {resourceLinks.map((page) => (
+                    <Link
+                      key={page.name}
+                      href={page.path}
+                      className={`hover:text-accent-text ${page.path === pathname ? "text-accent-text" : ""}`}
+                      onClick={() => {
+                        setIsOpen(false);
+                        setIsResourcesOpen(false);
+                      }}
+                    >
+                      {page.name}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </header>

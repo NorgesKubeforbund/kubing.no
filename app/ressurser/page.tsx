@@ -2,7 +2,7 @@ import { PagePath } from "../components/header";
 import Title from "../ui/title";
 import BlueLink from "../ui/blue-link";
 
-const links: PagePath[] = [
+export const resourceLinks: PagePath[] = [
   { name: "Butikker", path: "/ressurser/butikker" },
   { name: "Guider", path: "/ressurser/guider" },
   { name: "Lenker", path: "/ressurser/lenker" },
@@ -17,7 +17,7 @@ function Resources() {
         <p>Her finner du lenker til sider med nyttige ressurser.</p>
       </div>
       <div className="flex flex-col gap-4">
-        {links.map((page) =>
+        {resourceLinks.map((page) =>
           <div className="text-2xl" key={page.name}>
             <BlueLink href={page.path}>
               {page.name}
