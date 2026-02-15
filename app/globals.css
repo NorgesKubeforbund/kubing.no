@@ -1,0 +1,45 @@
+@import "tailwindcss";
+
+:root {
+  --background: #FCFCFC;
+  --background-secondary: #282C34;
+  --foreground: #171717;
+  --accent-text: #D30000;
+  --link-text: #30549E;
+  --table-odd: #E2E2E2;
+  --table-even: #FAFAFA;
+  --table-hover: #C2C2C2;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-background-secondary: var(--background-secondary);
+  --color-foreground: var(--foreground);
+  --color-accent-text: var(--accent-text);
+  --color-link-text: var(--link-text);
+  --color-table-odd: var(--table-odd);
+  --color-table-even: var(--table-even);
+  --color-table-hover: var(--table-hover);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+p {
+  line-height: 120%;
+}
+
+td, th {
+  padding: 4px 8px;
+}
+
+@media screen and (min-width: 640px) {
+  td, th {
+    padding: 8px 16px;
+  }
+}

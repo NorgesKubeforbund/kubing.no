@@ -1,0 +1,21 @@
+name: next.js CI
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      REACT_APP_NORSKEREKORDERWCA_KEY: ${{ secrets.REACT_APP_NORSKEREKORDERWCA_KEY }}
+      REACT_APP_NORSKEREKORDERNONWCA_KEY: ${{ secrets.REACT_APP_NORSKEREKORDERNONWCA_KEY }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
