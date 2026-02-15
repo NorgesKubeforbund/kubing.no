@@ -11,7 +11,7 @@ const delegates: { area: string, delegates: { name: string, mail: string, wcaId:
     delegates: [
       { name: "Ulrik Bredland", mail: "ubredland@worldcubeassociation.org", wcaId: "2012BRED01" },
       { name: "Vidar Klungre", mail: "vklungre@worldcubeassociation.org", wcaId: "2008KLUN01" },
-      { name: "Jakob Jernsletten", mail: "ironmeadow@gmail.com", wcaId: "2018JERN01" },
+      { name: "Jakob Jernsletten", mail: "jjernsletten@worldcubeassociation.org", wcaId: "2018JERN01" },
     ],
   },
   {
@@ -24,7 +24,7 @@ const delegates: { area: string, delegates: { name: string, mail: string, wcaId:
   {
     area: "Bergen",
     delegates: [
-      { name: "Lars Ulveseth", mail: "wca@ulveseth.com", wcaId: "2018ULVE01" },
+      { name: "Lars Ulveseth", mail: "lulveseth@worldcubeassociation.org", wcaId: "2018ULVE01" },
     ],
   },
   {
