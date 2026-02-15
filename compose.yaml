@@ -1,0 +1,10 @@
+services:
+  kubing.no:
+    container_name: kubing.no
+    ports:
+      - "8080:3000"
+    restart: unless-stopped
+    environment:
+      REACT_APP_NORSKEREKORDERWCA_KEY: ${REACT_APP_NORSKEREKORDERWCA_KEY}
+      REACT_APP_NORSKEREKORDERNONWCA_KEY: ${REACT_APP_NORSKEREKORDERNONWCA_KEY}
+    build: .
