@@ -62,7 +62,14 @@ function ContactForm({ serviceId }: { serviceId: string }) {
                 Navn <span className="text-accent-text">*</span>
               </label>
               <div className="flex flex-row justify-center">
-                <input className="w-full max-w-96 border border-gray-400 rounded-md px-3 py-2" type="text" id="name" placeholder="Ditt navn..." required />
+                <input
+                  className="w-full max-w-96 border border-gray-400 rounded-md px-3 py-2"
+                  type="text"
+                  id="name"
+                  placeholder="Ditt navn..."
+                  autoComplete="name"
+                  required
+                />
               </div>
             </div>
             <div className="flex flex-col gap-2">
@@ -70,7 +77,14 @@ function ContactForm({ serviceId }: { serviceId: string }) {
                 Epost <span className="text-accent-text">*</span>
               </label>
               <div className="flex flex-row justify-center">
-                <input className="w-full max-w-96 border border-gray-400 rounded-md px-3 py-2" type="email" id="email" placeholder="Din e-post..." required />
+                <input
+                  className="w-full max-w-96 border border-gray-400 rounded-md px-3 py-2"
+                  type="email"
+                  id="email"
+                  placeholder="Din e-post..."
+                  autoComplete="email"
+                  required
+                />
               </div>
             </div>
             <div className="flex flex-col gap-2">
