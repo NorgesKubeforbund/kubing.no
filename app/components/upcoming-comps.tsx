@@ -23,7 +23,7 @@ async function UpcomingComps() {
               .map((comp: CompResponse, index: number) => {
                 if (Date.parse(comp.end_date) > new Date().getTime()) {
                   return (
-                    <tr key={comp.id} className={`hover:bg-table-hover ${index % 2 === 0 ? "bg-table-odd" : "bg-table-even"}`}>
+                    <tr key={comp.id} className={`hover:bg-table-hover ${(index+1) % 2 === 0 ? "bg-table-odd" : "bg-table-even"}`}>
                       <td>
                         <Link
                           className="text-accent-text hover:underline"
