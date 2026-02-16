@@ -65,6 +65,7 @@ function ContactForm({ serviceId }: { serviceId: string }) {
                 <input
                   className="w-full max-w-96 border border-gray-400 rounded-md px-3 py-2"
                   type="text"
+                  name="name"
                   id="name"
                   placeholder="Ditt navn..."
                   autoComplete="name"
@@ -79,6 +80,7 @@ function ContactForm({ serviceId }: { serviceId: string }) {
               <div className="flex flex-row justify-center">
                 <input
                   className="w-full max-w-96 border border-gray-400 rounded-md px-3 py-2"
+                  name="email"
                   type="email"
                   id="email"
                   placeholder="Din e-post..."
@@ -91,7 +93,7 @@ function ContactForm({ serviceId }: { serviceId: string }) {
               <label htmlFor="message">
                 Melding <span className="text-accent-text">*</span>
               </label>
-              <textarea className="w-full bg-transparen border border-gray-400 rounded-md px-3 py-2" id="message" placeholder="Melding..." rows={6} required />
+              <textarea className="w-full bg-transparen border border-gray-400 rounded-md px-3 py-2" name="message" id="message" placeholder="Melding..." rows={6} required />
             </div>
             <div className="flex flex-row justify-center">
               <button className="bg-gray-100 hover:bg-gray-400 cursor-pointer border rounded-md px-2 py-1 w-fit" type="submit">
