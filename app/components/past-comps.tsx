@@ -12,9 +12,8 @@ async function PastComps() {
         <table>
           <thead>
             <tr>
-              <th>Navn</th>
-              <th>Sted</th>
-              <th>Dato</th>
+              <th className="text-left">Navn</th>
+              <th className="text-right">Dato</th>
             </tr>
           </thead>
           <tbody>
@@ -25,17 +24,21 @@ async function PastComps() {
               .slice(0, 14)
               .map((comp: CompResponse, index: number) => {
                 return (
-                  <tr key={comp.id} className={`hover:bg-table-hover ${index % 2 === 0 ? "bg-table-odd" : "bg-table-even"}`}>
-                    <td>
-                      <Link
-                        className="text-accent-text hover:underline"
-                        href={comp.url}
-                      >
-                        {comp.name}
-                      </Link>
-                    </td>
-                    <td>{comp.city}</td>
-                    <td>
+                  <tr key={comp.id} className={`hover:bg-table-hover ${(index+1) % 2 === 0 ? "bg-table-odd" : "bg-table-even"}`}>
+                    <td className="text-left">
+                      <div className="flex flex-col">
+                        <Link
+                          className="text-accent-text hover:underline"
+                          href={comp.url}
+                        >
+                          {comp.short_name}
+                        </Link>
+                          <span className="text-[0.85em] text-gray-800">
+                            {comp.city}
+                          </span>
+                        </div>
+                      </td>
+                    <td className="text-right whitespace-nowrap">
                       {formatCompDate(comp.start_date, comp.end_date)}
                     </td>
                   </tr>
