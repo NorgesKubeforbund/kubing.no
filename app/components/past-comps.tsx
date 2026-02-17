@@ -24,7 +24,7 @@ async function PastComps() {
               .slice(0, 14)
               .map((comp: CompResponse, index: number) => {
                 return (
-                  <tr key={comp.id} className={`hover:bg-table-hover ${(index+1) % 2 === 0 ? "bg-table-odd" : "bg-table-even"}`}>
+                  <tr key={comp.id} className={`hover:bg-table-hover ${index % 2 === 0 ? "bg-table-odd" : "bg-table-even"}`}>
                     <td className="text-left">
                       <div className="flex flex-col">
                         <Link
