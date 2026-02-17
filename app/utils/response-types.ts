@@ -3,6 +3,8 @@ export type CompResponse = {
   name: string,
   start_date: string,
   end_date: string,
+  registration_open: string,
+  registration_close: string,
   competitor_limit: number,
   cancelled_at: null,
   url: string,
@@ -34,7 +36,7 @@ export type CompResponse = {
     senior_delegate_id: number,
     class: string,
     teams: [],
-    avata: {
+    avatar: {
       url: string,
       pending_url: string,
       thumb_url: string,
