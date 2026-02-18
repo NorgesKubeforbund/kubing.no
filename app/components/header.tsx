@@ -36,7 +36,7 @@ function HeaderLink({
   return (
     <Link
       href={page.path}
-      className={`${className ?? ""} hover:text-accent-text ${page.path.split("/").at(1) === pathname.split("/").at(1) && !isResourcesOpen ? "text-accent-text" : ""}`}
+      className={`${className ?? ""} hover:text-accent-text ${page.path === pathname && !isResourcesOpen ? "text-accent-text" : ""}`}
       onClick={onClick}
     >
       {page.name}
@@ -80,8 +80,9 @@ function ResourcesDropdown({
                 onClick={() => {
                   setIsOpen(false);
                   setIsResourcesOpen(false);
-                }} pathname={pathname}
-                isResourcesOpen={isResourcesOpen}
+                }}
+                pathname={pathname}
+                isResourcesOpen={false}
               />
             )}
           </div>
