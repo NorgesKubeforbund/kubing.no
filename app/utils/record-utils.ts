@@ -1,5 +1,8 @@
 import { GoogleSheetsRecords, WCAEvent, WCARecord, WCAResponse } from "./response-types";
 
+const WCA_URL = process.env.REACT_APP_NORSKEREKORDERWCA_KEY ?? "";
+const NON_WCA_URL = process.env.REACT_APP_NORSKEREKORDERNONWCA_KEY ?? ""
+
 const WCA_API_BASEURL = "https://raw.githubusercontent.com/robiningelbrecht/wca-rest-api/refs/heads";
 
 function padRecords(records: string[][]) {
@@ -13,7 +16,7 @@ function padRecords(records: string[][]) {
 
 export async function getUnofficialWCARecords(): Promise<string[][]> {
   const res = await fetch(
-    String(process.env.REACT_APP_NORSKEREKORDERWCA_KEY),
+    WCA_URL,
     { next: { revalidate: 3600 } }
   );
   if (!res.ok) {
@@ -26,7 +29,7 @@ export async function getUnofficialWCARecords(): Promise<string[][]> {
 
 export async function getUnofficialNonWCARecords(): Promise<string[][]> {
   const res = await fetch(
-    String(process.env.REACT_APP_NORSKEREKORDERNONWCA_KEY),
+    NON_WCA_URL,
     { next: { revalidate: 3600 } }
   );
   if (!res.ok) {

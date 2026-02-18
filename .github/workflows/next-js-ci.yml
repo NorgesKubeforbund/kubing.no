@@ -2,7 +2,7 @@ name: next.js CI
 
 on:
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "development" ]
 
 jobs:
   build:
@@ -10,6 +10,12 @@ jobs:
     env:
       REACT_APP_NORSKEREKORDERWCA_KEY: ${{ secrets.REACT_APP_NORSKEREKORDERWCA_KEY }}
       REACT_APP_NORSKEREKORDERNONWCA_KEY: ${{ secrets.REACT_APP_NORSKEREKORDERNONWCA_KEY }}
+      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+      POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
+      POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
+
     steps:
       - uses: actions/checkout@v5
       - name: Use Node.js
