@@ -38,7 +38,7 @@ const delegates: { area: string, delegates: { name: string, mail: string, wcaId:
 function Delegates() {
   return (
     <div className="flex flex-col text-center gap-4">
-      <Title><EasterEgg>Norske Delegater</EasterEgg></Title>
+      <Title><EasterEgg>Norske delegater</EasterEgg></Title>
       {delegates.map((delegateArea) =>
         <div className="flex flex-col" key={delegateArea.area}>
           <BlueLink

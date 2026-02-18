@@ -6,7 +6,7 @@ export const resourceLinks: PagePath[] = [
   { name: "Butikker", path: "/ressurser/butikker" },
   { name: "Guider", path: "/ressurser/guider" },
   { name: "Lenker", path: "/ressurser/lenker" },
-  { name: "Lokale Arrangement", path: "/ressurser/lokale-arrangement" },
+  { name: "Lokale arrangement", path: "/ressurser/lokale-arrangement" },
 ];
 
 function Resources() {

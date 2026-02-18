@@ -63,7 +63,7 @@ function LocalEvents() {
   return (
     <div className="flex flex-col px-8 max-w-5xl text-center gap-8">
       <div className="flex flex-col gap-4">
-        <Title>Lokale Arrangement</Title>
+        <Title>Lokale arrangement</Title>
         <p>
           Ønsker du å finne andre kubere å løse sammen med?
           Det finnes flere lokale arragement rundt omkring i landet som møtes jevnlig for å kube sammen.
