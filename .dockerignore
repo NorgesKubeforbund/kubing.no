@@ -1,0 +1,108 @@
+# ============================================================================
+# Created by https://dockerignore.com/
+# LANGUAGE TEMPLATE for Node.js
+# Website: https://nodejs.org/
+# Repository: https://github.com/nodejs/node
+# ============================================================================
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# TEMPLATE OVERVIEW & USAGE NOTES
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# • TEMPLATE TYPE: Language Template
+# • PURPOSE: Node.js runtime and ecosystem patterns for Docker builds
+# • DESIGN PHILOSOPHY: Contains only Node.js-specific artifacts (no security patterns)
+# • COMBINATION GUIDANCE: Combine with common templates for complete coverage
+# • SECURITY CONSIDERATIONS: Security patterns not included (always use common/security.dockerignore)
+# • BEST PRACTICES: Always combine with security template for production use
+# • OFFICIAL SOURCES: Node.js community patterns and Docker best practices
+
+# ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+# DEPENDENCIES & PACKAGE MANAGERS
+# ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+# Package managers and dependency directories
+
+**/.npm/
+**/.npm/_logs/
+**/.pnpm-store/
+**/.pnpm/
+**/.yarn/
+**/.yarn/cache/
+**/bower_components/
+**/node_modules/
+.npmignore
+.npmrc
+.npmrc.*
+.yarnrc
+.yarnrc.yml
+npm-debug.log*
+pnpm-debug.log*
+pnpm-workspace.yaml
+yarn-error.log
+
+# ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+# NODE.JS BUILD ARTIFACTS & OUTPUT
+# ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+# Node.js build artifacts and output directories
+
+**/.nyc_output/
+**/.output/
+**/build/
+**/dist/
+**/out/
+
+# ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+# NODE.JS CACHE & TEMPORARY FILES
+# ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+# Node.js cache and temporary files
+
+**/.cache/
+**/.turbo/
+*.cache
+*.temp
+*.tmp
+.node_repl_history
+
+# ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+# NODE.JS LOGS & DEBUG FILES
+# ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+# Node.js logs and debug files
+
+**/logs/
+*.log
+*.log.*
+
+# ============================================================================
+# Created by https://dockerignore.com/
+# COMMON TEMPLATE for Git
+# Website: https://dockerignore.com/
+# Repository: https://github.com/ronald2wing/.dockerignore
+# ============================================================================
+
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# TEMPLATE OVERVIEW & USAGE NOTES
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# • TEMPLATE TYPE: Common Template
+# • PURPOSE: Git version control system patterns for all projects
+# • DESIGN PHILOSOPHY: Modular Git patterns for combination with other templates
+# • COMBINATION GUIDANCE: Combine with language or framework templates as needed
+# • SECURITY CONSIDERATIONS: Git files don't contain sensitive data but should be excluded
+# • BEST PRACTICES: Use to exclude Git-related files from Docker builds
+# • OFFICIAL SOURCES: Docker best practices for version control exclusion
+
+# ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+# GIT-SPECIFIC PATTERNS
+# ••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••
+# Git version control system files and directories
+
+**/.git-crypt/
+**/.git-rewrite/
+**/.git/
+.git-blame-ignore-revs
+.git/*
+.gitattributes
+.gitconfig
+.gitcredentials
+.gitignore
+.gitkeep
+.gitmodules
+.gitreview
