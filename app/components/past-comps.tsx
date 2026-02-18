@@ -7,7 +7,7 @@ async function PastComps() {
   const norwayCompData = await getNorwayCompData();
   return (
     <div className="flex flex-col text-center gap-4 text-xs sm:text-xl">
-      <Title>Tidligere Konkurranser</Title>
+      <Title>Tidligere konkurranser</Title>
       <div className="flex flex-row justify-center">
         <table>
           <thead>

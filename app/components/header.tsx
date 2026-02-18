@@ -15,9 +15,9 @@ const leftPages: PagePath[] = [
 ];
 
 const rightPages: PagePath[] = [
-  { name: "Norske Rekorder", path: "/rekorder" },
-  { name: "Bli Medlem", path: "/bli-medlem" },
-  { name: "Om Oss", path: "/om-oss" },
+  { name: "Norske rekorder", path: "/rekorder" },
+  { name: "Bli medlem", path: "/bli-medlem" },
+  { name: "Om oss", path: "/om-oss" },
 ];
 
 function HeaderLink({

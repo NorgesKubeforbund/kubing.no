@@ -4,9 +4,9 @@ import Title from "../ui/title";
 function BliMedlem() {
   return (
     <div className="flex flex-col text-center max-w-5xl px-8 gap-4">
-      <Title>Bli Medlem</Title>
+      <Title>Bli medlem</Title>
       <p>
-        Medlemskap i Norges kubeforbund koster 100 kroner i året. Ved å bli medlem støtter
+        Medlemskap i Norges Kubeforbund koster 100 kroner i året. Ved å bli medlem støtter
         du arbeidet vårt slik at vi blant annet kan arrangere flere og større konkurranser.
         Medlem får ofte rabatt på norske konkurranser.
       </p>

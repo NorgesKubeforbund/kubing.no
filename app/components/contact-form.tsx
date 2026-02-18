@@ -97,7 +97,7 @@ function ContactForm({ serviceId }: { serviceId: string }) {
             </div>
             <div className="flex flex-row justify-center">
               <button className="bg-gray-100 hover:bg-gray-400 cursor-pointer border rounded-md px-2 py-1 w-fit" type="submit">
-                Send Mail
+                Send epost
               </button>
             </div>
           </form>

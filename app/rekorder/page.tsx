@@ -8,7 +8,7 @@ function Records() {
   return (
     <div className="flex flex-col max-w-5xl px-4 sm:px-8 text-center gap-8">
       <div className="flex flex-col gap-4">
-        <Title>Norske Rekorder</Title>
+        <Title>Norske rekorder</Title>
         <p>
           Her er en liste over rekordene i Norge og hvem som har de.
           Vi har også oversikt over de uoffisielle rekordene som ikke er satt i konkurranse,

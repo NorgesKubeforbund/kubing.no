@@ -23,19 +23,19 @@ function RecordTables({
             className={`bg-gray-100 hover:bg-gray-300 cursor-pointer border rounded-md px-2 py-1 w-fit ${selected === "wca" && "ring-2 ring-blue-400"}`}
             onClick={() => setSelected("wca")}
           >
-            Offisielle Rekorder
+            Offisielle rekorder
           </button>
           <button
             className={`bg-gray-100 hover:bg-gray-300 cursor-pointer border rounded-md px-2 py-1 w-fit ${selected === "unofficial" && "ring-2 ring-blue-400"}`}
             onClick={() => setSelected("unofficial")}
           >
-            Uoffisielle Rekorder
+            Uoffisielle rekorder
           </button>
           <button
             className={`bg-gray-100 hover:bg-gray-300 cursor-pointer border rounded-md px-2 py-1 w-fit ${selected === "non-wca" && "ring-2 ring-blue-400"}`}
             onClick={() => setSelected("non-wca")}
           >
-            Ikke-WCA Rekorder
+            Ikke-WCA rekorder
           </button>
         </div>
       </div>

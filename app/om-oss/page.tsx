@@ -6,9 +6,9 @@ import Title from "../ui/title";
 function Introduction() {
   return (
     <div className="flex flex-col gap-4">
-      <Title>Om Oss</Title>
+      <Title>Om oss</Title>
       <p>
-        Norges kubeforbund jobber med å fremme interessen for løsing av Rubiks
+        Norges Kubeforbund jobber med å fremme interessen for løsing av Rubiks
         kube og andre lignende puslespill i Norge. Dette gjøres ved å
         arrangere konkurranser og bidra til å skape et sosialt miljø. Om du
         synes dette høres spennende ut, kan du bli medlem eller finne et
