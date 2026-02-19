@@ -51,7 +51,7 @@ function ContactForm({ serviceId }: { serviceId: string }) {
   };
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4" id="kontakt-oss">
       <div className="text-3xl font-semibold">Ta kontakt med NKF her:</div>
       {delivered
         ? <p>Epost er levert</p>
@@ -97,7 +97,7 @@ function ContactForm({ serviceId }: { serviceId: string }) {
             </div>
             <div className="flex flex-row justify-center">
               <button className="bg-gray-100 hover:bg-gray-400 cursor-pointer border rounded-md px-2 py-1 w-fit" type="submit">
-                Send epost
+                Send Mail
               </button>
             </div>
           </form>
