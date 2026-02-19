@@ -51,7 +51,7 @@ function ContactForm({ serviceId }: { serviceId: string }) {
   };
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4" id="kontakt-oss">
       <div className="text-3xl font-semibold">Ta kontakt med NKF her:</div>
       {delivered
         ? <p>Epost er levert</p>

@@ -8,7 +8,7 @@ async function Home() {
         <div className="flex flex-col gap-4">
           <Title>Norges Kubeforbund</Title>
           <p>
-            Velkommen til hjemmesiden til Norges kubeforbund.
+            Velkommen til hjemmesiden til Norges Kubeforbund.
             Hvis du ønsker å lære deg å løse Rubiks kube, så har du kommet til riktig sted.
             Vi har guider som beskriver hvordan dette gjøres.
             Hvis du allerede kan løse kuben, og kan tenke deg å delta i konkurranser,
