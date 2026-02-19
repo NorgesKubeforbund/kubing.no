@@ -18,7 +18,7 @@ const links: { href: string, text: string }[] = [
     text: "Om organisasjonen"
   },
   {
-    href: "/om-oss#kontaktOss",
+    href: "/om-oss#kontakt-oss",
     text: "Kontakt oss"
   },
 ];
