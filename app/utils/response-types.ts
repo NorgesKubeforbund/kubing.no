@@ -122,3 +122,48 @@ export type WCARecord = {
 export type GoogleSheetsRecords = {
   values: string[][]
 };
+
+export type WCAOAuthTokenResponse = {
+  access_token: string,
+  refresh_token: string,
+  token_type: string,
+  expires_in: number,
+  scope: string,
+  created_at: number
+};
+
+export type WCAProfileResponse = {
+  me: {
+    id: number,
+    wca_id: string | null,
+    name: string,
+    gender: string,
+    country_iso2: string,
+    created_at: string,
+    updated_at: string,
+    url: string,
+    country: {
+      id: string,
+      name: string,
+      continent_id: string,
+      iso2: string,
+    },
+    delegate_status: string | null,
+    class: string,
+    teams: string[],
+    avatar: {
+      id: number,
+      status: string,
+      thumbnail_crop_x: string | null,
+      thumbnail_crop_y: string | null,
+      thumbnail_crop_w: string | null,
+      thumbnail_crop_h: string | null,
+      url: string | null,
+      thumb_url: string | null,
+      is_default: boolean,
+      can_edit_thumbnail: boolean,
+    },
+    dob: string,
+    email: string,
+  }
+};
