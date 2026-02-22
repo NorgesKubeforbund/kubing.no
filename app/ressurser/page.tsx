@@ -1,6 +1,6 @@
-import { PagePath } from "../components/header";
-import Title from "../ui/title";
-import BlueLink from "../ui/blue-link";
+import { PagePath } from "@/app/components/header";
+import Title from "@/app/ui/title";
+import BlueLink from "@/app/ui/blue-link";
 
 export const resourceLinks: PagePath[] = [
   { name: "Butikker", path: "/ressurser/butikker" },
