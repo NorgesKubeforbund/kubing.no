@@ -6,6 +6,7 @@ import logo from "@/public/NKF_Logo_trans.png"
 import { Ref, useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { resourceLinks } from "../ressurser/page";
+import { useRouter } from "next/navigation";
 
 export type PagePath = { name: string, path: string };
 
@@ -91,12 +92,65 @@ function ResourcesDropdown({
   )
 }
 
+function LoginButton({
+  loggedIn,
+  isResourcesOpen,
+  pathname,
+  onClick,
+  onLogout,
+}: {
+  loggedIn: boolean
+  isResourcesOpen: boolean
+  pathname: string
+  onClick: () => void
+  onLogout: () => void
+}) {
+  const router = useRouter();
+  async function handleLogin() {
+    if (!loggedIn) {
+      router.push("/login");
+      onClick();
+    } else {
+      await fetch("/api/auth/logout", {
+        method: "POST"
+      });
+      onClick();
+      onLogout();
+      router.push("/");
+    }
+  }
+  return (
+    <div className="relative inline-block">
+      <button
+        className={`hover:text-accent-text cursor-pointer text-left ${"login" === pathname.split("/").at(1) && !isResourcesOpen ? "text-accent-text" : ""}`}
+        onClick={handleLogin}
+      >
+        {loggedIn ? "Logg ut" : "Logg inn"}
+      </button>
+    </div>
+  )
+}
+
 function Header() {
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isResourcesOpen, setIsResourcesOpen] = useState<boolean>(false);
   const pathname = usePathname();
   const popoverRef = useRef<HTMLDivElement | null>(null);
   const resourcesButtonRef = useRef<HTMLButtonElement | null>(null);
+
+  function reloadStatus() {
+    fetch("/api/status")
+      .then(res => {
+        if (!res.ok) {
+          return;
+        }
+        res.json()
+          .then((data: { isLoggedIn: boolean }) => setIsLoggedIn(data.isLoggedIn))
+          .catch(err => console.error(err));
+      })
+      .catch(err => console.error(err))
+  }
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -104,6 +158,7 @@ function Header() {
         setIsResourcesOpen(false);
       }
     }
+    reloadStatus();
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
@@ -169,6 +224,8 @@ function Header() {
           {rightPages.map((page) =>
             <HeaderLink className="hidden lg:flex" key={page.name} page={page} onClick={closeHeader} pathname={pathname} isResourcesOpen={isResourcesOpen} />
           )}
+          {isLoggedIn && <HeaderLink page={{ name: "Min side", path: "/min-side" }} onClick={closeHeader} pathname={pathname} isResourcesOpen={isResourcesOpen} />}
+          <LoginButton loggedIn={isLoggedIn} pathname={pathname} isResourcesOpen={isResourcesOpen} onClick={closeHeader} onLogout={reloadStatus} />
         </div>
       </div>
     </header>
