@@ -26,7 +26,7 @@ export async function getWCATokens(code: string, baseUrl: string): Promise<WCAOA
     }
   );
   if (!res.ok) {
-    return Promise.reject();
+    return Promise.reject("Failed to get WCA tokens");
   }
   return await res.json() as WCAOAuthTokenResponse;
 }
@@ -46,7 +46,7 @@ export async function refreshWCATokens(refreshToken: string, baseUrl: string): P
     }
   );
   if (!res.ok) {
-    return Promise.reject();
+    return Promise.reject("Failed to refresh WCA tokens");
   }
   return await res.json() as WCAOAuthTokenResponse;
 }
@@ -71,7 +71,7 @@ async function fetchFromWCA(url: string, accessToken: string, refreshToken: stri
         },
       });
     if (!res.ok) {
-      return Promise.reject();
+      return Promise.reject(`Failed to fetch from WCA: ${url}`);
     }
     return res.json();
   }
