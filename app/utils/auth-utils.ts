@@ -19,7 +19,7 @@ export async function getSessionToken(): Promise<jose.JWTVerifyResult<jose.JWTPa
   const cookieStore = await cookies();
   const token = cookieStore.get(SESSION_TOKEN_NAME)?.value;
   if (!token) {
-    return Promise.reject();
+    return Promise.reject("No session token available");
   }
   return jose.jwtVerify(token, JWT_SECRET, {});
 }
@@ -35,7 +35,7 @@ export async function getRefreshToken(): Promise<string> {
 
 export function createSessionToken(sessionId: string, userId: number | null): Promise<string> {
   const payload: Record<string, any> = {}; // eslint-disable-line @typescript-eslint/no-explicit-any
-  if (userId) {
+  if (userId !== null) {
     payload.userId = userId;
   }
   return new jose.SignJWT(payload)
@@ -80,8 +80,8 @@ export async function createSession(wcaTokens: WCAOAuthTokenResponse, user: WCAP
     access_token: encryptToken(wcaTokens.access_token),
     refresh_token: encryptToken(wcaTokens.refresh_token),
   };
-  await saveSession(encryptedWcaTokens, user, refreshToken.hash, sessionId);
   const userId = await getUserIdFromWCAUserId(user.me.id);
+  await saveSession(encryptedWcaTokens, user, refreshToken.hash, sessionId, userId);
   const sessionToken = await createSessionToken(sessionId, userId);
   return (
     {
@@ -101,12 +101,9 @@ export function generateRefreshToken(): RefreshToken {
   return { plain: plain, hash: hash };
 }
 
-export async function updateTokens(refreshToken: string): Promise<Tokens | null> {
+export async function updateTokens(refreshToken: string): Promise<Tokens> {
   const newRefreshToken = generateRefreshToken();
   const res = await updateSession(hashToken(refreshToken), newRefreshToken.hash);
-  if (!res) {
-    return null;
-  }
   const newSessionToken = await createSessionToken(res.sessionId, res.userId);
   return { sessionToken: newSessionToken, refreshToken: newRefreshToken.plain }
 }
@@ -119,7 +116,7 @@ export function setAuthCookies(res: NextResponse, tokens: Tokens) {
     secure: true,
     sameSite: "lax",
     path: "/",
-    expires: new Date(new Date().getTime() + 1000 * 60 * 60),
+    expires: new Date(new Date().getTime() + 1000 * 60 * 20),
   })
   res.cookies.set({
     name: REFRESH_TOKEN_NAME,
@@ -128,7 +125,7 @@ export function setAuthCookies(res: NextResponse, tokens: Tokens) {
     secure: true,
     sameSite: "lax",
     path: "/",
-    expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 60),
+    expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 8),
   })
 }
 

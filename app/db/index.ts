@@ -15,7 +15,7 @@ export function query(text: string, params: any[]): Promise<QueryResult<any>> {
   return pool.query(text, params);
 }
 
-export async function saveSession(tokens: WCAOAuthTokenResponse, user: WCAProfileResponse, refreshTokenHash: string, sessionId: string) {
+export async function saveSession(tokens: WCAOAuthTokenResponse, user: WCAProfileResponse, refreshTokenHash: string, sessionId: string, userId: number | null) {
   const res = await query(`
     INSERT INTO sessions (
     id,
@@ -34,7 +34,7 @@ export async function saveSession(tokens: WCAOAuthTokenResponse, user: WCAProfil
     `,
     [
       sessionId,
-      null,
+      userId,
       refreshTokenHash,
       tokens.access_token,
       tokens.refresh_token,
@@ -47,11 +47,11 @@ export async function saveSession(tokens: WCAOAuthTokenResponse, user: WCAProfil
   return res.rowCount;
 }
 
-export async function updateSession(refreshTokenHash: string, newRefreshTokenHash: string) {
+export async function updateSession(refreshTokenHash: string, newRefreshTokenHash: string): Promise<{ sessionId: string, userId: number | null }> {
   const sessionInfo = await query(`
     SELECT id, user_id
     FROM sessions
-    WHERE refresh_token_hash = $1 AND last_access > $2
+    WHERE refresh_token_hash = $1 AND last_access > $2 AND expires_at > NOW()
     `,
     [
       refreshTokenHash,
@@ -59,7 +59,7 @@ export async function updateSession(refreshTokenHash: string, newRefreshTokenHas
     ]
   )
   if (!sessionInfo.rowCount) {
-    return null;
+    return Promise.reject("Could not find valid session");
   }
   const res = await query(`
     UPDATE sessions
@@ -72,12 +72,9 @@ export async function updateSession(refreshTokenHash: string, newRefreshTokenHas
     ]
   )
   if (!res.rowCount) {
-    return null;
+    return Promise.reject("Could not update session");
   }
   const row = sessionInfo.rows.at(0);
-  if (!row) {
-    return null;
-  }
   return { sessionId: row.id, userId: row.user_id };
 }
 
@@ -106,9 +103,6 @@ export async function getUserIdFromWCAUserId(wcaUserId: number): Promise<number 
     return null;
   }
   const row = res.rows.at(0);
-  if (!row) {
-    return null;
-  }
   return row.id as number;
 }
 
@@ -122,12 +116,9 @@ export async function getWcaTokensFromSessionId(sessionId: string): Promise<{ ac
     ]
   )
   if (!res.rowCount) {
-    Promise.reject();
+    Promise.reject("No tokens from session ID");
   }
   const row = res.rows.at(0);
-  if (!row) {
-    Promise.reject();
-  }
   return { accessToken: row.wca_access_token as string, refreshToken: row.wca_refresh_token as string };
 }
 
@@ -176,12 +167,9 @@ export async function getUser(userId: number): Promise<User> {
     ]
   )
   if (!res.rowCount) {
-    return Promise.reject();
+    return Promise.reject("Did not find user");
   }
   const row = res.rows.at(0);
-  if (!row) {
-    return Promise.reject();
-  }
   return {
     name: row.name,
     wcaId: row.wca_id,
