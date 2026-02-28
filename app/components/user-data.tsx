@@ -3,6 +3,12 @@ import { getUserData } from "@/app/utils/user-utils";
 
 async function UserData({ userId }: { userId: number }) {
   const userData = await getUserData(userId);
+  const [year, month, day] = userData.dob.split("-").map((x) => parseInt(x, 10))
+  const dob = new Date(year, month - 1, day).toLocaleDateString("nb-NO", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+});
   return (
     <table className="text-left">
       <tbody>
@@ -20,7 +26,11 @@ async function UserData({ userId }: { userId: number }) {
         </tr>
         <tr>
           <td>Fødselsdato:</td>
-          <td>{userData.dob}</td>
+          <td>{dob}</td>
+        </tr>
+        <tr>
+          <td>Er medlem i år:</td>
+          <td>{userData.isMember ? "Ja" : "Nei"}</td>
         </tr>
       </tbody>
     </table>

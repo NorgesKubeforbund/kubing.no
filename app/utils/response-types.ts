@@ -1,3 +1,5 @@
+import { VippsPaymentStatus, VippsPaymentType } from "./types";
+
 export type CompResponse = {
   id: string,
   name: string,
@@ -167,3 +169,82 @@ export type WCAProfileResponse = {
     email: string,
   }
 };
+
+export type VippsAccessTokenResponse = {
+  token_type: string,
+  expires_in: number,
+  ext_expires_in: number,
+  expires_on: number,
+  not_before: number,
+  resource: string,
+  access_token: string,
+}
+
+export type VippsPaymentCreateReponse = {
+  redirectUrl: string,
+  reference: string,
+}
+
+export type VippsPaymentStatusReponse = {
+  aggregate: {
+    authorizedAmount: {
+      currency: "NOK",
+      value: number
+    },
+    cancelledAmount: {
+      currency: "NOK",
+      value: number
+    },
+    capturedAmount: {
+      currency: "NOK",
+      value: number
+    },
+    refundedAmount: {
+      currency: "NOK",
+      value: number
+    }
+  },
+  amount: {
+    currency: "NOK",
+    value: number
+  },
+  state: VippsPaymentStatus,
+  paymentMethod: {
+    type: VippsPaymentType,
+    cardBin: string,
+  },
+  profile: {
+    sub: string,
+  },
+  pspReference: string,
+  redirectUrl: string,
+  reference: string,
+  metadata: Record<string, string>,
+  shippingDetails: {
+    address: {
+      addressLine1: string,
+      addressLine2: string,
+      city: string,
+      country: string,
+      postCode: string,
+    },
+    shippingCost: number,
+    shippingOptionId: string,
+    shippingOptionName: string,
+  },
+  userDetails: {
+    email: string,
+    firstName: string,
+    lastName: string,
+    mobileNumber: string,
+    dateOfBirth: string,
+    addresses:
+    {
+      addressLine1: string,
+      addressLine2: string,
+      city: string,
+      country: string,
+      postCode: string,
+    }[],
+  }
+}
