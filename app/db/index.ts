@@ -177,3 +177,101 @@ export async function getUser(userId: number): Promise<User> {
     dob: row.dob,
   };
 }
+
+export async function isUserMemberInYear(userId: number, year: number): Promise<boolean> {
+  const res = await query(`
+    SELECT EXISTS (
+      SELECT 1 FROM memberships
+      WHERE user_id = $1 AND year = $2
+    )
+    `,
+    [
+      userId,
+      year,
+    ]
+  )
+  if (!res.rowCount) {
+    return Promise.reject("Could not check if user is member");
+  }
+  return res.rows[0].exists as boolean;
+}
+
+export async function getOrderNumber(): Promise<number> {
+  const res = await query("select nextval('order_number_idx');", [])
+  if (!res.rowCount) {
+    return Promise.reject("Could not get next order number.");
+  }
+  return res.rows[0].nextval as number;
+}
+
+export async function createOrder(userId: number, year: number, vippsReference: string): Promise<void> {
+  const res = await query(`
+    INSERT INTO orders
+    (user_id, year, status, vipps_reference)
+    VALUES
+    ($1, $2, 'CREATED', $3)
+    `,
+    [
+      userId,
+      year,
+      vippsReference,
+    ]
+  )
+  if (!res.rowCount) {
+    return Promise.reject("Could not create order");
+  }
+}
+
+export async function getOrderByUserIdAndVippsReference(userId: number, vippsReference: string): Promise<{ year: number, id: number }> {
+  const res = await query(`
+    SELECT id, year
+    FROM orders
+    WHERE user_id = $1 AND vipps_reference = $2
+    `,
+    [
+      userId,
+      vippsReference,
+    ]
+  )
+  if (!res.rowCount) {
+    return Promise.reject("Could not get order");
+  }
+  const row = res.rows[0];
+  return { year: row.year, id: row.id };
+}
+
+export async function addMember(userId: number, orderNumber: number, year: number) {
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+    const res = await client.query(`
+    UPDATE orders
+    SET status = 'COMPLETED'
+    WHERE id = $1;
+    `,
+      [
+        orderNumber,
+      ]
+    )
+    const res2 = await client.query(`
+      INSERT INTO memberships
+      (user_id, year)
+      VALUES
+      ($1, $2);
+    `,
+      [
+        userId,
+        year,
+      ]
+    )
+    if (!res.rowCount || !res2.rowCount) {
+      throw "Could not add member";
+    }
+    await client.query("COMMIT");
+  } catch (e) {
+    await client.query("ROLLBACK")
+    throw e
+  } finally {
+    client.release()
+  }
+}
