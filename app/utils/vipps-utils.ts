@@ -38,6 +38,7 @@ async function getAccessToken(): Promise<string> {
       }
     )
     if (!res.ok) {
+      console.log(await res.json());
       return Promise.reject("Could not get Vipps access token.");
     }
     const accessToken = await res.json() as VippsAccessTokenResponse;
@@ -73,6 +74,7 @@ export async function createVippsPaymentAndGetRedirectUrl(userId: number, paymen
     }
   )
   if (!res.ok) {
+    console.log(await res.json());
     return Promise.reject("Could not create Vipps payment.");
   }
   const payment = await res.json() as VippsPaymentCreateReponse;

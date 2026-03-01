@@ -12,7 +12,8 @@ export async function POST(req: NextRequest) {
     try {
       const url = await createVippsPaymentAndGetRedirectUrl(userId, "WALLET", getBaseUrl(req));
       return NextResponse.json({ url: url });
-    } catch {
+    } catch (err) {
+      console.log(err);
       return NextResponse.json({ error: "Noe gikk galt" }, { status: 500 });
     }
   } catch {
