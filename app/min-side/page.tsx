@@ -1,6 +1,7 @@
 import Title from "@/app/ui/title";
 import UserData from "../components/user-data";
 import { getSessionToken } from "../utils/auth-utils";
+import BlueLink from "../ui/blue-link";
 import BliMedlemButton from "../components/bli-medlem-button";
 import { isUserMember } from "../utils/user-utils";
 
@@ -18,6 +19,7 @@ async function MyPage() {
           <BliMedlemButton paymentType="card" />
         </div>
       )}
+      <BlueLink href="/min-side/innstillinger">Innstillinger</BlueLink>
     </div>
   );
 }
