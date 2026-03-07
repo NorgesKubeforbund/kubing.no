@@ -8,3 +8,11 @@ export type User = {
   email: string,
   dob: string,
 };
+
+export type UserData =  User & {
+  isMember: boolean
+};
+
+export type VippsPaymentType = "WALLET" | "CARD";
+
+export type VippsPaymentStatus = "CREATED" | "ABORTED" | "EXPIRED" |  "AUTHORIZED" | "TERMINATED";
