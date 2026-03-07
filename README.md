@@ -43,4 +43,10 @@ POSTGRES_HOST=localhost # Use "db" for docker
 POSTGRES_PORT=5432
 JWT_SECRET={secret} # openssl rand -base64 32
 TOKEN_ENCRYPTION_SECRET={secret} # openssl rand -base64 32
+VIPPS_CLIENT_ID={clientId}
+VIPPS_CLIENT_SECRET={secret}
+VIPPS_SUBSCRIPTION_KEY={Ocp-Apim-Subscription-Key}
+VIPPS_MSN={Merchant-Serial-Number}
+VIPPS_URL=https://apitest.vipps.no # https://api.vipps.no for production
+VIPPS_REF={unique reference}
 ```
