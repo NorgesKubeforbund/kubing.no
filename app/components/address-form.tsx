@@ -3,7 +3,7 @@
 import { MouseEvent, useEffect, useRef, useState } from "react"
 import { KartverketAddressResponse } from "../utils/response-types";
 
-export default function AddressForm() {
+export default function AddressForm({ setFieldsFilled }: { setFieldsFilled: (fieldsFilled: boolean) => void }) {
   const [addressSearch, setAddressSearch] = useState<string>("");
   const [address, setAddress] = useState<string>("");
   const [postCode, setPostCode] = useState<string>("");
@@ -15,7 +15,6 @@ export default function AddressForm() {
     if (hasSelectedRef.current) {
       return;
     }
-    setAddresses(null);
     if (addressSearch.trim() === "") {
       return;
     }
@@ -47,12 +46,13 @@ export default function AddressForm() {
     setPostCode(selected.postnummer);
     setPostArea(selected.poststed);
     setAddresses(null);
+    setFieldsFilled(true);
     hasSelectedRef.current = true;
   }
 
   return (
     <>
-      <input className="w-full max-w-96 border border-gray-400 rounded-md px-3 py-2" type="text" value={addressSearch} placeholder="Adressesøk" onChange={(v) => { hasSelectedRef.current = false; setAddressSearch(v.target.value); }} />
+      <input className="w-full max-w-96 border border-gray-400 rounded-md px-3 py-2" type="text" value={addressSearch} placeholder="Adressesøk" onChange={(v) => { hasSelectedRef.current = false; setAddressSearch(v.target.value); setAddresses(null); }} />
       <input className="w-full max-w-96 border border-gray-400 rounded-md px-3 py-2 cursor-not-allowed" type="text" value={address} readOnly placeholder="Adresse" name="address" />
       <input className="w-full max-w-96 border border-gray-400 rounded-md px-3 py-2 cursor-not-allowed" type="text" value={postCode} readOnly placeholder="Postnummer" name="postCode" />
       <input className="w-full max-w-96 border border-gray-400 rounded-md px-3 py-2 cursor-not-allowed" type="text" value={postArea} readOnly placeholder="Poststed" name="postArea" />

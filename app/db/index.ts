@@ -1,6 +1,6 @@
 import { Pool, QueryResult } from "pg";
 import { WCAOAuthTokenResponse, WCAProfileResponse } from "@/app/utils/response-types";
-import { User } from "@/app/utils/types";
+import { Address, User } from "@/app/utils/types";
 
 const pool = new Pool({
   database: process.env.POSTGRES_DB ?? "postgres",
@@ -122,7 +122,7 @@ export async function getWcaTokensFromSessionId(sessionId: string): Promise<{ ac
   return { accessToken: row.wca_access_token as string, refreshToken: row.wca_refresh_token as string };
 }
 
-export async function addUser(user: WCAProfileResponse) {
+export async function addUser(user: WCAProfileResponse, address: Address | null) {
   const res = await query(`
     INSERT INTO users (
     name,
@@ -130,10 +130,13 @@ export async function addUser(user: WCAProfileResponse) {
     wca_id,
     email,
     dob,
+    address,
+    post_code,
+    post_area,
     created_at
     )
     VALUES
-    ($1, $2, $3, $4, $5, NOW())
+    ($1, $2, $3, $4, $5, $6, $7, $8, NOW())
     RETURNING id;
     `,
     [
@@ -142,6 +145,9 @@ export async function addUser(user: WCAProfileResponse) {
       user.me.wca_id,
       user.me.email,
       user.me.dob,
+      address?.address,
+      address?.postCode,
+      address?.postArea,
     ]
   );
   const id = res.rows.at(0).id;
@@ -159,7 +165,7 @@ export async function addUser(user: WCAProfileResponse) {
 
 export async function getUser(userId: number): Promise<User> {
   const res = await query(`
-    SELECT name, wca_id, email, dob FROM users
+    SELECT name, wca_id, email, dob, address, post_code, post_area FROM users
     WHERE id = $1
     `,
     [
@@ -175,6 +181,7 @@ export async function getUser(userId: number): Promise<User> {
     wcaId: row.wca_id,
     email: row.email,
     dob: row.dob,
+    address: row.address ? {address: row.address, postCode: row.post_code, postArea: row.post_area} : null,
   };
 }
 
@@ -273,5 +280,23 @@ export async function addMember(userId: number, orderNumber: number, year: numbe
     throw e
   } finally {
     client.release()
+  }
+}
+
+export async function updateAddress(userId: number, address: Address) {
+  const res = await query(`
+    UPDATE users
+    SET address = $1, post_code = $2, post_area = $3
+    WHERE id = $4
+    `,
+    [
+      address.address,
+      address.postCode,
+      address.postArea,
+      userId,
+    ]
+  )
+  if (!res.rowCount) {
+    return Promise.reject("Could not update address");
   }
 }
