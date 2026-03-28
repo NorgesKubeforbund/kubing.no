@@ -36,7 +36,7 @@ function HeaderLink({
   return (
     <Link
       href={page.path}
-      className={`${className ?? ""} hover:text-accent-text ${page.path === pathname && !isResourcesOpen ? "text-accent-text" : ""}`}
+      className={`${className ?? ""} font-semibold active:text-accent-text hover:text-accent-text ${page.path === pathname && !isResourcesOpen ? "text-accent-text" : ""}`}
       onClick={onClick}
     >
       {page.name}
@@ -63,7 +63,7 @@ function ResourcesDropdown({
     <div className="relative inline-block">
       <button
         ref={resourcesButtonRef}
-        className={`hover:text-accent-text cursor-pointer text-left ${"ressurser" === pathname.split("/").at(1) || isResourcesOpen
+        className={`font-semibold active:text-accent-text hover:text-accent-text cursor-pointer text-left ${"ressurser" === pathname.split("/").at(1) || isResourcesOpen
           ? "text-accent-text"
           : ""
           }`}
@@ -72,7 +72,7 @@ function ResourcesDropdown({
         Ressurser
       </button>
       {isResourcesOpen && (
-        <div ref={popoverRef} className="absolute left-1/2 -translate-x-1/2 translate-y-4 w-64 lg:w-48 rounded-xl bg-background-secondary border-4 lg:border-2 border-white p-4 z-50 shadow-md">
+        <div ref={popoverRef} className="absolute left-1/2 -translate-x-1/2 translate-y-4 w-72 lg:w-48 rounded-xl bg-background-secondary border-4 lg:border-2 border-white p-4 z-50 shadow-md">
           <div className="flex flex-col gap-2 text-center">
             {resourceLinks.map((page) =>
               <HeaderLink
@@ -128,7 +128,7 @@ function Header() {
             alt="Norges Kubeforbund sin logo"
             className="w-auto h-auto"
           />
-          <div className="text-2xl min-[450px]:text-3xl hidden min-[375px]:flex flex-col justify-center">
+          <div className="font-bold text-2xl min-[450px]:text-3xl hidden min-[375px]:flex flex-col justify-center">
             Norges<br />
             Kubeforbund
           </div>
@@ -141,7 +141,7 @@ function Header() {
                 setIsResourcesOpen(false)
               }
             }}
-            className="cursor-pointer group hover:ring-2 p-1.5 rounded-sm ring-gray-400"
+            className="cursor-pointer group active:ring-2 hover:ring-2 p-1.5 rounded-sm ring-neutral-400"
           >
             <div className="space-y-1.5">
               <span className="block w-6 h-0.75 bg-white"></span>
@@ -151,8 +151,8 @@ function Header() {
           </button>
         </div>
       </div>
-      <div className={`${isOpen ? "flex" : "hidden"} lg:flex flex-row lg:flex-col justify-center p-4 text-2xl lg:text-[16px]`}>
-        <div className="flex flex-col lg:flex-row justify-between gap-6">
+      <div className={`${isOpen ? "flex" : "hidden"} lg:flex flex-row lg:flex-col justify-center p-3 text-2xl lg:text-[16px]`}>
+        <div className="flex flex-col lg:flex-row justify-between gap-5">
           {leftPages.map((page) =>
             <HeaderLink page={page} key={page.name} onClick={closeHeader} pathname={pathname} isResourcesOpen={isResourcesOpen} />
           )}

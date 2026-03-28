@@ -28,12 +28,12 @@ async function PastComps() {
                     <td className="text-left">
                       <div className="flex flex-col">
                         <Link
-                          className="text-accent-text hover:underline"
+                          className="text-accent-text active:underline hover:underline"
                           href={comp.url}
                         >
                           {comp.short_name}
                         </Link>
-                          <span className="text-[0.85em] text-gray-800">
+                          <span className="text-[0.85em] text-neutral-800">
                             {comp.city}
                           </span>
                         </div>

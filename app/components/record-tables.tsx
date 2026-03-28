@@ -20,19 +20,19 @@ function RecordTables({
       <div className="flex flex-row justify-center">
         <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 justify-center">
           <button
-            className={`bg-gray-100 hover:bg-gray-300 cursor-pointer border rounded-md px-2 py-1 w-fit ${selected === "wca" && "ring-2 ring-blue-400"}`}
+            className={`bg-neutral-100 active:bg-neutral-300 hover:bg-neutral-300 cursor-pointer border rounded-md px-2 py-1 w-fit ${selected === "wca" && "ring-2 ring-blue-400"}`}
             onClick={() => setSelected("wca")}
           >
             Offisielle rekorder
           </button>
           <button
-            className={`bg-gray-100 hover:bg-gray-300 cursor-pointer border rounded-md px-2 py-1 w-fit ${selected === "unofficial" && "ring-2 ring-blue-400"}`}
+            className={`bg-neutral-100 active:bg-neutral-300 hover:bg-neutral-300 cursor-pointer border rounded-md px-2 py-1 w-fit ${selected === "unofficial" && "ring-2 ring-blue-400"}`}
             onClick={() => setSelected("unofficial")}
           >
             Uoffisielle rekorder
           </button>
           <button
-            className={`bg-gray-100 hover:bg-gray-300 cursor-pointer border rounded-md px-2 py-1 w-fit ${selected === "non-wca" && "ring-2 ring-blue-400"}`}
+            className={`bg-neutral-100 active:bg-neutral-300 hover:bg-neutral-300 cursor-pointer border rounded-md px-2 py-1 w-fit ${selected === "non-wca" && "ring-2 ring-blue-400"}`}
             onClick={() => setSelected("non-wca")}
           >
             Ikke-WCA rekorder
