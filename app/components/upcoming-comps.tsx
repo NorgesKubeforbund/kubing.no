@@ -19,30 +19,28 @@ async function UpcomingComps() {
           <tbody>
             {norwayCompData
               .slice()
-              .map((comp: CompResponse, index: number) => {
-                if (Date.parse(comp.end_date) > new Date().getTime()) {
-                  return (
-                    <tr key={comp.id} className={`hover:bg-table-hover ${(index+1) % 2 === 0 ? "bg-table-odd" : "bg-table-even"}`}>
-                      <td className="text-left">
-                        <div className="flex flex-col">
-                          <Link
-                            className="text-accent-text active:bg-table-hover hover:underline"
-                            href={comp.url}
-                          >
-                            {comp.short_name}
-                          </Link>
-                            <span className="text-[0.85em] text-neutral-800">
-                              {comp.city}
-                            </span>
-                          </div>
-                        </td>
-                      <td className="text-right whitespace-nowrap">
-                        {formatCompDate(comp.start_date, comp.end_date)}
-                      </td>
-                    </tr>
-                  );
-                }
-              })}
+              .filter((comp: CompResponse) => Date.parse(comp.end_date) > new Date().getTime())
+              .map((comp: CompResponse, index: number) =>
+                <tr key={comp.id} className={`hover:bg-table-hover ${index % 2 === 0 ? "bg-table-odd" : "bg-table-even"}`}>
+                  <td className="text-left">
+                    <div className="flex flex-col">
+                      <Link
+                        className="text-accent-text active:bg-table-hover hover:underline"
+                        href={comp.url}
+                      >
+                        {comp.short_name}
+                      </Link>
+                      <span className="text-[0.85em] text-neutral-800">
+                        {comp.city}
+                      </span>
+                    </div>
+                  </td>
+                  <td className="text-right whitespace-nowrap">
+                    {formatCompDate(comp.start_date, comp.end_date)}
+                  </td>
+                </tr>
+              )
+            }
           </tbody>
         </table>
       </div>
