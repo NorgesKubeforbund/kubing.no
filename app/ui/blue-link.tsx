@@ -6,7 +6,7 @@ function BlueLink({ href, children }: { href: Url, children?: ReactNode }) {
   return (
     <Link
       href={href}
-      className="text-link-text font-semibold hover:underline"
+      className="text-link-text font-semibold active:underline hover:underline"
     >
       {children}
     </Link>

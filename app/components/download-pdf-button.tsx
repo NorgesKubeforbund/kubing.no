@@ -16,7 +16,7 @@ function downloadPdf() {
 function DownloadPDFButton({ children }: { children?: ReactNode }) {
   return (
     <button
-      className="hover:underline cursor-pointer font-semibold text-link-text"
+      className="active:underline hover:underline cursor-pointer font-semibold text-link-text"
       onClick={downloadPdf}
     >
       {children}

@@ -48,7 +48,7 @@ function Delegates() {
           </BlueLink>
           {delegateArea.delegates.map((delegate) =>
             <Link
-              className="hover:underline"
+              className="active:underline hover:underline"
               href={`https://www.worldcubeassociation.org/persons/${delegate.wcaId}`}
               key={delegate.wcaId}
             >

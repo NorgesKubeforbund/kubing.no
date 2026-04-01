@@ -31,7 +31,7 @@ function Footer() {
           <Link
             href={link.href}
             key={link.text}
-            className="hover:text-accent-text"
+            className="font-semibold active:text-accent-text hover:text-accent-text"
           >
             {link.text}
           </Link>))}
