@@ -1,5 +1,7 @@
 import { GoogleSheetsRecords, WCAEvent, WCARecord, WCAResponse } from "./response-types";
 
+const WCA_API_BASEURL = "https://raw.githubusercontent.com/robiningelbrecht/wca-rest-api/refs/heads";
+
 function padRecords(records: string[][]) {
   for (const row of records) {
     const toAdd = 5 - row.length;
@@ -37,7 +39,7 @@ export async function getUnofficialNonWCARecords(): Promise<string[][]> {
 
 async function getName(wcaId: string): Promise<string> {
   const res = await fetch(
-    `https://raw.githubusercontent.com/robiningelbrecht/wca-rest-api/master/api/persons/${wcaId}.json`,
+    `${WCA_API_BASEURL}/v1/persons/${wcaId}.json`,
     { next: { revalidate: 3600 * 24 } }
   );
   if (!res.ok) {
@@ -93,7 +95,7 @@ function formatRecord(event: string, best: number, category: "single" | "average
 
 async function getCategoryRecord(event: WCAEvent, category: "single" | "average"): Promise<string[]> {
   const res = await fetch(
-    `https://raw.githubusercontent.com/robiningelbrecht/wca-rest-api/master/api/rank/NO/${category}/${event.id}.json`,
+    `${WCA_API_BASEURL}/v1/rank/NO/${category}/${event.id}.json`,
     { next: { revalidate: 3600 } }
   );
   if (!res.ok) {
@@ -114,7 +116,7 @@ async function getEventRecords(event: WCAEvent): Promise<string[]> {
 
 export async function getWCARecords(): Promise<string[][]> {
   const res = await fetch(
-    "https://raw.githubusercontent.com/robiningelbrecht/wca-rest-api/master/api/events.json",
+    `${WCA_API_BASEURL}/v1/events.json`,
     { next: { revalidate: 3600 * 24 } }
   );
   if (!res.ok) {
