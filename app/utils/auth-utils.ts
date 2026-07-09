@@ -5,6 +5,7 @@ import crypto from "crypto";
 import { WCAOAuthTokenResponse, WCAProfileResponse } from "./response-types";
 import { NextResponse } from "next/server";
 import { getWCAUserInfo } from "@/app/utils/wca-oauth-utils";
+import { Address } from "./types";
 
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET ?? "");
 const JWT_ALG = "HS256";
@@ -129,8 +130,8 @@ export function setAuthCookies(res: NextResponse, tokens: Tokens) {
   })
 }
 
-export async function createUser(sessionId: string, baseUrl: string) {
+export async function createUser(sessionId: string, baseUrl: string, address: Address | null) {
   const { accessToken, refreshToken } = await getWcaTokensFromSessionId(sessionId);
   const userInfo = await getWCAUserInfo(decryptToken(accessToken), decryptToken(refreshToken), baseUrl);
-  await addUser(userInfo);
+  await addUser(userInfo, address);
 }

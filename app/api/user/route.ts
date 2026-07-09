@@ -1,3 +1,4 @@
+import { getAddress } from "@/app/utils/address-utils";
 import {
   createUser,
   getRefreshToken,
@@ -20,7 +21,9 @@ export async function POST(req: NextRequest) {
     }
     try {
       const sessionId = decoded.payload.sub;
-      await createUser(sessionId!, getBaseUrl(req));
+      const body = await req.json();
+      const address = body.address ? await getAddress(body.address) : null;
+      await createUser(sessionId!, getBaseUrl(req), address);
       const tokens = await updateTokens(refreshToken);
       if (!tokens) {
         throw new Error("Could not generate tokens");
