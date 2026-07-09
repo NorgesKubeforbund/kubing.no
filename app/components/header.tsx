@@ -123,7 +123,7 @@ function LoginButton({
   return (
     <div className="relative inline-block">
       <button
-        className={`hover:text-accent-text cursor-pointer text-left ${"login" === pathname.split("/").at(1) && !isResourcesOpen ? "text-accent-text" : ""}`}
+        className={`font-semibold hover:text-accent-text cursor-pointer text-left ${"login" === pathname.split("/").at(1) && !isResourcesOpen ? "text-accent-text" : ""}`}
         onClick={handleLogin}
       >
         {loggedIn ? "Logg ut" : "Logg inn"}
