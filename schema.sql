@@ -4,7 +4,10 @@ CREATE TABLE IF NOT EXISTS users (
     wca_user_id INTEGER UNIQUE NOT NULL,
     wca_id VARCHAR(10) UNIQUE,
     email VARCHAR(150) UNIQUE NOT NULL,
-    dob VARCHAR(10) NOT NULL,
+    dob DATE NOT NULL,
+    address VARCHAR(200),
+    post_code VARCHAR(4),
+    post_area VARCHAR(100),
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 

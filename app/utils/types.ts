@@ -6,7 +6,8 @@ export type User = {
   name: string,
   wcaId: string | null,
   email: string,
-  dob: string,
+  dob: Date,
+  address: Address | null,
 };
 
 export type UserData =  User & {
@@ -16,3 +17,9 @@ export type UserData =  User & {
 export type VippsPaymentType = "WALLET" | "CARD";
 
 export type VippsPaymentStatus = "CREATED" | "ABORTED" | "EXPIRED" |  "AUTHORIZED" | "TERMINATED";
+
+export type Address = {
+  address: string,
+  postCode: string,
+  postArea: string,
+};

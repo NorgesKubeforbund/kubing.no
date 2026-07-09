@@ -170,6 +170,44 @@ export type WCAProfileResponse = {
   }
 };
 
+export type KartverketAddressResponse = {
+  metadata: {
+    side: number,
+    viserFra: number,
+    treffPerSide: number,
+    totaltAntallTreff: number,
+    asciiKompatibel: boolean,
+    sokeStreng: string,
+    viserTil: number,
+  },
+  adresser: {
+    adressenavn: string,
+    adressetekst: string,
+    adressetilleggsnavn: string,
+    adressekode: number,
+    nummer: number,
+    bokstav: string,
+    kommunenummer: string,
+    kommunenavn: string,
+    gardsnummer: number,
+    bruksnummer: number,
+    festenummer: number,
+    undernummer: number,
+    bruksenhetsnummer: string[],
+    objtype: "Vegadresse",
+    poststed: string,
+    postnummer: string,
+    adressetekstutenadressetilleggsnavn: string,
+    stedfestingverifisert: true,
+    representasjonspunkt: {
+      epsg: string,
+      lat: number,
+      lon: number
+    },
+    oppdateringsdato: string,
+  }[],
+};
+
 export type VippsAccessTokenResponse = {
   token_type: string,
   expires_in: number,
