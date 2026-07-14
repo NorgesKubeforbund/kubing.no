@@ -21,6 +21,10 @@ const links: { href: string, text: string }[] = [
     href: "/om-oss#kontakt-oss",
     text: "Kontakt oss"
   },
+  {
+    href: "/personvern",
+    text: "Personvernerklæring"
+  },
 ];
 
 function Footer() {
