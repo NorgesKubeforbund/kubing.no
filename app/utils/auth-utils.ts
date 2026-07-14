@@ -1,11 +1,12 @@
 import * as jose from "jose";
 import { cookies } from "next/headers";
-import { addUser, getUserIdFromWCAUserId, getWcaTokensFromSessionId, saveSession, updateSession, updateUserInfo } from "@/app/db";
+import { addMembershipIfManuallyPaid, addUser, getUserIdFromWCAUserId, getWcaTokensFromSessionId, saveSession, updateSession, updateUserInfo } from "@/app/db";
 import crypto from "crypto";
 import { WCAOAuthTokenResponse, WCAProfileResponse } from "./response-types";
 import { NextResponse } from "next/server";
 import { getWCAUserInfo } from "@/app/utils/wca-oauth-utils";
 import { Address } from "./types";
+import { getCurrentYear } from "./time-utils";
 
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET ?? "");
 const JWT_ALG = "HS256";
@@ -133,7 +134,11 @@ export function setAuthCookies(res: NextResponse, tokens: Tokens) {
 export async function createUser(sessionId: string, baseUrl: string, address: Address | null) {
   const { accessToken, refreshToken } = await getWcaTokensFromSessionId(sessionId);
   const userInfo = await getWCAUserInfo(decryptToken(accessToken), decryptToken(refreshToken), baseUrl);
-  await addUser(userInfo, address);
+  const id = await addUser(userInfo, address);
+  const year = getCurrentYear()
+  if (userInfo.me.wca_id && year === 2026) {
+    await addMembershipIfManuallyPaid(id, userInfo.me.wca_id, year);
+  }
 }
 
 export async function updateWCAInfo(userId: number, sessionId: string, baseUrl: string) {
