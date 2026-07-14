@@ -4,7 +4,7 @@ import { getUserData } from "@/app/utils/user-utils";
 async function UserData({ userId }: { userId: number }) {
   const userData = await getUserData(userId);
   return (
-    <table className="text-left">
+    <table className="text-left self-center">
       <tbody>
         <tr>
           <td>Navn:</td>
@@ -14,7 +14,7 @@ async function UserData({ userId }: { userId: number }) {
           <td>WCA ID:</td>
           <td>{userData.wcaId}</td>
         </tr>
-        <tr>
+        <tr className="wrap-anywhere">
           <td>Epost:</td>
           <td>{userData.email}</td>
         </tr>

@@ -163,6 +163,29 @@ export async function addUser(user: WCAProfileResponse, address: Address | null)
   );
 }
 
+export async function updateUserInfo(userId: number, user: WCAProfileResponse) {
+  const res = await query(`
+    UPDATE users
+    SET
+      name = $1,
+      email = $2,
+      dob = $3
+    WHERE 
+      id = $4
+    `,
+    [
+      user.me.name,
+      user.me.email,
+      user.me.dob,
+      userId
+    ]
+  );
+  if (!res.rowCount) {
+    return Promise.reject("User does not exist.");
+  }
+  return;
+}
+
 export async function getUser(userId: number): Promise<User> {
   const res = await query(`
     SELECT name, wca_id, email, dob, address, post_code, post_area FROM users

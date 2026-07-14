@@ -8,24 +8,28 @@ export async function POST(req: NextRequest) {
   try {
     const userId = (await getSessionToken()).payload.userId as number;
     if (userId === undefined) {
-      return NextResponse.json({ error: "Ingen bruker er laget enda" }, { status: 403 });
-    }
-    const body = await req.json();
-    if (!body.address) {
-      return NextResponse.json({ error: "Adresse ikke gitt som parameter." }, { status: 400 });
+      return NextResponse.json({ error: "Ingen bruker er laget enda." }, { status: 403 });
     }
     try {
-      const address = await getAddress(body.address);
+      const body = await req.json();
+      if (!body.address) {
+        return NextResponse.json({ error: "Adresse ikke gitt som parameter." }, { status: 400 });
+      }
       try {
-        await updateAddress(userId, address);
-        return NextResponse.json({ message: "Adresse oppdatert" });
+        const address = await getAddress(body.address);
+        try {
+          await updateAddress(userId, address);
+          return NextResponse.json({ message: "Adresse oppdatert." });
+        } catch {
+          return NextResponse.json({ error: "Noe gikk galt." }, { status: 500 });
+        }
       } catch {
-        return NextResponse.json({ error: "Noe gikk galt" }, { status: 500 });
+        return NextResponse.json({ error: "Ikke gyldig addresse." }, { status: 400 });
       }
     } catch {
-      return NextResponse.json({ error: "Ikke gyldig addresse" }, { status: 400 });
+      return NextResponse.json({ error: "Input har ikke gyldig format." }, { status: 400 });
     }
   } catch {
-    return NextResponse.json({ error: "Ikke autentisert" }, { status: 401 });
+    return NextResponse.json({ error: "Ikke autentisert." }, { status: 401 });
   }
 }

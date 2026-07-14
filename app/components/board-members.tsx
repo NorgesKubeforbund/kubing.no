@@ -1,3 +1,4 @@
+import Title from "../ui/title";
 import { getBrregData } from "../utils/brreg-utils";
 import { BrregResponse } from "../utils/response-types";
 
@@ -5,7 +6,7 @@ async function BoardMembers() {
   const boardMembers = await getBrregData();
   return (
     <div className="flex flex-col gap-4">
-      <div className="text-3xl font-semibold">Styret</div>
+      <Title small>Styret</Title>
       <div className="flex flex-row justify-center">
         <table>
           <thead>

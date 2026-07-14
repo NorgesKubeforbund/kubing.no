@@ -2,6 +2,7 @@
 
 import { SubmitEvent, useState } from "react";
 import emailjs from "@emailjs/browser";
+import Title from "../ui/title";
 
 function ContactForm({ serviceId }: { serviceId: string }) {
   const [delivered, setDelivered] = useState<boolean>(false);
@@ -52,7 +53,7 @@ function ContactForm({ serviceId }: { serviceId: string }) {
 
   return (
     <div className="flex flex-col gap-4" id="kontakt-oss">
-      <div className="text-3xl font-semibold">Ta kontakt med NKF her:</div>
+      <Title small>Ta kontakt med NKF her:</Title>
       {delivered
         ? <p>Epost er levert</p>
         : <div className="flex flex-row justify-center w-full">
@@ -83,7 +84,7 @@ function ContactForm({ serviceId }: { serviceId: string }) {
                   name="email"
                   type="email"
                   id="email"
-                  placeholder="Din e-post..."
+                  placeholder="Din epost..."
                   autoComplete="email"
                   required
                 />
@@ -97,7 +98,7 @@ function ContactForm({ serviceId }: { serviceId: string }) {
             </div>
             <div className="flex flex-row justify-center">
               <button className="bg-neutral-100 active:bg-neutral-400 hover:bg-neutral-400 cursor-pointer border rounded-md px-2 py-1 w-fit" type="submit">
-                Send Mail
+                Send epost
               </button>
             </div>
           </form>
