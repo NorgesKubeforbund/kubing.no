@@ -1,4 +1,5 @@
 import UpcomingComps from "./components/upcoming-comps";
+import BlueLink from "./ui/blue-link";
 import Title from "./ui/title";
 
 async function Home() {
@@ -23,6 +24,18 @@ async function Home() {
             Speedkubing er en sport hvor målet er å løse Rubiks kube og andre liknende puslespill på kortest mulig tid.
             Flere ganger årlig arrangeres det konkurranser i Norge (og i resten av verden),
             hvor deltakerne løser Rubiks kube på tid.
+          </p>
+        </div>
+        <div className="flex flex-col gap-4">
+          <Title>Bli medlem</Title>
+          <p>
+            Medlemskap i Norges Kubeforbund koster 100 kroner i året. Ved å bli medlem støtter
+            du arbeidet vårt slik at vi blant annet kan arrangere flere og større konkurranser.
+            Medlem får ofte rabatt på norske konkurranser.
+          </p>
+          <p>
+            For å bli medlem må du <BlueLink href="/login">logge inn</BlueLink> med WCA, opprette bruker og betale
+            medlemskontigent med enten Vipps eller kort.
           </p>
         </div>
       </div>
