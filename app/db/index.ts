@@ -122,7 +122,7 @@ export async function getWcaTokensFromSessionId(sessionId: string): Promise<{ ac
   return { accessToken: row.wca_access_token as string, refreshToken: row.wca_refresh_token as string };
 }
 
-export async function addUser(user: WCAProfileResponse, address: Address | null) {
+export async function addUser(user: WCAProfileResponse, address: Address | null): Promise<number> {
   const res = await query(`
     INSERT INTO users (
     name,
@@ -161,6 +161,27 @@ export async function addUser(user: WCAProfileResponse, address: Address | null)
       user.me.id,
     ]
   );
+  return id;
+}
+
+export async function addMembershipIfManuallyPaid(userId: number, wcaId: string, year: number): Promise<void> {
+  const hasManuallyPaid = (await query("SELECT * FROM manual_payments WHERE wca_id = $1", [wcaId])).rowCount;
+  if (hasManuallyPaid) {
+    const addMembership = await query(`
+      INSERT INTO memberships
+      (user_id, year)
+      VALUES
+      ($1, $2);
+    `,
+      [
+        userId,
+        year,
+      ]
+    );
+    if (!addMembership.rowCount) {
+      throw new Error("Could not add membership");
+    }
+  }
 }
 
 export async function updateUserInfo(userId: number, user: WCAProfileResponse) {
@@ -204,7 +225,7 @@ export async function getUser(userId: number): Promise<User> {
     wcaId: row.wca_id,
     email: row.email,
     dob: row.dob,
-    address: row.address ? {address: row.address, postCode: row.post_code, postArea: row.post_area} : null,
+    address: row.address ? { address: row.address, postCode: row.post_code, postArea: row.post_area } : null,
   };
 }
 

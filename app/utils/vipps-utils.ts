@@ -69,7 +69,7 @@ export async function createVippsPaymentAndGetRedirectUrl(userId: number, paymen
         "reference": vippsReference,
         "returnUrl": `${url}/api/membership/claim?orderId=${vippsReference}`,
         "userFlow": "WEB_REDIRECT",
-        "paymentDescription": `Medlemsskap i NKF ${new Date().getFullYear()}`,
+        "paymentDescription": `Medlemsskap i NKF ${getCurrentYear()}`,
       }),
     }
   )

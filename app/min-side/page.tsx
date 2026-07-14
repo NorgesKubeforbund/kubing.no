@@ -4,6 +4,7 @@ import BlueLink from "@/app/ui/blue-link";
 import BliMedlemButton from "@/app/components/bli-medlem-button";
 import { isUserMember } from "@/app/utils/user-utils";
 import MembershipBadge from "@/app/components/membership-badge";
+import { getCurrentYear } from "../utils/time-utils";
 
 async function MyPage() {
   const userId = (await getSessionToken()).payload.userId as number;
@@ -14,7 +15,13 @@ async function MyPage() {
       <MembershipBadge isMember={isMember} />
       {!isMember && (
         <div className="flex flex-col gap-4">
-          <div className="text-2xl font-semibold text-accent-text">Bli medlem</div>
+          <Title small>Bli medlem</Title>
+          {getCurrentYear() === 2026 &&
+            <p>
+              Hvis du betalte medlemskontigent før den nye betalingsløsningen,
+              ta kontakt <BlueLink href="/om-oss#kontakt-oss">her</BlueLink>.
+            </p>
+          }
           <BliMedlemButton paymentType="vipps" />
           <BliMedlemButton paymentType="card" />
         </div>
