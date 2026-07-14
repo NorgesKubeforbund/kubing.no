@@ -1,6 +1,6 @@
 import * as jose from "jose";
 import { cookies } from "next/headers";
-import { addUser, getUserIdFromWCAUserId, getWcaTokensFromSessionId, saveSession, updateSession } from "@/app/db";
+import { addUser, getUserIdFromWCAUserId, getWcaTokensFromSessionId, saveSession, updateSession, updateUserInfo } from "@/app/db";
 import crypto from "crypto";
 import { WCAOAuthTokenResponse, WCAProfileResponse } from "./response-types";
 import { NextResponse } from "next/server";
@@ -134,4 +134,10 @@ export async function createUser(sessionId: string, baseUrl: string, address: Ad
   const { accessToken, refreshToken } = await getWcaTokensFromSessionId(sessionId);
   const userInfo = await getWCAUserInfo(decryptToken(accessToken), decryptToken(refreshToken), baseUrl);
   await addUser(userInfo, address);
+}
+
+export async function updateWCAInfo(userId: number, sessionId: string, baseUrl: string) {
+  const { accessToken, refreshToken } = await getWcaTokensFromSessionId(sessionId);
+  const userInfo = await getWCAUserInfo(decryptToken(accessToken), decryptToken(refreshToken), baseUrl);
+  await updateUserInfo(userId, userInfo);
 }
