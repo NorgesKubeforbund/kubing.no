@@ -1,4 +1,4 @@
-import { GoogleSheetsRecords, WCAEvent, WCARecord, WCAResponse } from "./response-types";
+import { GoogleSheetsRecords, WCAEvent, WCARecord, WCAResponse } from "@/types/responses";
 
 const WCA_URL = process.env.REACT_APP_NORSKEREKORDERWCA_KEY ?? "";
 const NON_WCA_URL = process.env.REACT_APP_NORSKEREKORDERNONWCA_KEY ?? ""

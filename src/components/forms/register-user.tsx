@@ -1,9 +1,9 @@
 "use client"
 
-import Title from "@/app/ui/title";
+import Title from "@/components/ui/title";
 import { useRouter } from "next/navigation";
 import { SubmitEvent, useState } from "react";
-import AddressForm from "./address-form";
+import AddressForm from "@/components/forms/address-form";
 
 function RegisterUser() {
   const router = useRouter();

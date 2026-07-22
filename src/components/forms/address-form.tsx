@@ -1,7 +1,7 @@
 "use client";
 
 import { MouseEvent, useEffect, useRef, useState } from "react"
-import { KartverketAddressResponse } from "../utils/response-types";
+import { KartverketAddressResponse } from "@/types/responses";
 
 export default function AddressForm({ setFieldsFilled }: { setFieldsFilled: (fieldsFilled: boolean) => void }) {
   const [addressSearch, setAddressSearch] = useState<string>("");

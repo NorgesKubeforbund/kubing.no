@@ -1,7 +1,7 @@
-import BoardMembers from "../components/board-members";
-import ContactForm from "../components/contact-form";
-import BlueLink from "../ui/blue-link";
-import Title from "../ui/title";
+import BoardMembers from "@/components/board-members";
+import ContactForm from "@/components/forms/contact-form";
+import BlueLink from "@/components/ui/blue-link";
+import Title from "@/components/ui/title";
 
 function Introduction() {
   return (

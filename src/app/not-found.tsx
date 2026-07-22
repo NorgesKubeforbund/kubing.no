@@ -1,5 +1,3 @@
-
-
 function NotFound() {
   return (
     <div className="flex flex-row justify-center p-4 text-2xl">

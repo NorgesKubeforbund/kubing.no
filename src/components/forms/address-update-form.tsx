@@ -1,5 +1,5 @@
 "use client";
-import AddressForm from "@/app/components/address-form";
+import AddressForm from "@/components/forms/address-form";
 import { SubmitEvent, useState } from "react";
 
 export default function AddressUpdateForm() {

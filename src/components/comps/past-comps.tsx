@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { CompResponse } from "../utils/response-types";
-import Title from "../ui/title";
-import { formatCompDate, getNorwayCompData } from "../utils/comp-utils";
+import { CompResponse } from "@/types/responses";
+import Title from "@/components/ui/title";
+import { formatCompDate, getNorwayCompData } from "@/lib/comps";
 
 async function PastComps() {
   const norwayCompData = await getNorwayCompData();

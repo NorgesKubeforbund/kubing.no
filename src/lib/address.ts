@@ -1,5 +1,5 @@
-import { KartverketAddressResponse } from "@/app/utils/response-types";
-import { Address } from "@/app/utils/types";
+import { KartverketAddressResponse } from "@/types/responses";
+import { Address } from "@/types";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function getAddress(body: any): Promise<Address> {

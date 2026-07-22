@@ -1,5 +1,5 @@
-import BlueLink from "@/app/ui/blue-link";
-import Title from "@/app/ui/title";
+import BlueLink from "@/components/ui/blue-link";
+import Title from "@/components/ui/title";
 
 const stores: { name: string, link: string, description: string }[] = [
   { name: "Cuboss", link: "https://cuboss.com", description: "Cuboss er en kubebutikk lokalisert i Sverige. De har et bra utvalg og kort leveringstid." },

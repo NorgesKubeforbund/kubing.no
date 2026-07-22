@@ -1,6 +1,6 @@
 import { Pool, QueryResult } from "pg";
-import { WCAOAuthTokenResponse, WCAProfileResponse } from "@/app/utils/response-types";
-import { Address, User } from "@/app/utils/types";
+import { WCAOAuthTokenResponse, WCAProfileResponse } from "@/types/responses";
+import { Address, User } from "@/types";
 
 const pool = new Pool({
   database: process.env.POSTGRES_DB ?? "postgres",

@@ -1,6 +1,6 @@
-import { getUser, isUserMemberInYear } from "@/app/db";
-import { UserData } from "@/app/utils/types";
-import { getCurrentYear } from "./time-utils";
+import { getUser, isUserMemberInYear } from "@/db";
+import { UserData } from "@/types";
+import { getCurrentYear } from "./time";
 
 export async function getUserData(userId: number): Promise<UserData> {
   const user = await getUser(userId);

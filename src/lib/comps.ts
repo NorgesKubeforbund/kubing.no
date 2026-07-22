@@ -1,4 +1,4 @@
-import { CompResponse } from "./response-types";
+import { CompResponse } from "@/types/responses";
 
 export const formatCompDate = (startDate: string, endDate: string): string => {
   const compStart = new Date(startDate);

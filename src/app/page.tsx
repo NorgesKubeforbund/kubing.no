@@ -1,6 +1,6 @@
-import UpcomingComps from "./components/upcoming-comps";
-import BlueLink from "./ui/blue-link";
-import Title from "./ui/title";
+import UpcomingComps from "@/components/comps/upcoming-comps";
+import BlueLink from "@/components/ui/blue-link";
+import Title from "@/components/ui/title";
 
 async function Home() {
   return (

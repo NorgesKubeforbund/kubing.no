@@ -1,8 +1,8 @@
-import Title from "@/app/ui/title";
-import { getSessionToken } from "@/app/utils/auth-utils";
+import Title from "@/components/ui/title";
+import { getSessionToken } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import LoginButton from "@/app/components/login-button";
-import { clientId } from "@/app/utils/wca-oauth-utils";
+import LoginButton from "@/components/login-button";
+import { clientId } from "@/lib/wca-oauth";
 
 async function Login() {
   let decoded;

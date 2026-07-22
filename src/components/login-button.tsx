@@ -1,6 +1,6 @@
 "use client";
 
-import { getWCALoginUrl } from "@/app/utils/wca-oauth-utils";
+import { getWCALoginUrl } from "@/lib/wca-oauth";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 

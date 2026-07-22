@@ -1,7 +1,7 @@
-import { addMember, createOrder, getOrderByUserIdAndVippsReference, getOrderNumber } from "../db";
-import { VippsAccessTokenResponse, VippsPaymentCreateReponse, VippsPaymentStatusReponse } from "./response-types";
-import { getCurrentYear } from "./time-utils";
-import { VippsPaymentStatus, VippsPaymentType } from "./types";
+import { addMember, createOrder, getOrderByUserIdAndVippsReference, getOrderNumber } from "@/db";
+import { VippsAccessTokenResponse, VippsPaymentCreateReponse, VippsPaymentStatusReponse } from "@/types/responses";
+import { getCurrentYear } from "@/lib/time";
+import { VippsPaymentStatus, VippsPaymentType } from "@/types";
 
 
 type VippsAccessToken = { accessToken: string, expiresAt: Date }

@@ -1,9 +1,9 @@
 import Link from "next/link";
-import PastComps from "../components/past-comps";
-import UpcomingComps from "../components/upcoming-comps";
-import Title from "../ui/title";
-import EasterEgg from "../components/easter-egg";
-import BlueLink from "../ui/blue-link";
+import PastComps from "@/components/comps/past-comps";
+import UpcomingComps from "@/components/comps/upcoming-comps";
+import Title from "@/components/ui/title";
+import EasterEgg from "@/components/easter-egg";
+import BlueLink from "@/components/ui/blue-link";
 
 const delegates: { area: string, delegates: { name: string, mail: string, wcaId: string }[] }[] = [
   {

@@ -1,4 +1,4 @@
-import { getAddress } from "@/app/utils/address-utils";
+import { getAddress } from "@/lib/address";
 import {
   createUser,
   getRefreshToken,
@@ -6,8 +6,8 @@ import {
   SESSION_TOKEN_NAME,
   setAuthCookies,
   updateTokens
-} from "@/app/utils/auth-utils";
-import { getBaseUrl } from "@/app/utils/url-utils";
+} from "@/lib/auth";
+import { getBaseUrl } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {

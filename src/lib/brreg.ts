@@ -1,4 +1,4 @@
-import { BrregResponse } from "./response-types";
+import { BrregResponse } from "@/types/responses";
 
 export async function getBrregData(): Promise<BrregResponse[]> {
   const res = await fetch(

@@ -1,5 +1,5 @@
-import { getSessionToken, updateWCAInfo } from "@/app/utils/auth-utils";
-import { getBaseUrl } from "@/app/utils/url-utils";
+import { getSessionToken, updateWCAInfo } from "@/lib/auth";
+import { getBaseUrl } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {

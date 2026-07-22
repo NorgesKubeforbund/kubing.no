@@ -1,5 +1,5 @@
-import BlueLink from "@/app/ui/blue-link";
-import Title from "@/app/ui/title"
+import BlueLink from "@/components/ui/blue-link";
+import Title from "@/components/ui/title"
 
 const links: { name: string, link: string, description: string }[] = [
   { name: "WCA", link: "https://www.worldcubeassociation.org", description: "WCA (World Cube Association) sine hjemmesider inneholder resultater og informasjon om alle offisielle konkurranser i hele verden. Du kan også finne profilen til alle som har deltatt på konkurranser." },

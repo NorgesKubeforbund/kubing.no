@@ -1,4 +1,4 @@
-import { getSessionToken } from "@/app/utils/auth-utils";
+import { getSessionToken } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
 export async function GET() {

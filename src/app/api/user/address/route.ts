@@ -1,6 +1,6 @@
-import { updateAddress } from "@/app/db";
-import { getAddress } from "@/app/utils/address-utils";
-import { getSessionToken } from "@/app/utils/auth-utils";
+import { updateAddress } from "@/db";
+import { getAddress } from "@/lib/address";
+import { getSessionToken } from "@/lib/auth";
 
 import { NextRequest, NextResponse } from "next/server";
 

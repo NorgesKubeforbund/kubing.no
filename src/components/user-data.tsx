@@ -1,5 +1,4 @@
-import { getUserData } from "@/app/utils/user-utils";
-
+import { getUserData } from "@/lib/user";
 
 async function UserData({ userId }: { userId: number }) {
   const userData = await getUserData(userId);
