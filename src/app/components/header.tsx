@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import logo from "@/public/NKF_Logo_trans.png"
+import logo from "@/assets/NKF_Logo_trans.png"
 import { Ref, useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { resourceLinks } from "../ressurser/page";
