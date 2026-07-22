@@ -5,7 +5,7 @@ import Image from "next/image";
 import logo from "@/assets/NKF_Logo_trans.png"
 import { Ref, useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
-import { resourceLinks } from "../ressurser/page";
+import { resourceLinks } from "@/app/ressurser/page";
 import { useRouter } from "next/navigation";
 
 export type PagePath = { name: string, path: string };

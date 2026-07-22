@@ -1,4 +1,4 @@
-import { getUnofficialNonWCARecords } from "../utils/record-utils";
+import { getUnofficialNonWCARecords } from "@/lib/records";
 
 async function NonWCATable() {
   const unofficialWcaRecords = await getUnofficialNonWCARecords();

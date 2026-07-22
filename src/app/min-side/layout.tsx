@@ -1,6 +1,6 @@
-import { getSessionToken } from "../utils/auth-utils";
+import { getSessionToken } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import RegisterUser from "../components/register-user";
+import RegisterUser from "@/components/forms/register-user";
 
 export default async function MyPageLayout({
   children,

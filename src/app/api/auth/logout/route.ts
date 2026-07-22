@@ -1,6 +1,6 @@
-import { deleteSession } from "@/app/db";
-import { getSessionToken, REFRESH_TOKEN_NAME, SESSION_TOKEN_NAME } from "@/app/utils/auth-utils";
-import { getBaseUrl } from "@/app/utils/url-utils";
+import { deleteSession } from "@/db";
+import { getSessionToken, REFRESH_TOKEN_NAME, SESSION_TOKEN_NAME } from "@/lib/auth";
+import { getBaseUrl } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {

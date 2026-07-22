@@ -1,7 +1,7 @@
-import { getSessionToken } from "@/app/utils/auth-utils";
-import { getBaseUrl } from "@/app/utils/url-utils";
-import { isUserMember } from "@/app/utils/user-utils";
-import { createVippsPaymentAndGetRedirectUrl } from "@/app/utils/vipps-utils";
+import { getSessionToken } from "@/lib/auth";
+import { getBaseUrl } from "@/lib/utils";
+import { isUserMember } from "@/lib/user";
+import { createVippsPaymentAndGetRedirectUrl } from "@/lib/vipps";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {

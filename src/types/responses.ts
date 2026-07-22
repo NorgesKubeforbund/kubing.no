@@ -1,4 +1,4 @@
-import { VippsPaymentStatus, VippsPaymentType } from "./types";
+import { VippsPaymentStatus, VippsPaymentType } from "@/types";
 
 export type CompResponse = {
   id: string,

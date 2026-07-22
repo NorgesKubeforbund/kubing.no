@@ -1,4 +1,4 @@
-import { getWCARecords } from "../utils/record-utils";
+import { getWCARecords } from "@/lib/records";
 
 async function WCATable() {
   const wcaRecords = await getWCARecords();

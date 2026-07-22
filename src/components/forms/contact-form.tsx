@@ -2,7 +2,7 @@
 
 import { SubmitEvent, useState } from "react";
 import emailjs from "@emailjs/browser";
-import Title from "../ui/title";
+import Title from "@/components/ui/title";
 
 function ContactForm({ serviceId }: { serviceId: string }) {
   const [delivered, setDelivered] = useState<boolean>(false);

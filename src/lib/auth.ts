@@ -1,12 +1,12 @@
 import * as jose from "jose";
 import { cookies } from "next/headers";
-import { addMembershipIfManuallyPaid, addUser, getUserIdFromWCAUserId, getWcaTokensFromSessionId, saveSession, updateSession, updateUserInfo } from "@/app/db";
+import { addMembershipIfManuallyPaid, addUser, getUserIdFromWCAUserId, getWcaTokensFromSessionId, saveSession, updateSession, updateUserInfo } from "@/db";
 import crypto from "crypto";
-import { WCAOAuthTokenResponse, WCAProfileResponse } from "./response-types";
+import { WCAOAuthTokenResponse, WCAProfileResponse } from "@/types/responses";
 import { NextResponse } from "next/server";
-import { getWCAUserInfo } from "@/app/utils/wca-oauth-utils";
-import { Address } from "./types";
-import { getCurrentYear } from "./time-utils";
+import { getWCAUserInfo } from "@/lib/wca-oauth";
+import { Address } from "@/types";
+import { getCurrentYear } from "@/lib/time";
 
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET ?? "");
 const JWT_ALG = "HS256";

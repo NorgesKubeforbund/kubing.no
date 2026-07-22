@@ -1,5 +1,5 @@
-import BlueLink from "../ui/blue-link";
-import Title from "../ui/title";
+import BlueLink from "@/components/ui/blue-link";
+import Title from "@/components/ui/title";
 
 export default function PrivacyPolicy() {
   return (

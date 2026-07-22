@@ -1,4 +1,4 @@
-import { WCAOAuthTokenResponse, WCAProfileResponse } from "@/app/utils/response-types";
+import { WCAOAuthTokenResponse, WCAProfileResponse } from "@/types/responses";
 
 export const clientId = process.env.WCA_OAUTH_CLIENT_ID ?? "";
 const clientSecret = process.env.WCA_OAUTH_SECRET ?? "";

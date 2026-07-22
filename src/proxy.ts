@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getRefreshToken, getSessionToken } from "@/app/utils/auth-utils";
-import { getBaseUrl } from "@/app/utils/url-utils";
+import { getRefreshToken, getSessionToken } from "@/lib/auth";
+import { getBaseUrl } from "@/lib/utils";
 
 export async function proxy(req: NextRequest) {
   try {

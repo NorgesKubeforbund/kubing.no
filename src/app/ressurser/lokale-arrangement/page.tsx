@@ -1,5 +1,5 @@
-import BlueLink from "@/app/ui/blue-link";
-import Title from "@/app/ui/title";
+import BlueLink from "@/components/ui/blue-link";
+import Title from "@/components/ui/title";
 
 const localEvents: { county: string, events: { name: string, link: string, text: string }[] }[] =
   [

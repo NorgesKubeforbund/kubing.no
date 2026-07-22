@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getWCATokens, getWCAUserInfo } from "@/app/utils/wca-oauth-utils";
-import { createSession, setAuthCookies } from "@/app/utils/auth-utils";
-import { getBaseUrl } from "@/app/utils/url-utils";
+import { getWCATokens, getWCAUserInfo } from "@/lib/wca-oauth";
+import { createSession, setAuthCookies } from "@/lib/auth";
+import { getBaseUrl } from "@/lib/utils";
 
 export async function GET(req: NextRequest) {
   const url = getBaseUrl(req)

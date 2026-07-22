@@ -1,6 +1,6 @@
-import { getSessionToken } from "@/app/utils/auth-utils";
-import { getBaseUrl } from "@/app/utils/url-utils";
-import { claimMembership } from "@/app/utils/vipps-utils";
+import { getSessionToken } from "@/lib/auth";
+import { getBaseUrl } from "@/lib/utils";
+import { claimMembership } from "@/lib/vipps";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {

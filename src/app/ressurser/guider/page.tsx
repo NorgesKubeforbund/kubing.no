@@ -1,6 +1,6 @@
-import DownloadPDFButton from "@/app/components/download-pdf-button";
-import BlueLink from "@/app/ui/blue-link";
-import Title from "@/app/ui/title";
+import DownloadPDFButton from "@/components/download-pdf-button";
+import BlueLink from "@/components/ui/blue-link";
+import Title from "@/components/ui/title";
 
 function Guides() {
   return (

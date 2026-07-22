@@ -1,9 +1,9 @@
-import AddressUpdateForm from "@/app/components/address-update-form";
-import UpdateWCAUserData from "@/app/components/update-wca-user-data";
-import UserData from "@/app/components/user-data";
-import BlueLink from "@/app/ui/blue-link";
-import Title from "@/app/ui/title";
-import { getSessionToken } from "@/app/utils/auth-utils";
+import AddressUpdateForm from "@/components/forms/address-update-form";
+import UpdateWCAUserData from "@/components/update-wca-user-data";
+import UserData from "@/components/user-data";
+import BlueLink from "@/components/ui/blue-link";
+import Title from "@/components/ui/title";
+import { getSessionToken } from "@/lib/auth";
 
 async function Settings() {
   const userId = (await getSessionToken()).payload.userId as number;

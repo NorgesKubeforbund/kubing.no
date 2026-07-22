@@ -1,12 +1,11 @@
-import Title from "@/app/ui/title";
-import { getSessionToken } from "@/app/utils/auth-utils";
-import BlueLink from "@/app/ui/blue-link";
-import BliMedlemButton from "@/app/components/bli-medlem-button";
-import { isUserMember } from "@/app/utils/user-utils";
-import MembershipBadge from "@/app/components/membership-badge";
-import { getCurrentYear } from "../utils/time-utils";
+import Title from "@/components/ui/title";
+import { getSessionToken } from "@/lib/auth";
+import BlueLink from "@/components/ui/blue-link";
+import BliMedlemButton from "@/components/bli-medlem-button";
+import { isUserMember } from "@/lib/user";
+import { getCurrentYear } from "@/lib/time";
 
-async function MyPage() {
+export default async function MyPage() {
   const userId = (await getSessionToken()).payload.userId as number;
   const isMember = await isUserMember(userId);
   return (
@@ -31,4 +30,24 @@ async function MyPage() {
   );
 }
 
-export default MyPage;
+function MembershipBadge({ isMember }: { isMember: boolean }) {
+  return isMember ? <IsMemberBadge /> : <NotMemberBadge />;
+}
+
+function IsMemberBadge() {
+  return (
+    <div className="bg-green-600 border-4 border-green-700 text-white rounded-xl p-4">
+      <div className="text-2xl font-semibold">Aktivt medlemskap i NKF</div>
+      <p>Medlemskapet varer ut inneværende kalenderår.</p>
+    </div>
+  );
+}
+
+function NotMemberBadge() {
+  return (
+    <div className="bg-red-600 border-4 border-red-700 text-white rounded-xl p-4">
+      <div className="text-2xl font-semibold">Ingen medlemskap i NKF</div>
+      <p>Medlemskapet følger kalenderåret og må fornyes hvert år.</p>
+    </div>
+  );
+}

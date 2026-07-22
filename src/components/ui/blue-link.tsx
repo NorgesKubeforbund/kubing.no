@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Url } from "../utils/types";
+import { Url } from "@/types";
 import { ReactNode } from "react";
 
 function BlueLink({ href, children }: { href: Url, children?: ReactNode }) {

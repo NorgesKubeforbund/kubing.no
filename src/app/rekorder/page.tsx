@@ -1,8 +1,8 @@
-import Title from "../ui/title";
-import WCATable from "../components/wca-table";
-import RecordTables from "../components/record-tables";
-import UnofficialWCATable from "../components/unoffical-records-table";
-import NonWCATable from "../components/non-wca-table";
+import Title from "@/components/ui/title";
+import WCATable from "@/components/records/wca-table";
+import RecordTables from "@/components/records/record-tables";
+import UnofficialWCATable from "@/components/records/unoffical-records-table";
+import NonWCATable from "@/components/records/non-wca-table";
 
 function Records() {
   return (
