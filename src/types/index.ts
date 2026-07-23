@@ -10,16 +10,36 @@ export type User = {
   address: Address | null,
 };
 
-export type UserData =  User & {
+export type UserData = User & {
   isMember: boolean
 };
 
 export type VippsPaymentType = "WALLET" | "CARD";
 
-export type VippsPaymentStatus = "CREATED" | "ABORTED" | "EXPIRED" |  "AUTHORIZED" | "TERMINATED";
+export type VippsPaymentStatus = "CREATED" | "ABORTED" | "EXPIRED" | "AUTHORIZED" | "TERMINATED";
 
 export type Address = {
   address: string,
   postCode: string,
   postArea: string,
 };
+
+type AuthNotPresent = {
+  isAuthenticated: false;
+  userId: null;
+  sessionId: null;
+};
+
+type AuthPresentNoUser = {
+  isAuthenticated: true;
+  userId: null;
+  sessionId: string;
+};
+
+type AuthPresentWithUser = {
+  isAuthenticated: true;
+  userId: number;
+  sessionId: string;
+};
+
+export type Auth = AuthNotPresent | AuthPresentNoUser | AuthPresentWithUser;

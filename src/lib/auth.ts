@@ -5,7 +5,7 @@ import crypto from "crypto";
 import { WCAOAuthTokenResponse, WCAProfileResponse } from "@/types/responses";
 import { NextResponse } from "next/server";
 import { getWCAUserInfo } from "@/lib/wca-oauth";
-import { Address } from "@/types";
+import { Address, Auth } from "@/types";
 import { getCurrentYear } from "@/lib/time";
 
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET ?? "");
@@ -17,20 +17,20 @@ export const REFRESH_TOKEN_NAME = "REFRESH";
 export type RefreshToken = { plain: string, hash: string };
 export type Tokens = { sessionToken: string, refreshToken: string };
 
-export async function getSessionToken(): Promise<jose.JWTVerifyResult<jose.JWTPayload>> {
+async function getSessionToken(): Promise<jose.JWTVerifyResult<jose.JWTPayload>> {
   const cookieStore = await cookies();
   const token = cookieStore.get(SESSION_TOKEN_NAME)?.value;
   if (!token) {
     return Promise.reject("No session token available");
   }
-  return jose.jwtVerify(token, JWT_SECRET, {});
+  return jose.jwtVerify(token, JWT_SECRET);
 }
 
-export async function getRefreshToken(): Promise<string> {
+export async function getRefreshToken(): Promise<string | null> {
   const cookieStore = await cookies();
   const refreshToken = cookieStore.get(REFRESH_TOKEN_NAME)?.value;
   if (!refreshToken) {
-    return Promise.reject("Token not present");
+    return null;
   }
   return refreshToken;
 }
@@ -145,4 +145,23 @@ export async function updateWCAInfo(userId: number, sessionId: string, baseUrl: 
   const { accessToken, refreshToken } = await getWcaTokensFromSessionId(sessionId);
   const userInfo = await getWCAUserInfo(decryptToken(accessToken), decryptToken(refreshToken), baseUrl);
   await updateUserInfo(userId, userInfo);
+}
+
+export async function getAuth(): Promise<Auth> {
+  try {
+    const decoded = await getSessionToken();
+    const userId = (decoded.payload.userId as number | undefined) ?? null;
+    const sessionId = decoded.payload.sub!;
+    return {
+      isAuthenticated: true,
+      userId: userId,
+      sessionId: sessionId,
+    };
+  } catch {
+    return {
+      isAuthenticated: false,  
+      userId: null,
+      sessionId: null,
+    };
+  }
 }
