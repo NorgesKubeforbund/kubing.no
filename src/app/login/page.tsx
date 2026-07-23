@@ -1,16 +1,12 @@
 import Title from "@/components/ui/title";
-import { getSessionToken } from "@/lib/auth";
+import { getAuth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import LoginButton from "@/components/login-button";
 import { clientId } from "@/lib/wca-oauth";
 
-async function Login() {
-  let decoded;
-  try {
-    decoded = await getSessionToken();
-  } catch {
-  }
-  if (decoded) {
+export default async function Login() {
+  const { isAuthenticated } = await getAuth();
+  if (isAuthenticated) {
     redirect("/min-side");
   }
   return (
@@ -20,5 +16,3 @@ async function Login() {
     </div>
   );
 }
-
-export default Login;

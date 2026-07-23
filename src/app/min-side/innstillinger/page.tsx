@@ -3,17 +3,16 @@ import UpdateWCAUserData from "@/components/update-wca-user-data";
 import UserData from "@/components/user-data";
 import BlueLink from "@/components/ui/blue-link";
 import Title from "@/components/ui/title";
-import { getSessionToken } from "@/lib/auth";
+import { getAuth } from "@/lib/auth";
 
 async function Settings() {
-  const userId = (await getSessionToken()).payload.userId as number;
-
+  const { userId } = await getAuth();
   return (
     <div className="flex flex-col px-4 sm:px-8 max-w-5xl gap-8 text-center">
       <Title>Innstillinger</Title>
       <div className="flex flex-col gap-4">
         <Title small>Personlig data</Title>
-        <UserData userId={userId} />
+        <UserData userId={userId!} />
       </div>
       <div className="flex flex-col gap-4">
         <Title small>Endre adresse</Title>

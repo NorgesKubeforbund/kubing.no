@@ -1,4 +1,4 @@
-import { getSessionToken } from "@/lib/auth";
+import { getAuth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import RegisterUser from "@/components/forms/register-user";
 
@@ -7,13 +7,11 @@ export default async function MyPageLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  let decoded;
-  try {
-    decoded = await getSessionToken();
-  } catch {
+  const { isAuthenticated, userId } = await getAuth();
+  if (!isAuthenticated) {
     redirect("/login");
   }
-  if (!decoded.payload.userId) {
+  if (!userId) {
     return <RegisterUser />
   }
   return children;
