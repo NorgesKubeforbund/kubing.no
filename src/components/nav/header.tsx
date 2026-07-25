@@ -167,6 +167,19 @@ function Header() {
     setIsResourcesOpen(false)
   };
 
+  async function refreshSession() {
+    await fetch("/api/auth/refresh", {
+      method: "POST",
+      signal: AbortSignal.timeout(30 * 1000),
+    });
+  }
+
+  useEffect(() => {
+    refreshSession()
+    const interval = setInterval(refreshSession, 90 * 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <header className="flex flex-col lg:flex-row justify-between h-auto p-4 bg-background-secondary text-white">
       <div className="flex flex-row justify-between">
