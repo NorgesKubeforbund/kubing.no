@@ -5,7 +5,7 @@ import crypto from "crypto";
 import { WCAOAuthTokenResponse, WCAProfileResponse } from "@/types/responses";
 import { NextResponse } from "next/server";
 import { getWCAUserInfo } from "@/lib/wca-oauth";
-import { Address, Auth } from "@/types";
+import { Address, Auth, RefreshToken, TokenCreation, Tokens } from "@/types";
 import { getCurrentYear } from "@/lib/time";
 
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET ?? "");
@@ -14,8 +14,6 @@ const ENCRYPTION_SECRET = process.env.TOKEN_ENCRYPTION_SECRET ?? "";
 const ENCRYPTION_ALG = "aes-256-gcm";
 export const SESSION_TOKEN_NAME = "SESSION";
 export const REFRESH_TOKEN_NAME = "REFRESH";
-export type RefreshToken = { plain: string, hash: string };
-export type Tokens = { sessionToken: string, refreshToken: string };
 
 async function getSessionToken(): Promise<jose.JWTVerifyResult<jose.JWTPayload>> {
   const cookieStore = await cookies();
@@ -29,10 +27,7 @@ async function getSessionToken(): Promise<jose.JWTVerifyResult<jose.JWTPayload>>
 export async function getRefreshToken(): Promise<string | null> {
   const cookieStore = await cookies();
   const refreshToken = cookieStore.get(REFRESH_TOKEN_NAME)?.value;
-  if (!refreshToken) {
-    return null;
-  }
-  return refreshToken;
+  return refreshToken ?? null;
 }
 
 export function createSessionToken(sessionId: string, userId: number | null): Promise<string> {
@@ -103,11 +98,23 @@ export function generateRefreshToken(): RefreshToken {
   return { plain: plain, hash: hash };
 }
 
-export async function updateTokens(refreshToken: string): Promise<Tokens> {
+export async function updateTokens(refreshToken: string): Promise<TokenCreation> {
   const newRefreshToken = generateRefreshToken();
   const res = await updateSession(hashToken(refreshToken), newRefreshToken.hash);
+  if (!res.success) {
+    return {
+      success: false,
+      error: res.error,
+    };
+  }
   const newSessionToken = await createSessionToken(res.sessionId, res.userId);
-  return { sessionToken: newSessionToken, refreshToken: newRefreshToken.plain }
+  return {
+    success: true,
+    tokens: {
+      sessionToken: newSessionToken,
+      refreshToken: newRefreshToken.plain,
+    },
+  };
 }
 
 export function setAuthCookies(res: NextResponse, tokens: Tokens) {
@@ -159,7 +166,7 @@ export async function getAuth(): Promise<Auth> {
     };
   } catch {
     return {
-      isAuthenticated: false,  
+      isAuthenticated: false,
       userId: null,
       sessionId: null,
     };

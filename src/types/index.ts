@@ -43,3 +43,15 @@ type AuthPresentWithUser = {
 };
 
 export type Auth = AuthNotPresent | AuthPresentNoUser | AuthPresentWithUser;
+
+type UpdateSessionSuccessRes = { success: true, sessionId: string, userId: number | null };
+
+type UpdateSessionError = "invalid" | "too_early" | "expired";
+
+type UpdateSessionFailedRes = { success: false, error: UpdateSessionError }
+
+export type UpdateSessionRes = UpdateSessionSuccessRes | UpdateSessionFailedRes;
+
+export type RefreshToken = { plain: string, hash: string };
+export type Tokens = { sessionToken: string, refreshToken: string };
+export type TokenCreation = { success: true, tokens: Tokens } | { success: false, error: UpdateSessionError};

@@ -1,6 +1,7 @@
 import { Pool, QueryResult } from "pg";
 import { WCAOAuthTokenResponse, WCAProfileResponse } from "@/types/responses";
-import { Address, User } from "@/types";
+import { Address, UpdateSessionRes, User } from "@/types";
+import { UUID } from "crypto";
 
 const pool = new Pool({
   database: process.env.POSTGRES_DB ?? "postgres",
@@ -47,35 +48,52 @@ export async function saveSession(tokens: WCAOAuthTokenResponse, user: WCAProfil
   return res.rowCount;
 }
 
-export async function updateSession(refreshTokenHash: string, newRefreshTokenHash: string): Promise<{ sessionId: string, userId: number | null }> {
-  const sessionInfo = await query(`
-    SELECT id, user_id
+export async function updateSession(refreshTokenHash: string, newRefreshTokenHash: string): Promise<UpdateSessionRes> {
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
+    const sessionInfo = await client.query(`
+    SELECT id, user_id, last_access
     FROM sessions
     WHERE refresh_token_hash = $1 AND last_access > $2 AND expires_at > NOW()
+    FOR UPDATE
     `,
-    [
-      refreshTokenHash,
-      new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 7)
-    ]
-  )
-  if (!sessionInfo.rowCount) {
-    return Promise.reject("Could not find valid session");
-  }
-  const res = await query(`
+      [
+        refreshTokenHash,
+        new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 7)
+      ]
+    )
+    const row = sessionInfo.rows.at(0) as { id: UUID, user_id: number | null, last_access: Date } | undefined;
+    if (!row) {
+      await client.query("ROLLBACK");
+      return { success: false, error: "invalid" };
+    }
+    if (new Date(new Date().getTime() - 1000 * 60) < row.last_access) {
+      await client.query("ROLLBACK");
+      return { success: false, error: "too_early" };
+    }
+    const res = await client.query(`
     UPDATE sessions
     SET refresh_token_hash = $1, last_access = NOW()
     WHERE refresh_token_hash = $2
     `,
-    [
-      newRefreshTokenHash,
-      refreshTokenHash,
-    ]
-  )
-  if (!res.rowCount) {
-    return Promise.reject("Could not update session");
+      [
+        newRefreshTokenHash,
+        refreshTokenHash,
+      ]
+    )
+    if (!res.rowCount) {
+      throw new Error("Could not update session");
+    }
+    
+    await client.query("COMMIT");
+    return { success: true, sessionId: row.id, userId: row.user_id };
+  } catch (e) {
+    await client.query("ROLLBACK")
+    throw e
+  } finally {
+    client.release()
   }
-  const row = sessionInfo.rows.at(0);
-  return { sessionId: row.id, userId: row.user_id };
 }
 
 export async function deleteSession(sessionId: string) {
