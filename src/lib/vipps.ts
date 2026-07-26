@@ -39,7 +39,7 @@ async function getAccessToken(): Promise<string> {
     )
     if (!res.ok) {
       console.log(await res.json());
-      return Promise.reject("Could not get Vipps access token.");
+      throw new Error("Could not get Vipps access token.");
     }
     const accessToken = await res.json() as VippsAccessTokenResponse;
     vippsAccessToken = { accessToken: accessToken.access_token, expiresAt: new Date(accessToken.expires_on * 1000 - 1000 * 30) };
@@ -75,7 +75,7 @@ export async function createVippsPaymentAndGetRedirectUrl(userId: number, paymen
   )
   if (!res.ok) {
     console.log(await res.json());
-    return Promise.reject("Could not create Vipps payment.");
+    throw new Error("Could not create Vipps payment.");
   }
   const payment = await res.json() as VippsPaymentCreateReponse;
   await createOrder(userId, getCurrentYear(), vippsReference);
@@ -86,7 +86,7 @@ export async function claimMembership(userId: number, vippsReference: string): P
   const order = await getOrderByUserIdAndVippsReference(userId, vippsReference);
   const status = await getPaymentStatus(vippsReference);
   if (status !== "AUTHORIZED") {
-    return Promise.reject("Order not payed for yet");
+    throw new Error("Order not payed for yet");
   }
   await capturePayment(vippsReference);
   await addMember(userId, order.id, order.year);
@@ -106,7 +106,7 @@ async function getPaymentStatus(reference: string): Promise<VippsPaymentStatus> 
     }
   )
   if (!res.ok) {
-    return Promise.reject("Could not get Vipps payment status.");
+    throw new Error("Could not get Vipps payment status.");
   }
   const status = await res.json() as VippsPaymentStatusReponse;
   return status.state;
@@ -132,7 +132,7 @@ async function capturePayment(reference: string) {
     }
   )
   if (!res.ok) {
-    return Promise.reject("Could not get Vipps payment status.");
+    throw new Error("Could not get Vipps payment status.");
   }
   const status = await res.json() as VippsPaymentStatusReponse;
   return status.state[0];

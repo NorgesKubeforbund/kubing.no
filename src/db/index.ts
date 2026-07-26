@@ -137,7 +137,7 @@ export async function getWcaTokensFromSessionId(sessionId: string): Promise<{ ac
     ]
   )
   if (!res.rowCount) {
-    Promise.reject("No tokens from session ID");
+    throw new Error("No tokens from session ID");
   }
   const row = res.rows.at(0);
   return { accessToken: row.wca_access_token as string, refreshToken: row.wca_refresh_token as string };
@@ -223,7 +223,7 @@ export async function updateUserInfo(userId: number, user: WCAProfileResponse) {
     ]
   );
   if (!res.rowCount) {
-    return Promise.reject("User does not exist.");
+    throw new Error("User does not exist.");
   }
   return;
 }
@@ -238,7 +238,7 @@ export async function getUser(userId: number): Promise<User> {
     ]
   )
   if (!res.rowCount) {
-    return Promise.reject("Did not find user");
+    throw new Error("Did not find user");
   }
   const row = res.rows.at(0);
   return {
@@ -263,7 +263,7 @@ export async function isUserMemberInYear(userId: number, year: number): Promise<
     ]
   )
   if (!res.rowCount) {
-    return Promise.reject("Could not check if user is member");
+    throw new Error("Could not check if user is member");
   }
   return res.rows[0].exists as boolean;
 }
@@ -271,7 +271,7 @@ export async function isUserMemberInYear(userId: number, year: number): Promise<
 export async function getOrderNumber(): Promise<number> {
   const res = await query("select nextval('order_number_idx');", [])
   if (!res.rowCount) {
-    return Promise.reject("Could not get next order number.");
+    throw new Error("Could not get next order number.");
   }
   return res.rows[0].nextval as number;
 }
@@ -290,7 +290,7 @@ export async function createOrder(userId: number, year: number, vippsReference: 
     ]
   )
   if (!res.rowCount) {
-    return Promise.reject("Could not create order");
+    throw new Error("Could not create order");
   }
 }
 
@@ -306,7 +306,7 @@ export async function getOrderByUserIdAndVippsReference(userId: number, vippsRef
     ]
   )
   if (!res.rowCount) {
-    return Promise.reject("Could not get order");
+    throw new Error("Could not get order");
   }
   const row = res.rows[0];
   return { year: row.year, id: row.id };
@@ -362,6 +362,6 @@ export async function updateAddress(userId: number, address: Address) {
     ]
   )
   if (!res.rowCount) {
-    return Promise.reject("Could not update address");
+    throw new Error("Could not update address");
   }
 }
