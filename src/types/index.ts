@@ -28,18 +28,21 @@ type AuthNotPresent = {
   isAuthenticated: false;
   userId: null;
   sessionId: null;
+  refreshToken: string | null;
 };
 
 type AuthPresentNoUser = {
   isAuthenticated: true;
   userId: null;
   sessionId: string;
+  refreshToken: string | null;
 };
 
 type AuthPresentWithUser = {
   isAuthenticated: true;
   userId: number;
   sessionId: string;
+  refreshToken: string | null;
 };
 
 export type Auth = AuthNotPresent | AuthPresentNoUser | AuthPresentWithUser;

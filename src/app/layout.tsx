@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/nav/header";
 import Footer from "@/components/nav/footer";
+import { getAuth } from "@/lib/auth";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,17 +20,19 @@ export const metadata: Metadata = {
   description: "Norges Kubeforbund sin hjemmeside.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { isAuthenticated } = await getAuth();
+
   return (
     <html lang="no">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
       >
-        <Header />
+        <Header initialIsLoggedIn={isAuthenticated} />
         <main className="flex flex-row justify-center flex-1 py-8 text-xl">
           {children}
         </main>

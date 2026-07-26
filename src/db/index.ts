@@ -48,7 +48,7 @@ export async function saveSession(tokens: WCAOAuthTokenResponse, user: WCAProfil
   return res.rowCount;
 }
 
-export async function updateSession(refreshTokenHash: string, newRefreshTokenHash: string): Promise<UpdateSessionRes> {
+export async function updateSession(refreshTokenHash: string, newRefreshTokenHash: string, forceUpdate: boolean): Promise<UpdateSessionRes> {
   const client = await pool.connect();
   try {
     await client.query("BEGIN");
@@ -68,7 +68,7 @@ export async function updateSession(refreshTokenHash: string, newRefreshTokenHas
       await client.query("ROLLBACK");
       return { success: false, error: "invalid" };
     }
-    if (new Date(new Date().getTime() - 1000 * 60) < row.last_access) {
+    if (!forceUpdate && new Date(new Date().getTime() - 1000 * 60) < row.last_access) {
       await client.query("ROLLBACK");
       return { success: false, error: "too_early" };
     }
