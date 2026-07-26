@@ -19,12 +19,12 @@ async function getSessionToken(): Promise<jose.JWTVerifyResult<jose.JWTPayload>>
   const cookieStore = await cookies();
   const token = cookieStore.get(SESSION_TOKEN_NAME)?.value;
   if (!token) {
-    return Promise.reject("No session token available");
+    throw new Error("No session token available");
   }
   return jose.jwtVerify(token, JWT_SECRET);
 }
 
-export async function getRefreshToken(): Promise<string | null> {
+async function getRefreshToken(): Promise<string | null> {
   const cookieStore = await cookies();
   const refreshToken = cookieStore.get(REFRESH_TOKEN_NAME)?.value;
   return refreshToken ?? null;
@@ -98,9 +98,9 @@ export function generateRefreshToken(): RefreshToken {
   return { plain: plain, hash: hash };
 }
 
-export async function updateTokens(refreshToken: string): Promise<TokenCreation> {
+export async function updateTokens(refreshToken: string, forceUpdate: boolean): Promise<TokenCreation> {
   const newRefreshToken = generateRefreshToken();
-  const res = await updateSession(hashToken(refreshToken), newRefreshToken.hash);
+  const res = await updateSession(hashToken(refreshToken), newRefreshToken.hash, forceUpdate);
   if (!res.success) {
     return {
       success: false,
@@ -126,7 +126,7 @@ export function setAuthCookies(res: NextResponse, tokens: Tokens) {
     sameSite: "lax",
     path: "/",
     expires: new Date(new Date().getTime() + 1000 * 60 * 20),
-  })
+  });
   res.cookies.set({
     name: REFRESH_TOKEN_NAME,
     value: tokens.refreshToken,
@@ -135,7 +135,7 @@ export function setAuthCookies(res: NextResponse, tokens: Tokens) {
     sameSite: "lax",
     path: "/",
     expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 8),
-  })
+  });
 }
 
 export async function createUser(sessionId: string, baseUrl: string, address: Address | null) {
@@ -155,6 +155,7 @@ export async function updateWCAInfo(userId: number, sessionId: string, baseUrl: 
 }
 
 export async function getAuth(): Promise<Auth> {
+  const refreshToken = await getRefreshToken();
   try {
     const decoded = await getSessionToken();
     const userId = (decoded.payload.userId as number | undefined) ?? null;
@@ -163,12 +164,14 @@ export async function getAuth(): Promise<Auth> {
       isAuthenticated: true,
       userId: userId,
       sessionId: sessionId,
+      refreshToken,
     };
   } catch {
     return {
       isAuthenticated: false,
       userId: null,
       sessionId: null,
+      refreshToken,
     };
   }
 }

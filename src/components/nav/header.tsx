@@ -130,8 +130,12 @@ function LoginButton({
   )
 }
 
-function Header() {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+function Header({ 
+  initialIsLoggedIn,
+}: {
+  initialIsLoggedIn: boolean;
+}) {
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(initialIsLoggedIn);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isResourcesOpen, setIsResourcesOpen] = useState<boolean>(false);
   const pathname = usePathname();
@@ -139,6 +143,7 @@ function Header() {
   const resourcesButtonRef = useRef<HTMLButtonElement | null>(null);
 
   function reloadStatus() {
+    // TODO: Remove and move logic to refresh session
     fetch("/api/status")
       .then(res => {
         if (!res.ok) {
@@ -175,7 +180,6 @@ function Header() {
   }
 
   useEffect(() => {
-    refreshSession()
     const interval = setInterval(refreshSession, 90 * 1000);
     return () => clearInterval(interval);
   }, []);

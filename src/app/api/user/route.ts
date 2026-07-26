@@ -1,7 +1,6 @@
 import { getAddress } from "@/lib/address";
 import {
   createUser,
-  getRefreshToken,
   getAuth,
   SESSION_TOKEN_NAME,
   setAuthCookies,
@@ -11,11 +10,10 @@ import { getBaseUrl } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
-  const { isAuthenticated, sessionId } = await getAuth();
+  const { isAuthenticated, sessionId, refreshToken } = await getAuth();
   if (!isAuthenticated) {
     return NextResponse.json({ error: "Ikke innlogget." }, { status: 401 });
   }
-  const refreshToken = await getRefreshToken();
   if (!refreshToken) {
     const res = NextResponse.json({}, { status: 401 });
     res.cookies.delete(SESSION_TOKEN_NAME);
@@ -25,10 +23,11 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const address = body.address ? await getAddress(body.address) : null;
     await createUser(sessionId!, getBaseUrl(req), address);
-    const tokens = await updateTokens(refreshToken);
-    if (!tokens) {
+    const tokenCreation = await updateTokens(refreshToken, true);
+    if (!tokenCreation.success) {
       throw new Error("Could not generate tokens");
     }
+    const tokens = tokenCreation.tokens;
     const res = NextResponse.json({});
     setAuthCookies(res, tokens);
     return res;

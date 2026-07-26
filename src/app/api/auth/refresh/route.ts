@@ -1,12 +1,12 @@
-import { getRefreshToken, REFRESH_TOKEN_NAME, SESSION_TOKEN_NAME, setAuthCookies, updateTokens } from "@/lib/auth";
+import { getAuth, REFRESH_TOKEN_NAME, SESSION_TOKEN_NAME, setAuthCookies, updateTokens } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
 export async function POST() {
-  const refreshToken = await getRefreshToken();
+  const { refreshToken } = await getAuth();
   if (!refreshToken) {
     return NextResponse.json({ error: "Mangler 'refresh token'." }, { status: 400 });
   }
-  const tokenCreation = await updateTokens(refreshToken);
+  const tokenCreation = await updateTokens(refreshToken, false);
   if (!tokenCreation.success) {
     switch (tokenCreation.error) {
       case "invalid":
