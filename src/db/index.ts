@@ -53,20 +53,23 @@ export async function updateSession(refreshTokenHash: string, newRefreshTokenHas
   try {
     await client.query("BEGIN");
     const sessionInfo = await client.query(`
-    SELECT id, user_id, last_access
+    SELECT id, user_id, last_access, expires_at
     FROM sessions
-    WHERE refresh_token_hash = $1 AND last_access > $2 AND expires_at > NOW()
+    WHERE refresh_token_hash = $1 AND last_access > $2
     FOR UPDATE
     `,
       [
         refreshTokenHash,
         new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 7)
       ]
-    )
-    const row = sessionInfo.rows.at(0) as { id: UUID, user_id: number | null, last_access: Date } | undefined;
+    );
+    const row = sessionInfo.rows.at(0) as { id: UUID, user_id: number | null, last_access: Date, expires_at: Date } | undefined;
     if (!row) {
       await client.query("ROLLBACK");
       return { success: false, error: "invalid" };
+    }
+    if (row.expires_at < new Date()) {
+      return { success: false, error: "expired" };
     }
     if (!forceUpdate && new Date(new Date().getTime() - 1000 * 60) < row.last_access) {
       await client.query("ROLLBACK");
@@ -81,7 +84,7 @@ export async function updateSession(refreshTokenHash: string, newRefreshTokenHas
         newRefreshTokenHash,
         refreshTokenHash,
       ]
-    )
+    );
     if (!res.rowCount) {
       throw new Error("Could not update session");
     }
