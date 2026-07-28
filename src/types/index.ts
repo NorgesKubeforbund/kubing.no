@@ -18,6 +18,11 @@ export type VippsPaymentType = "WALLET" | "CARD";
 
 export type VippsPaymentStatus = "CREATED" | "ABORTED" | "EXPIRED" | "AUTHORIZED" | "TERMINATED";
 
+export type OrderCreated = {
+  year: number;
+  id: number;
+};
+
 export type Address = {
   address: string,
   postCode: string,
@@ -57,4 +62,4 @@ export type UpdateSessionRes = UpdateSessionSuccessRes | UpdateSessionFailedRes;
 
 export type RefreshToken = { plain: string, hash: string };
 export type Tokens = { sessionToken: string, refreshToken: string };
-export type TokenCreation = { success: true, tokens: Tokens } | { success: false, error: UpdateSessionError};
+export type TokenCreation = { success: true, tokens: Tokens } | { success: false, error: UpdateSessionError };

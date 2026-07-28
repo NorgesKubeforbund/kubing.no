@@ -1,6 +1,6 @@
 import { Pool, QueryResult } from "pg";
 import { WCAOAuthTokenResponse, WCAProfileResponse } from "@/types/responses";
-import { Address, UpdateSessionRes, User } from "@/types";
+import { Address, OrderCreated, UpdateSessionRes, User } from "@/types";
 import { UUID } from "crypto";
 
 const pool = new Pool({
@@ -294,7 +294,7 @@ export async function createOrder(userId: number, year: number, vippsReference: 
   }
 }
 
-export async function getOrderByUserIdAndVippsReference(userId: number, vippsReference: string): Promise<{ year: number, id: number }> {
+export async function getOrderByUserIdAndVippsReference(userId: number, vippsReference: string): Promise<OrderCreated> {
   const res = await query(`
     SELECT id, year
     FROM orders
