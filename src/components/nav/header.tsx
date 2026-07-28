@@ -142,27 +142,12 @@ function Header({
   const popoverRef = useRef<HTMLDivElement | null>(null);
   const resourcesButtonRef = useRef<HTMLButtonElement | null>(null);
 
-  function reloadStatus() {
-    // TODO: Remove and move logic to refresh session
-    fetch("/api/status")
-      .then(res => {
-        if (!res.ok) {
-          return;
-        }
-        res.json()
-          .then((data: { isLoggedIn: boolean }) => setIsLoggedIn(data.isLoggedIn))
-          .catch(err => console.error(err));
-      })
-      .catch(err => console.error(err))
-  }
-
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (popoverRef.current && !popoverRef.current.contains(event.target as Node) && (resourcesButtonRef.current !== event.target)) {
         setIsResourcesOpen(false);
       }
     }
-    reloadStatus();
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
@@ -173,10 +158,12 @@ function Header({
   };
 
   async function refreshSession() {
-    await fetch("/api/auth/refresh", {
+    const res = await fetch("/api/auth/refresh", {
       method: "POST",
       signal: AbortSignal.timeout(30 * 1000),
     });
+    const { isLoggedIn } = await res.json();
+    setIsLoggedIn(isLoggedIn);
   }
 
   useEffect(() => {
@@ -241,7 +228,7 @@ function Header({
             <HeaderLink className="hidden lg:flex" key={page.name} page={page} onClick={closeHeader} pathname={pathname} isResourcesOpen={isResourcesOpen} />
           )}
           {isLoggedIn && <HeaderLink page={{ name: "Min side", path: "/min-side" }} onClick={closeHeader} pathname={pathname} isResourcesOpen={isResourcesOpen} />}
-          <LoginButton loggedIn={isLoggedIn} pathname={pathname} isResourcesOpen={isResourcesOpen} onClick={closeHeader} onLogout={reloadStatus} />
+          <LoginButton loggedIn={isLoggedIn} pathname={pathname} isResourcesOpen={isResourcesOpen} onClick={closeHeader} onLogout={() => setIsLoggedIn(false)} />
         </div>
       </div>
     </header>
