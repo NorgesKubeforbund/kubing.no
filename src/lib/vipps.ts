@@ -1,7 +1,8 @@
-import { addMember, createOrder, getOrderByUserIdAndVippsReference, getOrderNumber } from "@/db";
+import { addMember, createOrder, getOrderByUserIdAndVippsReference, getOrderNumber, getUser } from "@/db";
 import { VippsAccessTokenResponse, VippsPaymentCreateReponse, VippsPaymentStatusReponse } from "@/types/responses";
 import { getCurrentYear } from "@/lib/time";
 import { VippsPaymentStatus, VippsPaymentType } from "@/types";
+import { sendMembershipConfirmation } from "@/lib/mail";
 
 
 type VippsAccessToken = { accessToken: string, expiresAt: Date }
@@ -83,6 +84,7 @@ export async function createVippsPaymentAndGetRedirectUrl(userId: number, paymen
 }
 
 export async function claimMembership(userId: number, vippsReference: string): Promise<void> {
+  const user = await getUser(userId);
   const order = await getOrderByUserIdAndVippsReference(userId, vippsReference);
   const status = await getPaymentStatus(vippsReference);
   if (status !== "AUTHORIZED") {
@@ -90,6 +92,7 @@ export async function claimMembership(userId: number, vippsReference: string): P
   }
   await capturePayment(vippsReference);
   await addMember(userId, order.id, order.year);
+  await sendMembershipConfirmation(user, order);
 }
 
 async function getPaymentStatus(reference: string): Promise<VippsPaymentStatus> {
