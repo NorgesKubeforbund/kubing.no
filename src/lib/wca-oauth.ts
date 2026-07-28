@@ -51,7 +51,7 @@ export async function refreshWCATokens(refreshToken: string, baseUrl: string): P
   return await res.json() as WCAOAuthTokenResponse;
 }
 
-async function fetchFromWCA(url: string, accessToken: string, refreshToken: string, baseUrl: string) {
+async function fetchFromWCA(url: string, accessToken: string) {
   const res = await fetch(
     url,
     {
@@ -61,23 +61,11 @@ async function fetchFromWCA(url: string, accessToken: string, refreshToken: stri
       },
     });
   if (!res.ok) {
-    const tokens = await refreshWCATokens(refreshToken, baseUrl);
-    const res = await fetch(
-      url,
-      {
-        headers: {
-          "Authorization": `Bearer ${tokens.access_token}`,
-          "Accept": "application/json",
-        },
-      });
-    if (!res.ok) {
-      throw new Error(`Failed to fetch from WCA: ${url}`);
-    }
-    return res.json();
+    throw new Error(`Failed to fetch from WCA: ${url}`);
   }
   return res.json();
 }
 
-export async function getWCAUserInfo(accessToken: string, refreshToken: string, baseUrl: string): Promise<WCAProfileResponse> {
-  return await fetchFromWCA("https://www.worldcubeassociation.org/api/v0/me", accessToken, refreshToken, baseUrl) as WCAProfileResponse;
+export async function getWCAUserInfo(accessToken: string): Promise<WCAProfileResponse> {
+  return await fetchFromWCA("https://www.worldcubeassociation.org/api/v0/me", accessToken) as WCAProfileResponse;
 }

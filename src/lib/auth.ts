@@ -1,10 +1,10 @@
 import * as jose from "jose";
 import { cookies } from "next/headers";
-import { addMembershipIfManuallyPaid, addUser, getUserIdFromWCAUserId, getWcaTokensFromSessionId, saveSession, updateSession, updateUserInfo } from "@/db";
+import { addMembershipIfManuallyPaid, addUser, getUserIdFromWCAUserId, getWcaTokensFromSessionId, saveSession, updateSession, updateUserInfo, updateWCATokens } from "@/db";
 import crypto from "crypto";
 import { WCAOAuthTokenResponse, WCAProfileResponse } from "@/types/responses";
 import { NextResponse } from "next/server";
-import { getWCAUserInfo } from "@/lib/wca-oauth";
+import { getWCAUserInfo, refreshWCATokens } from "@/lib/wca-oauth";
 import { Address, Auth, RefreshToken, TokenCreation, Tokens } from "@/types";
 import { getCurrentYear } from "@/lib/time";
 
@@ -98,7 +98,7 @@ export function generateRefreshToken(): RefreshToken {
   return { plain: plain, hash: hash };
 }
 
-export async function updateTokens(refreshToken: string, forceUpdate: boolean): Promise<TokenCreation> {
+export async function updateTokens(refreshToken: string, forceUpdate: boolean, baseUrl?: string): Promise<TokenCreation> {
   const newRefreshToken = generateRefreshToken();
   const res = await updateSession(hashToken(refreshToken), newRefreshToken.hash, forceUpdate);
   if (!res.success) {
@@ -108,12 +108,22 @@ export async function updateTokens(refreshToken: string, forceUpdate: boolean): 
     };
   }
   const newSessionToken = await createSessionToken(res.sessionId, res.userId);
+  if (baseUrl) {
+    const isWCASessionValid = await checkWCASession(res.sessionId, baseUrl);
+    if (!isWCASessionValid) {
+      return {
+        success: false,
+        error: "expired",
+      };
+    }
+  }
   return {
     success: true,
     tokens: {
       sessionToken: newSessionToken,
       refreshToken: newRefreshToken.plain,
     },
+    sessionId: res.sessionId,
   };
 }
 
@@ -139,8 +149,8 @@ export function setAuthCookies(res: NextResponse, tokens: Tokens) {
 }
 
 export async function createUser(sessionId: string, baseUrl: string, address: Address | null) {
-  const { accessToken, refreshToken } = await getWcaTokensFromSessionId(sessionId);
-  const userInfo = await getWCAUserInfo(decryptToken(accessToken), decryptToken(refreshToken), baseUrl);
+  const { accessToken } = await getWcaTokensFromSessionId(sessionId);
+  const userInfo = await getWCAUserInfo(decryptToken(accessToken));
   const id = await addUser(userInfo, address);
   const year = getCurrentYear()
   if (userInfo.me.wca_id && year === 2026) {
@@ -149,9 +159,37 @@ export async function createUser(sessionId: string, baseUrl: string, address: Ad
 }
 
 export async function updateWCAInfo(userId: number, sessionId: string, baseUrl: string) {
-  const { accessToken, refreshToken } = await getWcaTokensFromSessionId(sessionId);
-  const userInfo = await getWCAUserInfo(decryptToken(accessToken), decryptToken(refreshToken), baseUrl);
-  await updateUserInfo(userId, userInfo);
+  const { refreshToken, accessToken } = await getWcaTokensFromSessionId(sessionId);
+  const userInfo = await getWCAUserInfo(decryptToken(accessToken));
+  try {
+    await updateUserInfo(userId, userInfo);
+  } catch {
+    await refreshWCASession(refreshToken, sessionId, baseUrl);
+    await updateUserInfo(userId, userInfo);
+  }
+}
+
+export async function checkWCASession(sessionId: string, baseUrl: string): Promise<boolean> {
+  try {
+    const { refreshToken, accessTokenExpiresAt } = await getWcaTokensFromSessionId(sessionId);
+    if (new Date(Date.now() + 1000 * 60 * 10) < accessTokenExpiresAt) {
+      return true;
+    }
+    await refreshWCASession(refreshToken, sessionId, baseUrl);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function refreshWCASession(refreshToken: string, sessionId: string, baseUrl: string) {
+  const wcaTokens = await refreshWCATokens(decryptToken(refreshToken), baseUrl);
+  const encryptedWcaTokens = {
+    ...wcaTokens,
+    access_token: encryptToken(wcaTokens.access_token),
+    refresh_token: encryptToken(wcaTokens.refresh_token),
+  };
+  await updateWCATokens(encryptedWcaTokens, sessionId);
 }
 
 export async function getAuth(): Promise<Auth> {

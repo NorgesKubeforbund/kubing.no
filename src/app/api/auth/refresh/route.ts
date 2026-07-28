@@ -1,7 +1,8 @@
 import { getAuth, REFRESH_TOKEN_NAME, SESSION_TOKEN_NAME, setAuthCookies, updateTokens } from "@/lib/auth";
-import { NextResponse } from "next/server";
+import { getBaseUrl } from "@/lib/utils";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function POST() {
+export async function POST(req: NextRequest) {
   const { isAuthenticated, refreshToken } = await getAuth();
   if (!refreshToken) {
     return NextResponse.json({
@@ -9,7 +10,7 @@ export async function POST() {
       isLoggedIn: isAuthenticated,
     }, { status: 400 });
   }
-  const tokenCreation = await updateTokens(refreshToken, false);
+  const tokenCreation = await updateTokens(refreshToken, false, getBaseUrl(req));
   if (!tokenCreation.success) {
     switch (tokenCreation.error) {
       case "invalid":
@@ -26,7 +27,6 @@ export async function POST() {
         return clearSessionRes(401, "Økten har utløpt.");
     }
   }
-  // TODO: Validate that WCA session is still valid
   const res = NextResponse.json({
     message: "Økt fornyet.",
     isLoggedIn: true,

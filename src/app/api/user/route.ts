@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const address = body.address ? await getAddress(body.address) : null;
     await createUser(sessionId!, getBaseUrl(req), address);
-    const tokenCreation = await updateTokens(refreshToken, true);
+    const tokenCreation = await updateTokens(refreshToken, true, getBaseUrl(req));
     if (!tokenCreation.success) {
       throw new Error("Could not generate tokens");
     }
