@@ -62,4 +62,15 @@ export type UpdateSessionRes = UpdateSessionSuccessRes | UpdateSessionFailedRes;
 
 export type RefreshToken = { plain: string, hash: string };
 export type Tokens = { sessionToken: string, refreshToken: string };
-export type TokenCreation = { success: true, tokens: Tokens } | { success: false, error: UpdateSessionError };
+
+type TokenCreationSuccess = { success: true, tokens: Tokens, sessionId: string };
+
+type TokenCreationError = { success: false, error: UpdateSessionError };
+
+export type TokenCreation = TokenCreationSuccess | TokenCreationError;
+
+export type WCATokens = {
+  accessToken: string;
+  refreshToken: string;
+  accessTokenExpiresAt: Date;
+};

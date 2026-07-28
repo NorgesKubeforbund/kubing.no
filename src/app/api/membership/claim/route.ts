@@ -3,6 +3,7 @@ import { getBaseUrl } from "@/lib/utils";
 import { claimMembership } from "@/lib/vipps";
 import { NextRequest, NextResponse } from "next/server";
 
+// TODO: When it is only possible to have a single active order, move logic to my page
 export async function GET(req: NextRequest) {
   const url = getBaseUrl(req);
   const { userId } = await getAuth();

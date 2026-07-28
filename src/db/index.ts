@@ -1,6 +1,6 @@
 import { Pool, QueryResult } from "pg";
 import { WCAOAuthTokenResponse, WCAProfileResponse } from "@/types/responses";
-import { Address, OrderCreated, UpdateSessionRes, User } from "@/types";
+import { Address, OrderCreated, UpdateSessionRes, User, WCATokens } from "@/types";
 import { UUID } from "crypto";
 
 const pool = new Pool({
@@ -48,6 +48,30 @@ export async function saveSession(tokens: WCAOAuthTokenResponse, user: WCAProfil
   return res.rowCount;
 }
 
+export async function updateWCATokens(tokens: WCAOAuthTokenResponse, sessionId: string) {
+  const res = await query(`
+    UPDATE sessions
+    SET
+      wca_access_token = $1,
+      wca_refresh_token = $2,
+      wca_scope = $3,
+      wca_access_token_expires_at = $4
+    WHERE
+      id = $5
+    `,
+    [
+      tokens.access_token,
+      tokens.refresh_token,
+      tokens.scope,
+      new Date(tokens.created_at * 1000 + tokens.expires_in * 1000),
+      sessionId,
+    ]
+  )
+  if (!res.rowCount) {
+    throw new Error("Failed to update WCA tokens of session ID");
+  }
+}
+
 export async function updateSession(refreshTokenHash: string, newRefreshTokenHash: string, forceUpdate: boolean): Promise<UpdateSessionRes> {
   const client = await pool.connect();
   try {
@@ -88,7 +112,7 @@ export async function updateSession(refreshTokenHash: string, newRefreshTokenHas
     if (!res.rowCount) {
       throw new Error("Could not update session");
     }
-    
+
     await client.query("COMMIT");
     return { success: true, sessionId: row.id, userId: row.user_id };
   } catch (e) {
@@ -127,20 +151,21 @@ export async function getUserIdFromWCAUserId(wcaUserId: number): Promise<number 
   return row.id as number;
 }
 
-export async function getWcaTokensFromSessionId(sessionId: string): Promise<{ accessToken: string, refreshToken: string }> {
+export async function getWcaTokensFromSessionId(sessionId: string): Promise<WCATokens> {
   const res = await query(`
-    SELECT wca_access_token, wca_refresh_token FROM sessions
+    SELECT 
+      wca_access_token AS "accessToken",
+      wca_refresh_token AS "refreshToken",
+      wca_access_token_expires_at AS "accessTokenExpiresAt"
+    FROM sessions
     WHERE id = $1
     `,
-    [
-      sessionId,
-    ]
+    [sessionId]
   )
   if (!res.rowCount) {
     throw new Error("No tokens from session ID");
   }
-  const row = res.rows.at(0);
-  return { accessToken: row.wca_access_token as string, refreshToken: row.wca_refresh_token as string };
+  return res.rows[0];
 }
 
 export async function addUser(user: WCAProfileResponse, address: Address | null): Promise<number> {
