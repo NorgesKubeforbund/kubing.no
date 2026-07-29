@@ -9,9 +9,16 @@ export async function GET(req: NextRequest) {
   if (!code) {
     return NextResponse.redirect(new URL("/login?error", url));
   }
-  const wcaTokens = await getWCATokens(code, url);
-  const user = await getWCAUserInfo(wcaTokens.access_token);
-
+  const wcaTokensRes = await getWCATokens(code, url);
+  if (!wcaTokensRes.success) {
+    return NextResponse.redirect(new URL("/login?error", url));
+  }
+  const wcaTokens = wcaTokensRes.data;
+  const userRes = await getWCAUserInfo(wcaTokensRes.data.access_token);
+  if (!userRes.success) {
+    return NextResponse.redirect(new URL("/login?error", url));
+  }
+  const user = userRes.data;
   const tokens = await createSession(wcaTokens, user);
   const res = NextResponse.redirect(new URL("/min-side", url));
   setAuthCookies(res, tokens);

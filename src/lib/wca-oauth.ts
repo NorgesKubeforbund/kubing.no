@@ -1,3 +1,4 @@
+import { Maybe } from "@/types";
 import { WCAOAuthTokenResponse, WCAProfileResponse } from "@/types/responses";
 
 export const clientId = process.env.WCA_OAUTH_CLIENT_ID ?? "";
@@ -11,7 +12,7 @@ function getRedirectUri(url: string): string {
   return new URL("/oauth/wca", url).toString();
 }
 
-export async function getWCATokens(code: string, baseUrl: string): Promise<WCAOAuthTokenResponse> {
+export async function getWCATokens(code: string, baseUrl: string): Promise<Maybe<WCAOAuthTokenResponse>> {
   const formData = new FormData();
   formData.append("grant_type", "authorization_code");
   formData.append("client_id", clientId);
@@ -26,12 +27,16 @@ export async function getWCATokens(code: string, baseUrl: string): Promise<WCAOA
     }
   );
   if (!res.ok) {
-    throw new Error("Failed to get WCA tokens");
+    return { success: false };
   }
-  return await res.json() as WCAOAuthTokenResponse;
+  const tokenRes = await res.json() as WCAOAuthTokenResponse;
+  return {
+    success: true,
+    data: tokenRes,
+  };
 }
 
-export async function refreshWCATokens(refreshToken: string, baseUrl: string): Promise<WCAOAuthTokenResponse> {
+export async function refreshWCATokens(refreshToken: string, baseUrl: string): Promise<Maybe<WCAOAuthTokenResponse>> {
   const formData = new FormData();
   formData.append("grant_type", "refresh_token");
   formData.append("client_id", clientId);
@@ -46,12 +51,16 @@ export async function refreshWCATokens(refreshToken: string, baseUrl: string): P
     }
   );
   if (!res.ok) {
-    throw new Error("Failed to refresh WCA tokens");
+    return { success: false };
   }
-  return await res.json() as WCAOAuthTokenResponse;
+  const tokenRes = await res.json() as WCAOAuthTokenResponse;
+  return {
+    success: true,
+    data: tokenRes,
+  };
 }
 
-async function fetchFromWCA(url: string, accessToken: string) {
+async function fetchFromWCA(url: string, accessToken: string): Promise<Maybe<unknown>> {
   const res = await fetch(
     url,
     {
@@ -61,11 +70,15 @@ async function fetchFromWCA(url: string, accessToken: string) {
       },
     });
   if (!res.ok) {
-    throw new Error(`Failed to fetch from WCA: ${url}`);
+    return { success: false };
   }
-  return res.json();
+  const data = await res.json();
+  return {
+    success: true,
+    data,
+  };
 }
 
-export async function getWCAUserInfo(accessToken: string): Promise<WCAProfileResponse> {
-  return await fetchFromWCA("https://www.worldcubeassociation.org/api/v0/me", accessToken) as WCAProfileResponse;
+export async function getWCAUserInfo(accessToken: string): Promise<Maybe<WCAProfileResponse>> {
+  return fetchFromWCA("https://www.worldcubeassociation.org/api/v0/me", accessToken) as Promise<Maybe<WCAProfileResponse>>;
 }

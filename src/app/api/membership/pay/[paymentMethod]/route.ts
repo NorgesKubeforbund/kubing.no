@@ -1,6 +1,6 @@
 import { getAuth } from "@/lib/auth";
 import { getBaseUrl } from "@/lib/utils";
-import { isUserMember } from "@/lib/user";
+import { isUserMember } from "@/lib/membership";
 import { createVippsPaymentAndGetRedirectUrl } from "@/lib/vipps";
 import { NextRequest, NextResponse } from "next/server";
 

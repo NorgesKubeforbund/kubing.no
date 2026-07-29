@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAuth, REFRESH_TOKEN_NAME, SESSION_TOKEN_NAME, setAuthCookies, updateTokens } from "@/lib/auth";
 
 export async function proxy(req: NextRequest) {
-  console.log(req.url);
   const { isAuthenticated, refreshToken } = await getAuth();
   if (isAuthenticated || !refreshToken) {
     return NextResponse.next();

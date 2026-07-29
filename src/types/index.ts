@@ -29,6 +29,10 @@ export type Address = {
   postArea: string,
 };
 
+export type AddressError = "invalid_input" | "api_failure" | "inconclusive";
+
+export type AddressValidation = { success: true, address: Address } | { success: false, error: AddressError };
+
 type AuthNotPresent = {
   isAuthenticated: false;
   userId: null;
@@ -74,3 +78,5 @@ export type WCATokens = {
   refreshToken: string;
   accessTokenExpiresAt: Date;
 };
+
+export type Maybe<T> = { success: true, data: T } | { success: false };

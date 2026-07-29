@@ -1,7 +1,6 @@
-import { getUserData } from "@/lib/user";
+import { UserData } from "@/types";
 
-async function UserData({ userId }: { userId: number }) {
-  const userData = await getUserData(userId);
+async function UserDataTable({ userData }: { userData: UserData }) {
   return (
     <table className="text-left self-center">
       <tbody>
@@ -40,4 +39,4 @@ async function UserData({ userId }: { userId: number }) {
   )
 }
 
-export default UserData;
+export default UserDataTable;
