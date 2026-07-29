@@ -1,15 +1,19 @@
 import { KartverketAddressResponse } from "@/types/responses";
-import { Address } from "@/types";
+import { Address, AddressValidation } from "@/types";
+import { query } from "@/db";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function getAddress(addressObj: any): Promise<Address> {
-  const address = addressObj.address;
+export async function getAddress(addressObj: any): Promise<AddressValidation> {
+  const addressText = addressObj.address;
   const postCode = addressObj.postCode;
   const postArea = addressObj.postArea;
-  if (!address || !postCode || !postArea) {
-    throw new Error("Not all address parameters where found in body.");
+  if (!addressText || !postCode || !postArea) {
+    return {
+      success: false,
+      error: "invalid_input",
+    };
   }
-  const res = await fetch(`https://ws.geonorge.no/adresser/v1/sok?adressetekst=${address}&postnummer=${postCode}&poststed=${postArea}&fuzzy=false&utkoordsys=4258&treffPerSide=10&side=0&asciiKompatibel=true`,
+  const res = await fetch(`https://ws.geonorge.no/adresser/v1/sok?adressetekst=${addressText}&postnummer=${postCode}&poststed=${postArea}&fuzzy=false&utkoordsys=4258&treffPerSide=10&side=0&asciiKompatibel=true`,
     {
       headers: {
         "Accept": "application/json",
@@ -17,12 +21,42 @@ export async function getAddress(addressObj: any): Promise<Address> {
     }
   );
   if (!res.ok) {
-    throw new Error("Address API failed.");
+    return {
+      success: false,
+      error: "api_failure",
+    };
   }
   const json = await res.json() as KartverketAddressResponse;
   if (json.adresser.length === 0 || json.adresser.length > 1) {
-    throw new Error("Either 0 or more than 1 address was found.");
+    return {
+      success: false,
+      error: "inconclusive",
+    };
   }
   const foundAddress = json.adresser[0];
-  return { address: foundAddress.adressetekst, postCode: foundAddress.postnummer, postArea: foundAddress.poststed };
+  const address = {
+    address: foundAddress.adressetekst,
+    postCode: foundAddress.postnummer,
+    postArea: foundAddress.poststed,
+  };
+  return {
+    success: true,
+    address,
+  };
+}
+
+export async function updateAddress(userId: number, address: Address): Promise<boolean> {
+  const res = await query(`
+    UPDATE users
+    SET address = $1, post_code = $2, post_area = $3
+    WHERE id = $4
+    `,
+    [
+      address.address,
+      address.postCode,
+      address.postArea,
+      userId,
+    ]
+  )
+  return res.rowCount !== null && res.rowCount > 0;
 }

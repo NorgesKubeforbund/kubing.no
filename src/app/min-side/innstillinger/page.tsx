@@ -4,15 +4,22 @@ import UserData from "@/components/user-data";
 import BlueLink from "@/components/ui/blue-link";
 import Title from "@/components/ui/title";
 import { getAuth } from "@/lib/auth";
+import { getUserData } from "@/lib/user";
+import { notFound } from "next/navigation";
 
 async function Settings() {
-  const { userId } = await getAuth();
+  const { userId } = await getAuth()
+  const userDataRes = await getUserData(userId!);
+  if (!userDataRes.success) {
+    notFound();
+  }
+  const userData = userDataRes.data;
   return (
     <div className="flex flex-col px-4 sm:px-8 max-w-5xl gap-8 text-center">
       <Title>Innstillinger</Title>
       <div className="flex flex-col gap-4">
         <Title small>Personlig data</Title>
-        <UserData userId={userId!} />
+        <UserData userData={userData} />
       </div>
       <div className="flex flex-col gap-4">
         <Title small>Endre adresse</Title>

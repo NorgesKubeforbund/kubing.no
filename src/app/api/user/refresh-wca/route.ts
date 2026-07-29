@@ -10,10 +10,9 @@ export async function POST(req: NextRequest) {
   if (userId === null) {
     return NextResponse.json({ error: "Ingen bruker er laget enda." }, { status: 403 });
   }
-  try {
-    await updateWCAInfo(userId, sessionId, getBaseUrl(req));
-    return NextResponse.json({ message: "Informasjon oppdatert." });
-  } catch {
+  const success = await updateWCAInfo(userId, sessionId, getBaseUrl(req));
+  if (!success) {
     return NextResponse.json({ error: "Noe gikk galt." }, { status: 500 });
   }
+  return NextResponse.json({ message: "Informasjon oppdatert." });
 }

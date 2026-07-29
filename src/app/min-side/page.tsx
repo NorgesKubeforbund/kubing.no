@@ -2,7 +2,7 @@ import Title from "@/components/ui/title";
 import { getAuth } from "@/lib/auth";
 import BlueLink from "@/components/ui/blue-link";
 import BliMedlemButton from "@/components/bli-medlem-button";
-import { isUserMember } from "@/lib/user";
+import { isUserMember } from "@/lib/membership";
 import { getCurrentYear } from "@/lib/time";
 
 export default async function MyPage() {
