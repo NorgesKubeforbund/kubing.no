@@ -30,7 +30,7 @@ export default function UpdateWCAUserData() {
       </p>
       <button
         onClick={() => updateWCAUserData()}
-        className="self-center bg-gray-100 hover:bg-gray-400 cursor-pointer disabled:cursor-not-allowed disabled:hover:bg-gray-100 disabled:text-gray-400 border rounded-md px-2 py-1 w-fit"
+        className="self-center bg-neutral-100 hover:bg-neutral-400 cursor-pointer disabled:cursor-not-allowed disabled:hover:bg-neutral-100 disabled:text-neutral-400 border rounded-md px-2 py-1 w-fit"
         disabled={loading}
       >
         Oppdater informasjon

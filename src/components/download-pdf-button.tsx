@@ -5,9 +5,9 @@ function downloadPdf() {
   fetch("/3x3-Begynnermetode.pdf").then(response => {
     response.blob().then(blob => {
       const fileURL = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = fileURL;
-      link.download = '3x3-Begynnermetode.pdf';
+      link.download = "3x3-Begynnermetode.pdf";
       link.click();
     })
   })

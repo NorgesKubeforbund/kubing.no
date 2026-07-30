@@ -223,6 +223,34 @@ export type VippsPaymentCreateReponse = {
   reference: string,
 }
 
+export type VippsCancelPayment = {
+  amount: {
+    currency: "NOK",
+    value: number
+  },
+  state: VippsPaymentStatus,
+  aggregate: {
+    authorizedAmount: {
+      currency: "NOK",
+      value: number
+    },
+    cancelledAmount: {
+      currency: "NOK",
+      value: number
+    },
+    capturedAmount: {
+      currency: "NOK",
+      value: number
+    },
+    refundedAmount: {
+      currency: "NOK",
+      value: number
+    }
+  },
+  pspReference: string,
+  reference: string,
+};
+
 export type VippsPaymentStatusReponse = {
   aggregate: {
     authorizedAmount: {
