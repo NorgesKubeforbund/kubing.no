@@ -1,13 +1,15 @@
 import Title from "@/components/ui/title";
 import { getAuth } from "@/lib/auth";
 import BlueLink from "@/components/ui/blue-link";
-import BliMedlemButton from "@/components/bli-medlem-button";
+import BecomeMemberButtons from "@/components/become-member-buttons";
 import { isUserMember } from "@/lib/membership";
 import { getCurrentYear } from "@/lib/time";
+import { claimMembership } from "@/lib/vipps";
 
 export default async function MyPage() {
   const { userId } = await getAuth();
-  const isMember = await isUserMember(userId!);
+  const isMember = await isUserMember(userId!) || await claimMembership(userId!);
+
   return (
     <div className="flex flex-col px-4 sm:px-8 gap-8 text-center">
       <Title>Min side</Title>
@@ -21,8 +23,7 @@ export default async function MyPage() {
               ta kontakt <BlueLink href="/om-oss#kontakt-oss">her</BlueLink>.
             </p>
           }
-          <BliMedlemButton paymentType="WALLET" />
-          <BliMedlemButton paymentType="CARD" />
+          <BecomeMemberButtons />
         </div>
       )}
       <BlueLink href="/min-side/innstillinger">Innstillinger</BlueLink>

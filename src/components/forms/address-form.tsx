@@ -52,10 +52,10 @@ export default function AddressForm({ setFieldsFilled }: { setFieldsFilled: (fie
 
   return (
     <>
-      <input className="w-full max-w-96 border border-gray-400 rounded-md px-3 py-2" type="text" value={addressSearch} placeholder="Adressesøk" onChange={(v) => { hasSelectedRef.current = false; setAddressSearch(v.target.value); setAddresses(null); }} />
-      <input className="w-full max-w-96 border border-gray-400 rounded-md px-3 py-2 cursor-not-allowed" type="text" value={address} readOnly placeholder="Adresse" name="address" />
-      <input className="w-full max-w-96 border border-gray-400 rounded-md px-3 py-2 cursor-not-allowed" type="text" value={postCode} readOnly placeholder="Postnummer" name="postCode" />
-      <input className="w-full max-w-96 border border-gray-400 rounded-md px-3 py-2 cursor-not-allowed" type="text" value={postArea} readOnly placeholder="Poststed" name="postArea" />
+      <input className="w-full max-w-96 border border-neutral-400 rounded-md px-3 py-2" type="text" value={addressSearch} placeholder="Adressesøk" onChange={(v) => { hasSelectedRef.current = false; setAddressSearch(v.target.value); setAddresses(null); }} />
+      <input className="w-full max-w-96 border border-neutral-400 rounded-md px-3 py-2 cursor-not-allowed" type="text" value={address} readOnly placeholder="Adresse" name="address" />
+      <input className="w-full max-w-96 border border-neutral-400 rounded-md px-3 py-2 cursor-not-allowed" type="text" value={postCode} readOnly placeholder="Postnummer" name="postCode" />
+      <input className="w-full max-w-96 border border-neutral-400 rounded-md px-3 py-2 cursor-not-allowed" type="text" value={postArea} readOnly placeholder="Poststed" name="postArea" />
       {
         addresses &&
         <div className="text-sm translate-y-12 absolute rounded-xl border-4 bg-background lg:border-2 border-black p-4 z-50 shadow-mdk">
@@ -63,7 +63,7 @@ export default function AddressForm({ setFieldsFilled }: { setFieldsFilled: (fie
             <div className="flex flex-col gap-2">
               {addresses.adresser.map((option, index) =>
                 <button
-                  className="bg-gray-100 hover:bg-gray-400 cursor-pointer disabled:cursor-not-allowed disabled:hover:bg-gray-100 disabled:text-gray-400 border rounded-md px-2 py-1 w-fit"
+                  className="bg-neutral-100 hover:bg-neutral-400 cursor-pointer disabled:cursor-not-allowed disabled:hover:bg-neutral-100 disabled:text-neutral-400 border rounded-md px-2 py-1 w-fit"
                   onClick={(e) => selectAddress(e, index)}
                   key={`${option.adressetekst}-${option.postnummer}-${option.poststed}`}
                 >

@@ -19,9 +19,12 @@ export type VippsPaymentType = "WALLET" | "CARD";
 export type VippsPaymentStatus = "CREATED" | "ABORTED" | "EXPIRED" | "AUTHORIZED" | "TERMINATED";
 
 export type OrderCreated = {
-  year: number;
   id: number;
+  year: number;
+  vippsReference: string;
 };
+
+export type OrderCreation = { success: true, status: "created_order", redirectUrl: string } | { success: true, status: "order_paid" } | { success: false };
 
 export type Address = {
   address: string,

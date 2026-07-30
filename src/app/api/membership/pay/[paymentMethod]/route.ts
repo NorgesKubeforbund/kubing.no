@@ -20,11 +20,12 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ pay
   if (isMember) {
     return NextResponse.json({ error: "Allerede medlem i år." }, { status: 409 });
   }
-  try {
-    const url = await createVippsPaymentAndGetRedirectUrl(userId, paymentMethod, getBaseUrl(req));
-    return NextResponse.json({ url: url });
-  } catch (err) {
-    console.log(err);
+  const orderCreation = await createVippsPaymentAndGetRedirectUrl(userId, paymentMethod, getBaseUrl(req));
+  if (!orderCreation.success) {
     return NextResponse.json({ error: "Noe gikk galt." }, { status: 500 });
   }
+  if (orderCreation.status === "created_order") {
+    return NextResponse.json({ hasPaid: false, url: orderCreation.redirectUrl });
+  }
+  return NextResponse.json({ hasPaid: true });
 }

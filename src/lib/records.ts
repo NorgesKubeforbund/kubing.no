@@ -58,12 +58,12 @@ function formatTime(time: number): string {
 
 
   if (seconds < 1) {
-    return `0.${String(hundredths).padStart(2, '0')}`
+    return `0.${String(hundredths).padStart(2, "0")}`
   }
   if (minutes > 0) {
-    return `${minutes}:${String(seconds).padStart(2, '0')}.${String(hundredths).padStart(2, '0')}`
+    return `${minutes}:${String(seconds).padStart(2, "0")}.${String(hundredths).padStart(2, "0")}`
   }
-  return `${seconds}.${String(hundredths).padStart(2, '0')}`
+  return `${seconds}.${String(hundredths).padStart(2, "0")}`
 }
 
 function formatMulti(best: number): string {
