@@ -49,4 +49,5 @@ VIPPS_SUBSCRIPTION_KEY={Ocp-Apim-Subscription-Key}
 VIPPS_MSN={Merchant-Serial-Number}
 VIPPS_URL=https://apitest.vipps.no # https://api.vipps.no for production
 VIPPS_REF={unique reference}
+CRON_SECRET={secret} # openssl rand -base64 32
 ```
