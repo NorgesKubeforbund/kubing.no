@@ -393,20 +393,17 @@ export async function updateSession(refreshTokenHash: string, newRefreshTokenHas
     const sessionInfo = await client.query(`
     SELECT id, user_id, last_access, expires_at
     FROM sessions
-    WHERE refresh_token_hash = $1 AND last_access > $2
+    WHERE refresh_token_hash = $1
     FOR UPDATE
     `,
-      [
-        refreshTokenHash,
-        new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 7)
-      ]
+      [refreshTokenHash]
     );
     const row = sessionInfo.rows.at(0) as { id: UUID, user_id: number | null, last_access: Date, expires_at: Date } | undefined;
     if (!row) {
       await client.query("ROLLBACK");
       return { success: false, error: "invalid" };
     }
-    if (row.expires_at < new Date()) {
+    if (row.expires_at < new Date() || row.last_access < new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 7)) {
       return { success: false, error: "expired" };
     }
     if (!forceUpdate && new Date(new Date().getTime() - 1000 * 60) < row.last_access) {
@@ -504,4 +501,11 @@ async function addUser(user: WCAProfileResponse, address: Address | null): Promi
     ]
   );
   return id;
+}
+
+export async function deleteExpiredSessions(): Promise<void> {
+  await query(`
+    DELETE FROM sessions
+    WHERE expires_at < NOW() OR last_access < $1
+  `, [new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 7)]);
 }
