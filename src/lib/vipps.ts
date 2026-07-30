@@ -73,8 +73,14 @@ export async function createVippsPaymentAndGetRedirectUrl(userId: number, paymen
           success: true,
           status: "order_paid",
         };
-      } else {
+      } else if (status === "CREATED") {
         await cancelOrder(order.vippsReference, accessToken, order.id, client);
+      } else {
+        await client.query(`
+          UPDATE orders
+          SET status = 'CANCELLED'
+          WHERE id = $1
+        `, [order.id]);
       }
     }
     const orderNumber = await getOrderNumber(client);

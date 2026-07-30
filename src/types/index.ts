@@ -39,6 +39,7 @@ export type AddressValidation = { success: true, address: Address } | { success:
 type AuthNotPresent = {
   isAuthenticated: false;
   userId: null;
+  permissions: null;
   sessionId: null;
   refreshToken: string | null;
 };
@@ -46,6 +47,7 @@ type AuthNotPresent = {
 type AuthPresentNoUser = {
   isAuthenticated: true;
   userId: null;
+  permissions: null;
   sessionId: string;
   refreshToken: string | null;
 };
@@ -53,13 +55,14 @@ type AuthPresentNoUser = {
 type AuthPresentWithUser = {
   isAuthenticated: true;
   userId: number;
+  permissions: UserPermission[] | null;
   sessionId: string;
   refreshToken: string | null;
 };
 
 export type Auth = AuthNotPresent | AuthPresentNoUser | AuthPresentWithUser;
 
-type UpdateSessionSuccessRes = { success: true, sessionId: string, userId: number | null };
+type UpdateSessionSuccessRes = { success: true, sessionId: string, userId: number | null, permissions: UserPermission[] };
 
 type UpdateSessionError = "invalid" | "too_early" | "expired";
 
@@ -83,3 +86,17 @@ export type WCATokens = {
 };
 
 export type Maybe<T> = { success: true, data: T } | { success: false };
+
+export type UserPermission = "membership_list" | "members_comp";
+
+export type CompWCIF = {
+  persons: {
+    wcaId: string;
+  }[];
+  schedule: { startDate: string };
+};
+
+export type UserWithWcaId = {
+  name: string;
+  wcaId: string;
+};
