@@ -5,7 +5,7 @@ import crypto, { UUID } from "crypto";
 import { WCAOAuthTokenResponse, WCAProfileResponse } from "@/types/responses";
 import { NextResponse } from "next/server";
 import { getWCAUserInfo, refreshWCATokens } from "@/lib/wca-oauth";
-import { Address, Auth, Maybe, RefreshToken, TokenCreation, Tokens, UpdateSessionRes, WCATokens } from "@/types";
+import { Address, Auth, Maybe, RefreshToken, TokenCreation, Tokens, UpdateSessionRes, UserPermission, WCATokens } from "@/types";
 import { getCurrentYear } from "@/lib/time";
 import { addMembershipIfManuallyPaid } from "@/lib/membership";
 
@@ -36,10 +36,13 @@ async function getRefreshToken(): Promise<string | null> {
   return refreshToken ?? null;
 }
 
-function createSessionToken(sessionId: string, userId: number | null): Promise<string> {
+function createSessionToken(sessionId: string, userId: number | null, permissions: UserPermission[]): Promise<string> {
   const payload: Record<string, any> = {}; // eslint-disable-line @typescript-eslint/no-explicit-any
   if (userId !== null) {
     payload.userId = userId;
+  }
+  if (permissions.length) {
+    payload.permissions = permissions;
   }
   return new jose.SignJWT(payload)
     .setProtectedHeader({ alg: JWT_ALG })
@@ -93,8 +96,14 @@ export async function createSession(wcaTokens: WCAOAuthTokenResponse, user: WCAP
     refresh_token: encryptToken(wcaTokens.refresh_token),
   };
   const userId = await getUserIdFromWCAUserId(user.me.id);
+  const isSuperAdmin = (await query(`
+    SELECT id
+    FROM super_admins
+    WHERE id = $1
+  `, [userId])).rowCount;
+  const permissions: UserPermission[] = isSuperAdmin ? ["membership_list", "members_comp"] : [];
   await saveSession(encryptedWcaTokens, user, refreshToken.hash, sessionId, userId);
-  const sessionToken = await createSessionToken(sessionId, userId);
+  const sessionToken = await createSessionToken(sessionId, userId, permissions);
   return {
     sessionToken: sessionToken,
     refreshToken: refreshToken.plain,
@@ -120,7 +129,7 @@ export async function updateTokens(refreshToken: string, forceUpdate: boolean, b
       error: res.error,
     };
   }
-  const newSessionToken = await createSessionToken(res.sessionId, res.userId);
+  const newSessionToken = await createSessionToken(res.sessionId, res.userId, res.permissions);
   if (baseUrl) {
     const isWCASessionValid = await checkWCASession(res.sessionId, baseUrl);
     if (!isWCASessionValid) {
@@ -304,16 +313,28 @@ export async function getAuth(): Promise<Auth> {
       userId: null,
       sessionId: null,
       refreshToken,
+      permissions: null,
     };
   }
   const { data: decoded } = decodedRes;
-  const userId = (decoded.payload.userId as number | undefined) ?? null;
   const sessionId = decoded.payload.sub!;
+  const userId = (decoded.payload.userId as number | undefined) ?? null;
+  if (!userId) {
+    return {
+      isAuthenticated: true,
+      userId,
+      sessionId,
+      refreshToken,
+      permissions: null,
+    };
+  }
+  const permissions = (decoded.payload.permissions as UserPermission[] | undefined) ?? null;
   return {
     isAuthenticated: true,
-    userId: userId,
-    sessionId: sessionId,
+    userId,
+    sessionId,
     refreshToken,
+    permissions,
   };
 }
 
@@ -395,9 +416,7 @@ export async function updateSession(refreshTokenHash: string, newRefreshTokenHas
     FROM sessions
     WHERE refresh_token_hash = $1
     FOR UPDATE
-    `,
-      [refreshTokenHash]
-    );
+    `, [refreshTokenHash]);
     const row = sessionInfo.rows.at(0) as { id: UUID, user_id: number | null, last_access: Date, expires_at: Date } | undefined;
     if (!row) {
       await client.query("ROLLBACK");
@@ -414,18 +433,23 @@ export async function updateSession(refreshTokenHash: string, newRefreshTokenHas
     UPDATE sessions
     SET refresh_token_hash = $1, last_access = NOW()
     WHERE refresh_token_hash = $2
-    `,
-      [
-        newRefreshTokenHash,
-        refreshTokenHash,
-      ]
-    );
+    `, [newRefreshTokenHash, refreshTokenHash]);
     if (!res.rowCount) {
       throw new Error("Could not update session");
     }
-
+    const isSuperAdmin = (await client.query(`
+      SELECT id
+      FROM super_admins
+      WHERE id = $1
+    `, [row.user_id])).rowCount;
+    const permissions: UserPermission[] = isSuperAdmin ? ["membership_list", "members_comp"] : [];
     await client.query("COMMIT");
-    return { success: true, sessionId: row.id, userId: row.user_id };
+    return {
+      success: true,
+      sessionId: row.id,
+      userId: row.user_id,
+      permissions
+    };
   } catch (e) {
     await client.query("ROLLBACK")
     throw e

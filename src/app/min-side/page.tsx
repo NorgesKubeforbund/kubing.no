@@ -7,9 +7,9 @@ import { getCurrentYear } from "@/lib/time";
 import { claimMembership } from "@/lib/vipps";
 
 export default async function MyPage() {
-  const { userId } = await getAuth();
+  const { userId, permissions } = await getAuth();
   const isMember = await isUserMember(userId!) || await claimMembership(userId!);
-
+  const hasPermissions = permissions?.length ?? 0 > 0;
   return (
     <div className="flex flex-col px-4 sm:px-8 gap-8 text-center">
       <Title>Min side</Title>
@@ -27,6 +27,7 @@ export default async function MyPage() {
         </div>
       )}
       <BlueLink href="/min-side/innstillinger">Innstillinger</BlueLink>
+      {hasPermissions && <BlueLink href="/admin">Admin-side</BlueLink>}
     </div>
   );
 }
