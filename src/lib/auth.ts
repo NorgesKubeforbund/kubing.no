@@ -461,7 +461,7 @@ async function getUserIdFromWCAUserId(wcaUserId: number): Promise<number | null>
   if (!res.rowCount) {
     return null;
   }
-  return res.rows[0].id[0] as number;
+  return res.rows[0].id as number;
 }
 
 async function addUser(user: WCAProfileResponse, address: Address | null): Promise<number> {
