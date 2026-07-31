@@ -13,6 +13,10 @@ const internalLinks: { href: string, text: string }[] = [
     href: "/personvern",
     text: "Personvernerklæring"
   },
+  {
+    href: "/NKF-medlem-salgskontrakt.pdf",
+    text: "Salgsavtale"
+  },
 ];
 
 const externalLinks: { href: string, text: string }[] = [
