@@ -1,4 +1,4 @@
-import { query } from "@/db";
+import { getClient, query } from "@/db";
 import { getCurrentYear } from "@/lib/time";
 import { User, UserWithWcaId } from "@/types";
 
@@ -21,19 +21,32 @@ export async function isUserMemberInYear(userId: number, year: number): Promise<
 }
 
 export async function addMembershipIfManuallyPaid(userId: number, wcaId: string, year: number): Promise<void> {
-  const hasManuallyPaid = (await query("SELECT * FROM manual_payments WHERE wca_id = $1", [wcaId])).rowCount;
-  if (hasManuallyPaid) {
-    await query(`
-      INSERT INTO memberships
-      (user_id, year)
-      VALUES
-      ($1, $2);
-    `,
-      [
-        userId,
-        year,
-      ]
-    );
+  const client = await getClient();
+  try {
+    await client.query("BEGIN");
+    const hasManuallyPaid = (await query("SELECT * FROM manual_payments WHERE wca_id = $1", [wcaId])).rowCount;
+    if (hasManuallyPaid) {
+      await query(`
+        INSERT INTO memberships
+        (user_id, year)
+        VALUES
+        ($1, $2);
+        `,
+        [
+          userId,
+          year,
+        ]
+      );
+      await query(`
+        DELETE FROM manual_payments WHERE wca_id = $1
+        `, [wcaId]
+      );
+    }
+    await client.query("COMMIT");
+  } catch {
+    await client.query("ROLLBACK");
+  } finally {
+    client.release();
   }
 }
 
