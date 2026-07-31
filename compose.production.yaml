@@ -23,6 +23,9 @@ services:
       VIPPS_MSN: ${VIPPS_MSN}
       VIPPS_URL: ${VIPPS_URL}
       VIPPS_REF: ${VIPPS_REF}
+      RESEND_API_KEY: ${RESEND_API_KEY}
+      RESEND_DOMAIN: ${RESEND_DOMAIN}
+      CRON_SECRET: ${CRON_SECRET}
     build: .
 
   db:
