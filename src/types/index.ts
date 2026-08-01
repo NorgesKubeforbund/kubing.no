@@ -24,7 +24,7 @@ export type OrderCreated = {
   vippsReference: string;
 };
 
-export type OrderCreation = { success: true, status: "created_order", redirectUrl: string } | { success: true, status: "order_paid" } | { success: false };
+export type OrderCreation = { success: true, status: "created_order", redirectUrl: string } | { success: true, status: "order_paid" } | { success: true, status: "already_member" } |  { success: false };
 
 export type Address = {
   address: string,

@@ -4,6 +4,7 @@ import { getCurrentYear } from "@/lib/time";
 import { Maybe, OrderCreated, OrderCreation, User, VippsPaymentStatus, VippsPaymentType } from "@/types";
 import { sendMembershipConfirmation } from "@/lib/mail";
 import { PoolClient } from "pg";
+import { isUserMemberInYearWithClient } from "./membership";
 
 
 type VippsAccessToken = { accessToken: string, expiresAt: Date }
@@ -50,6 +51,7 @@ async function getAccessToken(): Promise<string> {
 }
 
 export async function createVippsPaymentAndGetRedirectUrl(userId: number, paymentType: VippsPaymentType, baseUrl: string): Promise<OrderCreation> {
+  const year = getCurrentYear();
   const client = await getClient();
   try {
     await client.query("BEGIN");
@@ -59,6 +61,11 @@ export async function createVippsPaymentAndGetRedirectUrl(userId: number, paymen
       WHERE id = $1
       FOR UPDATE
       `, [userId])).rows.at(0);
+    const isMember = await isUserMemberInYearWithClient(userId, year, client);
+    if (isMember) {
+      await client.query("ROLLBACK");
+      return { success: true, status: "already_member" };
+    }
     const createdOrder = await getCreatedOrder(userId, client);
     const accessToken = await getAccessToken();
     if (createdOrder.success) {
@@ -112,7 +119,7 @@ export async function createVippsPaymentAndGetRedirectUrl(userId: number, paymen
       throw new Error("Could not create Vipps payment.");
     }
     const payment = await res.json() as VippsPaymentCreateReponse;
-    await createOrder(userId, getCurrentYear(), vippsReference, client);
+    await createOrder(userId, year, vippsReference, client);
     await client.query("COMMIT");
     return {
       success: true,
