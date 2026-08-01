@@ -1,6 +1,5 @@
 import { getAuth } from "@/lib/auth";
 import { getBaseUrl } from "@/lib/utils";
-import { isUserMember } from "@/lib/membership";
 import { createVippsPaymentAndGetRedirectUrl } from "@/lib/vipps";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -15,10 +14,6 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ pay
   }
   if (userId === null) {
     return NextResponse.json({ error: "Ingen bruker er laget enda." }, { status: 403 });
-  }
-  const isMember = await isUserMember(userId);
-  if (isMember) {
-    return NextResponse.json({ error: "Allerede medlem i år." }, { status: 409 });
   }
   const orderCreation = await createVippsPaymentAndGetRedirectUrl(userId, paymentMethod, getBaseUrl(req));
   if (!orderCreation.success) {

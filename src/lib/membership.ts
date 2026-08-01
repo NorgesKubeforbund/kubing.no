@@ -1,6 +1,7 @@
 import { getClient, query } from "@/db";
 import { getCurrentYear } from "@/lib/time";
 import { User, UserWithWcaId } from "@/types";
+import { PoolClient } from "pg";
 
 export async function isUserMemberInYear(userId: number, year: number): Promise<boolean> {
   const res = await query(`
@@ -8,15 +9,20 @@ export async function isUserMemberInYear(userId: number, year: number): Promise<
       SELECT 1 FROM memberships
       WHERE user_id = $1 AND year = $2
     )
-    `,
-    [
-      userId,
-      year,
-    ]
-  )
+  `,[userId, year]);
   if (!res.rowCount) {
     throw new Error("Could not check if user is member");
   }
+  return res.rows[0].exists as boolean;
+}
+
+export async function isUserMemberInYearWithClient(userId: number, year: number, client: PoolClient): Promise<boolean> {
+  const res = await client.query(`
+    SELECT EXISTS (
+      SELECT 1 FROM memberships
+      WHERE user_id = $1 AND year = $2
+    )
+  `,[userId, year]);
   return res.rows[0].exists as boolean;
 }
 
