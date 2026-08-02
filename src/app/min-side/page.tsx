@@ -18,7 +18,7 @@ export default async function MyPage() {
         <div className="flex flex-col gap-4">
           <Title small>Bli medlem</Title>
           {getCurrentYear() === 2026 &&
-            <p>
+            <p className="mb-4">
               Hvis du betalte medlemskontigent før den nye betalingsløsningen,
               ta kontakt <BlueLink href="/om-oss#kontakt-oss">her</BlueLink>.
             </p>
