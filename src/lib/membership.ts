@@ -1,6 +1,6 @@
 import { getClient, query } from "@/db";
-import { getCurrentYear } from "@/lib/time";
-import { User, UserWithWcaId } from "@/types";
+import { getCurrentYear, toNorwayDateString } from "@/lib/time";
+import { Member, UserWithWcaId } from "@/types";
 import { PoolClient } from "pg";
 
 export async function isUserMemberInYear(userId: number, year: number): Promise<boolean> {
@@ -9,7 +9,7 @@ export async function isUserMemberInYear(userId: number, year: number): Promise<
       SELECT 1 FROM memberships
       WHERE user_id = $1 AND year = $2
     )
-  `,[userId, year]);
+  `, [userId, year]);
   if (!res.rowCount) {
     throw new Error("Could not check if user is member");
   }
@@ -22,7 +22,7 @@ export async function isUserMemberInYearWithClient(userId: number, year: number,
       SELECT 1 FROM memberships
       WHERE user_id = $1 AND year = $2
     )
-  `,[userId, year]);
+  `, [userId, year]);
   return res.rows[0].exists as boolean;
 }
 
@@ -61,24 +61,59 @@ export async function isUserMember(userId: number): Promise<boolean> {
   return isUserMemberInYear(userId, year);
 }
 
-export async function getAllMembers(year: number): Promise<User[]> {
-  return (await query(`
+export async function getAllMembers(year: number): Promise<Member[]> {
+  const members = (await query(`
     SELECT 
-      id,
+      u.name,
+      u.wca_id AS "wcaId",
+      u.email,
+      u.dob,
+      u.address,
+      u.post_code AS "postCode",
+      u.post_area AS "postArea",
+      m.created_at AS "createdAt"
+    FROM users u
+    JOIN memberships m ON u.id = m.user_id AND m.year = $1
+    ORDER BY u.name
+  `, [year])).rows.map(row => ({
+    name: row.name,
+    wcaId: row.wcaId,
+    email: row.email,
+    dob: row.dob,
+    address: {
+      address: row.address,
+      postCode: row.postCode,
+      postArea: row.postArea,
+    },
+    createdAt: toNorwayDateString(row.createdAt),
+  }));
+  if (year !== 2026) {
+    return members;
+  }
+  const manualMembers = (await query(`
+    SELECT 
       name,
       wca_id AS "wcaId",
       email,
       dob,
       address,
       post_code AS "postCode",
-      post_area AS "postArea"
-    FROM users
-    WHERE id IN (
-      SELECT user_id FROM memberships
-      WHERE year = $1
-    )
-    ORDER BY name
-    `, [year])).rows;
+      post_area AS "postArea",
+      created_at AS "createdAt"
+    FROM manual_payments
+  `, [])).rows.map(row => ({
+    name: row.name,
+    wcaId: row.wcaId,
+    email: row.email,
+    dob: row.dob,
+    address: {
+      address: row.address,
+      postCode: row.postCode,
+      postArea: row.postArea,
+    },
+    createdAt: toNorwayDateString(row.createdAt),
+  }));
+  return [...members, ...manualMembers].sort(sortMembers)
 }
 
 export async function getMembersByWcaIds(wcaIds: string[], year: number): Promise<UserWithWcaId[]> {
@@ -108,4 +143,16 @@ export async function getManualMembersByWcaIds(wcaIds: string[]): Promise<UserWi
       wcaId: row.wca_id,
     }
   ));
+}
+
+export async function getAllYearsWithMembers(): Promise<number[]> {
+  const res = await query(`
+    SELECT DISTINCT year
+    FROM memberships  
+  `, []);
+  return res.rows.map(row => row.year).sort().reverse();
+}
+
+function sortMembers(a: Member, b: Member): number {
+  return a.name.localeCompare(b.name, "no", { sensitivity: "base" });
 }

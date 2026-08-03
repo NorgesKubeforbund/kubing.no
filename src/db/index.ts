@@ -1,4 +1,4 @@
-import { Pool, PoolClient, QueryResult } from "pg";
+import { Pool, PoolClient, QueryResult, types } from "pg";
 
 const pool = new Pool({
   database: process.env.POSTGRES_DB ?? "postgres",
@@ -7,6 +7,8 @@ const pool = new Pool({
   host: process.env.POSTGRES_HOST ?? "postgres",
   port: parseInt(process.env.POSTGRES_PORT ?? "5432"),
 });
+
+types.setTypeParser(1082, (val) => val);
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function query(text: string, params: any[]): Promise<QueryResult<any>> {
