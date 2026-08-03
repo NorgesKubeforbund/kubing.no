@@ -19,7 +19,7 @@ async function UserDataTable({ userData }: { userData: UserData }) {
         <tr>
           <td>Fødselsdato:</td>
           <td>
-            {userData.dob.toLocaleDateString("nb-NO", {
+            {new Date(userData.dob).toLocaleDateString("nb-NO", {
               month: "long",
               day: "numeric",
               year: "numeric",

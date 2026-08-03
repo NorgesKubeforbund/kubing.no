@@ -51,7 +51,13 @@ CREATE TABLE IF NOT EXISTS orders (
 
 CREATE TABLE IF NOT EXISTS manual_payments (
     wca_id VARCHAR(10) PRIMARY KEY,
-    name VARCHAR(150) NOT NULL
+    name VARCHAR(150) NOT NULL,
+    email VARCHAR(150) UNIQUE NOT NULL,
+    dob DATE NOT NULL,
+    address VARCHAR(200),
+    post_code VARCHAR(4),
+    post_area VARCHAR(100),
+    created_at TIMESTAMPTZ NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS super_admins (

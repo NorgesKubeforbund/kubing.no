@@ -6,12 +6,16 @@ export type User = {
   name: string,
   wcaId: string | null,
   email: string,
-  dob: Date,
+  dob: string,
   address: Address | null,
 };
 
 export type UserData = User & {
   isMember: boolean
+};
+
+export type Member = User & {
+  createdAt: string;
 };
 
 export type VippsPaymentType = "WALLET" | "CARD";
