@@ -17,7 +17,6 @@ const delegates: { area: string, delegates: { name: string, mail: string, wcaId:
   {
     area: "Trondheim",
     delegates: [
-      { name: "Jacob Oliver Bruun", mail: "jbruun@worldcubeassociation.org", wcaId: "2018BRUU01" },
       { name: "Lars Johan Folde", mail: "lfolde@worldcubeassociation.org", wcaId: "2018FOLD01" },
     ],
   },
@@ -28,9 +27,9 @@ const delegates: { area: string, delegates: { name: string, mail: string, wcaId:
     ],
   },
   {
-    area: "USA",
+    area: "Tromsø",
     delegates: [
-      { name: "Elmer Alexander Johnsen", mail: "ejohnsen@worldcubeassociation.org", wcaId: "2018JOHN03" },
+      { name: "Jacob Oliver Bruun", mail: "jbruun@worldcubeassociation.org", wcaId: "2018BRUU01" },
     ],
   },
 ];
