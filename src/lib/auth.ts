@@ -461,7 +461,7 @@ export async function updateSession(refreshTokenHash: string, newRefreshTokenHas
       permissions
     };
   } catch (e) {
-    await client.query("ROLLBACK")
+    await client.query("ROLLBACK").catch(() => { });
     console.error(e);
     return { success: false, error: "unexpected_error" };
   } finally {
