@@ -24,7 +24,7 @@ export default function UpdateWCAUserData() {
       <p>
         Hvis du trykker på knappen nedenfor, vil vi på nytt hente inn
         din personlige informasjon fra WCA.
-        Har du endret navn eller epost på WCA, er dette måten du kan
+        Har du endret navn eller e-post på WCA, er dette måten du kan
         oppdatere informasjonen vi har om deg. Slik at vi har
         riktig navn og kontaktinformasjon.
       </p>

@@ -1,16 +1,10 @@
-function Title({ children, small }: { children?: React.ReactNode, small?: boolean }) {
-  if (small) {
-    return (
-      <div className="text-3xl text-black font-semibold">
-        {children}
-      </div>
-    )
-  }
+export default function Title({ children, small }: { children?: React.ReactNode, small?: boolean }) {
+  const className = small
+    ? "text-3xl text-black font-semibold"
+    : "text-4xl text-accent-text font-bold";
   return (
-    <div className="text-4xl text-accent-text font-bold">
+    <div className={className}>
       {children}
     </div>
-  )
+  );
 }
-
-export default Title

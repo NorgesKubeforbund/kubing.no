@@ -10,9 +10,12 @@ import { getBaseUrl } from "@/lib/utils";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
-  const { isAuthenticated, sessionId, refreshToken } = await getAuth();
+  const { isAuthenticated, userId, sessionId, refreshToken } = await getAuth();
   if (!isAuthenticated) {
     return NextResponse.json({ error: "Ikke innlogget." }, { status: 401 });
+  }
+  if (userId !== null) {
+    return NextResponse.json({ error: "Bruker er allerede laget" }, { status: 409 });
   }
   if (!refreshToken) {
     const res = NextResponse.json({ error: "Ikke innlogget." }, { status: 401 });

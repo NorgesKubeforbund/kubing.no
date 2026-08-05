@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
   }
   const success = await updateAddress(userId, addressValidation.address);
   if (!success) {
-    return NextResponse.json({ error: "Noe gikk galt." }, { status: 500 })
+    return NextResponse.json({ error: "Noe gikk galt." }, { status: 500 });
   }
   return NextResponse.json({ message: "Adresse oppdatert." });
 }

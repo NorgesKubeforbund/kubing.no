@@ -5,11 +5,17 @@ import BlueLink from "@/components/ui/blue-link";
 import Title from "@/components/ui/title";
 import { getAuth } from "@/lib/auth";
 import { getUserData } from "@/lib/user";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
-async function Settings() {
-  const { userId } = await getAuth()
-  const userDataRes = await getUserData(userId!);
+export default async function SettingsPage() {
+  const { isAuthenticated, userId } = await getAuth()
+  if (!isAuthenticated) {
+    redirect("/login");
+  }
+  if (userId === null) {
+    redirect("/min-side");
+  }
+  const userDataRes = await getUserData(userId);
   if (!userDataRes.success) {
     notFound();
   }
@@ -43,6 +49,3 @@ async function Settings() {
     </div>
   );
 }
-
-
-export default Settings;

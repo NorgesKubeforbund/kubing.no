@@ -35,7 +35,8 @@ async function Home() {
           </p>
           <p>
             For å bli medlem må du <BlueLink href="/login">logge inn</BlueLink> med WCA, opprette bruker og betale
-            medlemskontigent med enten Vipps eller kort.
+            medlemskontigent med enten Vipps eller kort. Hvis du ikke allerede har en WCA-bruker, kan du opprette
+            en <BlueLink href="https://www.worldcubeassociation.org/users/sign_up">her</BlueLink>.
           </p>
         </div>
       </div>

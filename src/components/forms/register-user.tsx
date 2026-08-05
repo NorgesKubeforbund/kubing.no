@@ -46,7 +46,7 @@ function RegisterUser() {
   return (
     <div className="flex flex-col px-4 sm:px-8 gap-16 text-center">
       <Title>Registrer deg</Title>
-      <p>Når du lager en bruker vil vi lagre navn, WCA ID, epost og fødselsdato som er knyttet til din WCA bruker.</p>
+      <p>Når du lager en bruker vil vi lagre navn, WCA ID, e-post og fødselsdato som er knyttet til din WCA bruker.</p>
       <form onSubmit={registerUser} className="flex flex-col gap-4 items-center" >
         <AddressForm setFieldsFilled={setFieldsFilled} />
         <label className="flex flex-row gap-4">

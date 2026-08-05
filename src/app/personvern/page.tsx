@@ -24,7 +24,7 @@ export default function PrivacyPolicy() {
             Navn
           </div>
           <div>
-            Epost
+            E-post
           </div>
           <div>
             Fødselsdato
@@ -63,7 +63,7 @@ export default function PrivacyPolicy() {
         <div className="flex flex-col gap-2">
           <div className="text-2xl font-semibold">Rett til korrigering</div>
           <p>
-            Hvis du har endret navn eller epost hos WCA, kan du oppdatere det <BlueLink href="/min-side/innstillinger">her</BlueLink>.
+            Hvis du har endret navn eller e-post hos WCA, kan du oppdatere det <BlueLink href="/min-side/innstillinger">her</BlueLink>.
           </p>
         </div>
         {/* <div className="flex flex-col gap-2">

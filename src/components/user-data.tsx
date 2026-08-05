@@ -13,7 +13,7 @@ async function UserDataTable({ userData }: { userData: UserData }) {
           <td>{userData.wcaId}</td>
         </tr>
         <tr className="wrap-anywhere">
-          <td>Epost:</td>
+          <td>E-post:</td>
           <td>{userData.email}</td>
         </tr>
         <tr>

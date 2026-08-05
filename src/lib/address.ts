@@ -27,7 +27,7 @@ export async function getAddress(addressObj: any): Promise<AddressValidation> {
     };
   }
   const json = await res.json() as KartverketAddressResponse;
-  if (json.adresser.length === 0 || json.adresser.length > 1) {
+  if (json.adresser.length !== 1) {
     return {
       success: false,
       error: "inconclusive",

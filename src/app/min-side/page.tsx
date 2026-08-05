@@ -5,9 +5,17 @@ import BecomeMemberButtons from "@/components/become-member-buttons";
 import { isUserMember } from "@/lib/membership";
 import { getCurrentYear } from "@/lib/time";
 import { claimMembership } from "@/lib/vipps";
+import { redirect } from "next/navigation";
+import RegisterUser from "@/components/forms/register-user";
 
 export default async function MyPage() {
-  const { userId, permissions } = await getAuth();
+  const { isAuthenticated, userId, permissions } = await getAuth();
+  if (!isAuthenticated) {
+    redirect("/login");
+  }
+  if (userId === null) {
+    return <RegisterUser />;
+  }
   const isMember = await isUserMember(userId!) || await claimMembership(userId!);
   const hasPermissions = permissions?.length ?? 0 > 0;
   return (
