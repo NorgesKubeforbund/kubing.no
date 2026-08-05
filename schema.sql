@@ -49,6 +49,9 @@ CREATE TABLE IF NOT EXISTS orders (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
+CREATE UNIQUE INDEX IF NOT EXISTS orders_one_created_per_user_year
+  ON orders (user_id, year) WHERE status = 'CREATED';
+
 CREATE TABLE IF NOT EXISTS manual_payments (
     wca_id VARCHAR(10) PRIMARY KEY,
     name VARCHAR(150) NOT NULL,
