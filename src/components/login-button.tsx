@@ -17,13 +17,11 @@ function LoginButton({ clientId }: { clientId: string }) {
     <button
       disabled={loading}
       onClick={login}
-      type="submit"
-      value="Lag bruker"
       className="bg-neutral-100 hover:bg-neutral-400 cursor-pointer disabled:cursor-not-allowed disabled:hover:bg-neutral-100 disabled:text-neutral-400 border rounded-md px-2 py-1 w-fit"
     >
       Logg inn med WCA
     </button>
-  )
+  );
 }
 
 export default LoginButton;

@@ -55,7 +55,7 @@ function ContactForm({ serviceId }: { serviceId: string }) {
     <div className="flex flex-col gap-4" id="kontakt-oss">
       <Title small>Ta kontakt med NKF her:</Title>
       {delivered
-        ? <p>Epost er levert</p>
+        ? <p>E-post er levert</p>
         : <div className="flex flex-row justify-center w-full">
           <form onSubmit={onSubmit} className="flex flex-col gap-6 w-full">
             <div className="flex flex-col gap-2">
@@ -76,7 +76,7 @@ function ContactForm({ serviceId }: { serviceId: string }) {
             </div>
             <div className="flex flex-col gap-2">
               <label htmlFor="email">
-                Epost <span className="text-accent-text">*</span>
+                E-post <span className="text-accent-text">*</span>
               </label>
               <div className="flex flex-row justify-center">
                 <input
@@ -84,7 +84,7 @@ function ContactForm({ serviceId }: { serviceId: string }) {
                   name="email"
                   type="email"
                   id="email"
-                  placeholder="Din epost..."
+                  placeholder="Din e-post..."
                   autoComplete="email"
                   required
                 />
@@ -98,7 +98,7 @@ function ContactForm({ serviceId }: { serviceId: string }) {
             </div>
             <div className="flex flex-row justify-center">
               <button className="bg-neutral-100 active:bg-neutral-400 hover:bg-neutral-400 cursor-pointer border rounded-md px-2 py-1 w-fit" type="submit">
-                Send epost
+                Send e-post
               </button>
             </div>
           </form>

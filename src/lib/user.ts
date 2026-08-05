@@ -20,13 +20,17 @@ export async function getUserData(userId: number): Promise<Maybe<UserData>> {
 
 export async function getUser(userId: number): Promise<Maybe<User>> {
   const res = await query(`
-    SELECT name, wca_id, email, dob, address, post_code, post_area FROM users
+    SELECT 
+      name,
+      wca_id AS "wcaId",
+      email,
+      dob,
+      address,
+      post_code AS "postCode",
+      post_area AS "postArea"
+    FROM users
     WHERE id = $1
-    `,
-    [
-      userId,
-    ]
-  )
+  `, [userId]);
   if (!res.rowCount) {
     return { success: false };
   }
@@ -35,10 +39,10 @@ export async function getUser(userId: number): Promise<Maybe<User>> {
     success: true,
     data: {
       name: row.name,
-      wcaId: row.wca_id,
+      wcaId: row.wcaId,
       email: row.email,
       dob: row.dob,
-      address: row.address ? { address: row.address, postCode: row.post_code, postArea: row.post_area } : null,
+      address: row.address ? { address: row.address, postCode: row.postCode, postArea: row.postArea } : null,
     }
   };
 }

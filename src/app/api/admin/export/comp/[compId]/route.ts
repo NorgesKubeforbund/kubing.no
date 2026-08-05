@@ -21,7 +21,6 @@ export async function GET(
   const body = await res.json() as CompWCIF;
   const wcaIds = body.persons.map(person => person.wcaId);
   const year = parseInt(body.schedule.startDate.substring(0, 4));
-  console.log(year);
   const nkfMembersInComp = await getMembersByWcaIds(wcaIds, year);
   if (year === 2026) {
     const nonRegisteredNkfMembersInComp = await getManualMembersByWcaIds(wcaIds);;

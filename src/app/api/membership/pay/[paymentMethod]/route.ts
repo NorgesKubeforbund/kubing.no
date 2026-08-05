@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest, { params }: { params: Promise<{ paymentMethod: string }> }) {
   const { paymentMethod } = await params;
   if (paymentMethod !== "WALLET" && paymentMethod !== "CARD") {
-    return NextResponse.json({ error: "Ugyldig betalingsmåte." }, { status: 401 });
+    return NextResponse.json({ error: "Ugyldig betalingsmåte." }, { status: 400 });
   }
   const { isAuthenticated, userId } = await getAuth();
   if (!isAuthenticated) {

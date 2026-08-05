@@ -10,9 +10,6 @@ export async function isUserMemberInYear(userId: number, year: number): Promise<
       WHERE user_id = $1 AND year = $2
     )
   `, [userId, year]);
-  if (!res.rowCount) {
-    throw new Error("Could not check if user is member");
-  }
   return res.rows[0].exists as boolean;
 }
 
@@ -30,23 +27,17 @@ export async function addMembershipIfManuallyPaid(userId: number, wcaId: string,
   const client = await getClient();
   try {
     await client.query("BEGIN");
-    const hasManuallyPaid = (await query("SELECT * FROM manual_payments WHERE wca_id = $1", [wcaId])).rowCount;
+    const hasManuallyPaid = (await query("SELECT * FROM manual_payments WHERE wca_id = $1 FOR UPDATE", [wcaId])).rowCount;
     if (hasManuallyPaid) {
       await query(`
         INSERT INTO memberships
         (user_id, year)
         VALUES
         ($1, $2);
-        `,
-        [
-          userId,
-          year,
-        ]
-      );
+      `, [userId, year]);
       await query(`
         DELETE FROM manual_payments WHERE wca_id = $1
-        `, [wcaId]
-      );
+      `, [wcaId]);
     }
     await client.query("COMMIT");
   } catch {
@@ -118,31 +109,21 @@ export async function getAllMembers(year: number): Promise<Member[]> {
 
 export async function getMembersByWcaIds(wcaIds: string[], year: number): Promise<UserWithWcaId[]> {
   const res = await query(`
-    SELECT u.name AS name, u.wca_id AS wca_id
+    SELECT u.name, u.wca_id AS "wcaId"
     FROM users u
     JOIN memberships m ON m.user_id = u.id AND year = $2
     WHERE u.wca_id = ANY($1)`
     , [wcaIds, year]);
-  return res.rows.map(row => (
-    {
-      name: row.name,
-      wcaId: row.wca_id,
-    }
-  ));
+  return res.rows;
 }
 
 export async function getManualMembersByWcaIds(wcaIds: string[]): Promise<UserWithWcaId[]> {
   const res = await query(`
-    SELECT name, wca_id
+    SELECT name, wca_id AS "wcaId"
     FROM manual_payments
     WHERE wca_id = ANY($1)`
-    , [wcaIds]);
-  return res.rows.map(row => (
-    {
-      name: row.name,
-      wcaId: row.wca_id,
-    }
-  ));
+  , [wcaIds]);
+  return res.rows;
 }
 
 export async function getAllYearsWithMembers(): Promise<number[]> {

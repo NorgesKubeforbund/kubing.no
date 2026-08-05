@@ -5,13 +5,16 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const fromDomain = process.env.RESEND_DOMAIN;
 
 async function sendMail(email: string, subject: string, html: string) {
-  // TODO: Handle errors
-  await resend.emails.send({
+  const { error } = await resend.emails.send({
     from: `Norges Kubeforbund <info@${fromDomain}>`,
     to: email,
     subject: subject,
     html: html,
   });
+  if (error) {
+    console.error("Failed:", error.message);
+    return;
+  }
 }
 
 function htmlTemplate(content: string) {
