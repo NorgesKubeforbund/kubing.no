@@ -40,11 +40,11 @@ export async function POST(req: NextRequest) {
     }
   }
   const address = addressValidation?.address ?? null;
-  const success = await createUser(sessionId!, getBaseUrl(req), address);
+  const success = await createUser(sessionId!, getBaseUrl(), address);
   if (!success) {
     return NextResponse.json({ error: "Noe gikk galt, fikk ikke laget bruker." }, { status: 500 });
   }
-  const tokenCreation = await updateTokens(refreshToken, true, getBaseUrl(req));
+  const tokenCreation = await updateTokens(refreshToken, true, getBaseUrl());
   if (!tokenCreation.success) {
     return NextResponse.json({ error: "Noe gikk galt, fikk ikke laget bruker." }, { status: 500 });
   }

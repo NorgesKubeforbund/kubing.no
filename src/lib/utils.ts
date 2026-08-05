@@ -1,7 +1,6 @@
-import { NextRequest } from "next/server";
+if (!process.env.APP_URL) throw new Error("APP_URL is missing");
+const APP_URL = process.env.APP_URL;
 
-export function getBaseUrl(req: NextRequest): string {
-  const protocol = req.headers.get("x-forwarded-proto") || "http";
-  const host = req.headers.get("x-forwarded-host") || req.headers.get("host");
-  return `${protocol}://${host}`;
+export function getBaseUrl(): string {
+  return APP_URL;
 }

@@ -9,9 +9,15 @@ import { Address, Auth, Maybe, RefreshToken, TokenCreation, Tokens, UpdateSessio
 import { getCurrentYear } from "@/lib/time";
 import { addMembershipIfManuallyPaid } from "@/lib/membership";
 
-const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET ?? "");
+if (!process.env.JWT_SECRET) throw new Error("JWT_SECRET missing");
+if (!process.env.TOKEN_ENCRYPTION_SECRET) throw new Error("TOKEN_ENCRYPTION_SECRET missing");
+
+const ENCRYPTION_KEY = Buffer.from(process.env.TOKEN_ENCRYPTION_SECRET, "base64");
+if (ENCRYPTION_KEY.length !== 32) throw new Error("TOKEN_ENCRYPTION_SECRET must be 32 bytes base64");
+if (process.env.JWT_SECRET.length < 32) throw new Error("JWT_SECRET too short");
+
+const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET);
 const JWT_ALG = "HS256";
-const ENCRYPTION_SECRET = process.env.TOKEN_ENCRYPTION_SECRET ?? "";
 const ENCRYPTION_ALG = "aes-256-gcm";
 export const SESSION_TOKEN_NAME = "SESSION";
 export const REFRESH_TOKEN_NAME = "REFRESH";
@@ -23,7 +29,11 @@ async function getSessionToken(): Promise<Maybe<jose.JWTVerifyResult<jose.JWTPay
     return { success: false };
   }
   try {
-    const decoded = await jose.jwtVerify(token, JWT_SECRET);
+    const decoded = await jose.jwtVerify(token, JWT_SECRET, {
+      issuer: "https://kubing.no",
+      audience: "https://kubing.no",
+      algorithms: [JWT_ALG],
+    });
     return { success: true, data: decoded };
   } catch {
     return { success: false };
@@ -56,8 +66,7 @@ function createSessionToken(sessionId: string, userId: number | null, permission
 
 function encryptToken(token: string): string {
   const iv = crypto.randomBytes(12);
-  const key = Buffer.from(ENCRYPTION_SECRET, "base64");
-  const cipher = crypto.createCipheriv(ENCRYPTION_ALG, key, iv);
+  const cipher = crypto.createCipheriv(ENCRYPTION_ALG, ENCRYPTION_KEY, iv);
   let encrypted = cipher.update(token, "utf8", "hex");
   encrypted += cipher.final("hex");
   const authTag = cipher.getAuthTag();
@@ -66,10 +75,9 @@ function encryptToken(token: string): string {
 
 function decryptToken(encryptedToken: string): string {
   const [encrypted, iv, authTag] = encryptedToken.split("|");
-  const key = Buffer.from(ENCRYPTION_SECRET, "base64");
   const decipher = crypto.createDecipheriv(
     ENCRYPTION_ALG,
-    key,
+    ENCRYPTION_KEY,
     Buffer.from(iv, "hex")
   );
   decipher.setAuthTag(Buffer.from(authTag, "hex"));
@@ -403,7 +411,7 @@ async function updateWCATokens(tokens: WCAOAuthTokenResponse, sessionId: string)
   }
   return {
     success: true,
-    data: res.rows[0].wca_access_token_expires_at,
+    data: res.rows[0].accessTokenExpiresAt,
   }
 }
 
@@ -423,6 +431,7 @@ export async function updateSession(refreshTokenHash: string, newRefreshTokenHas
       return { success: false, error: "invalid" };
     }
     if (row.expires_at < new Date() || row.last_access < new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 7)) {
+      await client.query("ROLLBACK");
       return { success: false, error: "expired" };
     }
     if (!forceUpdate && new Date(new Date().getTime() - 1000 * 60) < row.last_access) {
@@ -435,7 +444,8 @@ export async function updateSession(refreshTokenHash: string, newRefreshTokenHas
     WHERE refresh_token_hash = $2
     `, [newRefreshTokenHash, refreshTokenHash]);
     if (!res.rowCount) {
-      throw new Error("Could not update session");
+      await client.query("ROLLBACK");
+      return { success: false, error: "unexpected_error" };
     }
     const isSuperAdmin = (await client.query(`
       SELECT id
@@ -452,7 +462,8 @@ export async function updateSession(refreshTokenHash: string, newRefreshTokenHas
     };
   } catch (e) {
     await client.query("ROLLBACK")
-    throw e
+    console.error(e);
+    return { success: false, error: "unexpected_error" };
   } finally {
     client.release()
   }

@@ -6,15 +6,21 @@ import { sendMembershipConfirmation } from "@/lib/mail";
 import { PoolClient } from "pg";
 import { isUserMemberInYearWithClient } from "./membership";
 
+if (!process.env.VIPPS_URL) throw new Error("VIPPS_URL is missing");
+if (!process.env.VIPPS_CLIENT_ID) throw new Error("VIPPS_CLIENT_ID is missing");
+if (!process.env.VIPPS_CLIENT_SECRET) throw new Error("VIPPS_CLIENT_SECRET is missing");
+if (!process.env.VIPPS_SUBSCRIPTION_KEY) throw new Error("VIPPS_SUBSCRIPTION_KEY is missing");
+if (!process.env.VIPPS_MSN) throw new Error("VIPPS_MSN is missing");
+if (!process.env.VIPPS_REF) throw new Error("VIPPS_REF is missing");
 
 type VippsAccessToken = { accessToken: string, expiresAt: Date }
 let vippsAccessToken: VippsAccessToken | null = null;
-const VIPPS_URL = process.env.VIPPS_URL ?? "";
-const VIPPS_CLIENT_ID = process.env.VIPPS_CLIENT_ID ?? "";
-const VIPPS_CLIENT_SECRET = process.env.VIPPS_CLIENT_SECRET ?? "";
-const VIPPS_SUBSCRIPTION_KEY = process.env.VIPPS_SUBSCRIPTION_KEY ?? "";
-const VIPPS_MSN = process.env.VIPPS_MSN ?? "";
-const VIPPS_REF = process.env.VIPPS_REF ?? "test-kubing";
+const VIPPS_URL = process.env.VIPPS_URL;
+const VIPPS_CLIENT_ID = process.env.VIPPS_CLIENT_ID;
+const VIPPS_CLIENT_SECRET = process.env.VIPPS_CLIENT_SECRET;
+const VIPPS_SUBSCRIPTION_KEY = process.env.VIPPS_SUBSCRIPTION_KEY;
+const VIPPS_MSN = process.env.VIPPS_MSN;
+const VIPPS_REF = process.env.VIPPS_REF;
 const MEMBERSHIP_COST = 10000; // 10000 = 100.00kr
 
 const STANDARD_HEADERS = {
@@ -24,7 +30,7 @@ const STANDARD_HEADERS = {
   "Vipps-System-Plugin-Version": "4.5.6",
 };
 
-async function getAccessToken(): Promise<string> {
+async function getAccessToken(): Promise<Maybe<string>> {
   if (!vippsAccessToken || vippsAccessToken.expiresAt < new Date()) {
     const res = await fetch(
       `${VIPPS_URL}/accesstoken/get`,
@@ -41,13 +47,16 @@ async function getAccessToken(): Promise<string> {
       }
     )
     if (!res.ok) {
-      console.log(await res.json());
-      throw new Error("Could not get Vipps access token.");
+      console.error(await res.text());
+      return { success: false };
     }
     const accessToken = await res.json() as VippsAccessTokenResponse;
     vippsAccessToken = { accessToken: accessToken.access_token, expiresAt: new Date(accessToken.expires_on * 1000 - 1000 * 30) };
   }
-  return vippsAccessToken.accessToken;
+  return {
+    success: true,
+    data: vippsAccessToken.accessToken,
+  };
 }
 
 export async function createVippsPaymentAndGetRedirectUrl(userId: number, paymentType: VippsPaymentType, baseUrl: string): Promise<OrderCreation> {
@@ -66,16 +75,34 @@ export async function createVippsPaymentAndGetRedirectUrl(userId: number, paymen
       await client.query("ROLLBACK");
       return { success: true, status: "already_member" };
     }
-    const createdOrder = await getCreatedOrder(userId, client);
-    const accessToken = await getAccessToken();
+    const createdOrder = await getCreatedOrder(userId, year, client);
+    const accessTokenRes = await getAccessToken();
+    if (!accessTokenRes.success) {
+      await client.query("ROLLBACK");
+      return { success: false };
+    }
+    const accessToken = accessTokenRes.data;
     if (createdOrder.success) {
       const order = createdOrder.data;
-      const status = await getPaymentStatus(order.vippsReference, accessToken);
+      const statusRes = await getPaymentStatus(order.vippsReference, accessToken);
+      if (!statusRes.success) {
+        await client.query("ROLLBACK");
+        return { success: false };
+      }
+      const status = statusRes.data;
       if (status === "AUTHORIZED") {
-        await capturePayment(order.vippsReference);
-        await addMember(userId, order.id, order.year, client);
-        await sendMembershipConfirmation(user, order);
+        const addMemberSuccess = await addMember(userId, order.id, order.year, client);
+        if (!addMemberSuccess) {
+          await client.query("ROLLBACK");
+          return { success: false };
+        }
+        const captureRes = await capturePayment(order.vippsReference);
+        if (!captureRes.success) {
+          await client.query("ROLLBACK");
+          return { success: false };
+        }
         await client.query("COMMIT");
+        await sendMembershipConfirmation(user, order);
         return {
           success: true,
           status: "order_paid",
@@ -115,8 +142,9 @@ export async function createVippsPaymentAndGetRedirectUrl(userId: number, paymen
       }
     );
     if (!res.ok) {
-      console.log(await res.json());
-      throw new Error("Could not create Vipps payment.");
+      console.error(await res.text());
+      await client.query("ROLLBACK");
+      return { success: false };
     }
     const payment = await res.json() as VippsPaymentCreateReponse;
     await createOrder(userId, year, vippsReference, client);
@@ -127,15 +155,17 @@ export async function createVippsPaymentAndGetRedirectUrl(userId: number, paymen
       redirectUrl: payment.redirectUrl,
     };
   } catch (e) {
-    await client.query("ROLLBACK")
-    throw e
+    await client.query("ROLLBACK");
+    console.error(e);
+    return { success: false };
   } finally {
-    client.release()
+    client.release();
   }
 }
 
 export async function claimMembership(userId: number): Promise<boolean> {
   const client = await getClient();
+  const year = getCurrentYear();
   try {
     await client.query("BEGIN");
     const user: User = (await client.query(`
@@ -144,40 +174,59 @@ export async function claimMembership(userId: number): Promise<boolean> {
       WHERE id = $1
       FOR UPDATE
       `, [userId])).rows.at(0);
-    const createdOrder = await getCreatedOrder(userId, client);
+    const createdOrder = await getCreatedOrder(userId, year, client);
     if (!createdOrder.success) {
-      await client.query("ROLLBACK")
+      await client.query("ROLLBACK");
       return false;
     }
     const order = createdOrder.data;
-    const accessToken = await getAccessToken();
-    const status = await getPaymentStatus(order.vippsReference, accessToken);
-    if (status !== "AUTHORIZED") {
-      await client.query("ROLLBACK")
+    const accessTokenRes = await getAccessToken();
+    if (!accessTokenRes.success) {
+      await client.query("ROLLBACK");
+      return false
+    }
+    const accessToken = accessTokenRes.data;
+    const statusRes = await getPaymentStatus(order.vippsReference, accessToken);
+    if (!statusRes.success) {
+      await client.query("ROLLBACK");
       return false;
     }
-    await capturePayment(order.vippsReference);
-    await addMember(userId, order.id, order.year, client);
-    await sendMembershipConfirmation(user, order);
+    const status = statusRes.data;
+    if (status !== "AUTHORIZED") {
+      await client.query("ROLLBACK");
+      return false;
+    }
+    const addMemberSuccess = await addMember(userId, order.id, order.year, client);
+    if (!addMemberSuccess) {
+      await client.query("ROLLBACK");
+      return false;
+    }
+    const captureRes = await capturePayment(order.vippsReference);
+    if (!captureRes.success) {
+      await client.query("ROLLBACK");
+      return false;
+    }
     await client.query("COMMIT");
+    await sendMembershipConfirmation(user, order);
     return true;
   } catch (e) {
-    await client.query("ROLLBACK")
-    throw e
+    await client.query("ROLLBACK");
+    console.error(e);
+    return false;
   } finally {
-    client.release()
+    client.release();
   }
 }
 
-async function getCreatedOrder(userId: number, client: PoolClient): Promise<Maybe<OrderCreated>> {
+async function getCreatedOrder(userId: number, year: number, client: PoolClient): Promise<Maybe<OrderCreated>> {
   const createdOrderRes = await client.query(`
     SELECT 
       id,
       vipps_reference AS "vippsReference",
       year
     FROM orders
-    WHERE user_id = $1 AND status = 'CREATED'
-  `, [userId]);
+    WHERE user_id = $1 AND year = $2 AND status = 'CREATED'
+  `, [userId, year]);
   if (!createdOrderRes.rowCount) {
     return { success: false };
   }
@@ -187,7 +236,7 @@ async function getCreatedOrder(userId: number, client: PoolClient): Promise<Mayb
   };
 }
 
-async function cancelOrder(vippsReference: string, accessToken: string, orderId: number, client: PoolClient): Promise<VippsCancelPayment> {
+async function cancelOrder(vippsReference: string, accessToken: string, orderId: number, client: PoolClient): Promise<Maybe<VippsCancelPayment>> {
   const res = await fetch(
     `${VIPPS_URL}/epayment/v1/payments/${vippsReference}/cancel`,
     {
@@ -204,20 +253,23 @@ async function cancelOrder(vippsReference: string, accessToken: string, orderId:
       }),
     }
   );
-  if (!res.ok) {
-    console.log(await res.json());
-    throw new Error("Could not cancel Vipps payment.");
-  }
   const status = await res.json() as VippsCancelPayment;
   await client.query(`
     UPDATE orders
     SET status = 'CANCELLED'
     WHERE id = $1
-  `, [orderId]);
-  return status;
+    `, [orderId]);
+  if (!res.ok) {
+    console.error(status);
+    return { success: false };
+  }
+  return {
+    success: true,
+    data: status,
+  };
 }
 
-async function getPaymentStatus(reference: string, accessToken: string): Promise<VippsPaymentStatus> {
+async function getPaymentStatus(reference: string, accessToken: string): Promise<Maybe<VippsPaymentStatus>> {
   const res = await fetch(
     `${VIPPS_URL}/epayment/v1/payments/${reference}`,
     {
@@ -230,14 +282,21 @@ async function getPaymentStatus(reference: string, accessToken: string): Promise
     }
   )
   if (!res.ok) {
-    throw new Error("Could not get Vipps payment status.");
+    return { success: false };
   }
   const status = await res.json() as VippsPaymentStatusReponse;
-  return status.state;
+  return {
+    success: true,
+    data: status.state,
+  };
 }
 
-async function capturePayment(reference: string) {
-  const accessToken = await getAccessToken();
+async function capturePayment(reference: string): Promise<Maybe<VippsPaymentStatus>> {
+  const accessTokenRes = await getAccessToken();
+  if (!accessTokenRes.success) {
+    return { success: false };
+  }
+  const accessToken = accessTokenRes.data;
   const res = await fetch(
     `${VIPPS_URL}/epayment/v1/payments/${reference}/capture`,
     {
@@ -256,21 +315,21 @@ async function capturePayment(reference: string) {
     }
   )
   if (!res.ok) {
-    throw new Error("Could not capture Vipps payment status.");
+    return { success: false };
   }
   const status = await res.json() as VippsPaymentStatusReponse;
-  return status.state[0];
+  return {
+    success: true,
+    data: status.state,
+  };
 }
 
 async function getOrderNumber(client: PoolClient): Promise<number> {
   const res = await client.query("select nextval('order_number_idx');", [])
-  if (!res.rowCount) {
-    throw new Error("Could not get next order number.");
-  }
   return res.rows[0].nextval as number;
 }
 
-async function createOrder(userId: number, year: number, vippsReference: string, client: PoolClient): Promise<void> {
+async function createOrder(userId: number, year: number, vippsReference: string, client: PoolClient): Promise<boolean> {
   const res = await client.query(`
     INSERT INTO orders
     (user_id, year, status, vipps_reference)
@@ -283,12 +342,10 @@ async function createOrder(userId: number, year: number, vippsReference: string,
       vippsReference,
     ]
   )
-  if (!res.rowCount) {
-    throw new Error("Could not create order");
-  }
+  return res.rowCount !== null && res.rowCount > 0;
 }
 
-async function addMember(userId: number, orderNumber: number, year: number, client: PoolClient) {
+async function addMember(userId: number, orderNumber: number, year: number, client: PoolClient): Promise<boolean> {
   const res = await client.query(`
     UPDATE orders
     SET status = 'COMPLETED'
@@ -300,7 +357,10 @@ async function addMember(userId: number, orderNumber: number, year: number, clie
     VALUES
     ($1, $2);
   `, [userId, year]);
-  if (!res.rowCount || !res2.rowCount) {
-    throw "Could not add member";
-  }
+  return (
+    res.rowCount !== null
+    && res.rowCount > 0
+    && res2.rowCount !== null
+    && res2.rowCount > 0
+  );
 }
