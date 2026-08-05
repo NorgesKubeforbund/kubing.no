@@ -1,8 +1,8 @@
 import { getAuth, REFRESH_TOKEN_NAME, SESSION_TOKEN_NAME, setAuthCookies, updateTokens } from "@/lib/auth";
 import { getBaseUrl } from "@/lib/utils";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
-export async function POST(req: NextRequest) {
+export async function POST() {
   const { isAuthenticated, refreshToken } = await getAuth();
   if (!refreshToken) {
     return NextResponse.json({
@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
       isLoggedIn: isAuthenticated,
     }, { status: 400 });
   }
-  const tokenCreation = await updateTokens(refreshToken, false, getBaseUrl(req));
+  const tokenCreation = await updateTokens(refreshToken, false, getBaseUrl());
   if (!tokenCreation.success) {
     switch (tokenCreation.error) {
       case "invalid":
@@ -25,6 +25,11 @@ export async function POST(req: NextRequest) {
         }, { status: 429 });
       case "expired":
         return clearSessionRes(401, "Økten har utløpt.");
+      case "unexpected_error":
+        return NextResponse.json({
+          error: "Noe gikk galt.",
+          isLoggedIn: isAuthenticated,
+        }, { status: 500 });
     }
   }
   const res = NextResponse.json({

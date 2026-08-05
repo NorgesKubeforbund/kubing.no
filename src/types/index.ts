@@ -68,7 +68,7 @@ export type Auth = AuthNotPresent | AuthPresentNoUser | AuthPresentWithUser;
 
 type UpdateSessionSuccessRes = { success: true, sessionId: string, userId: number | null, permissions: UserPermission[] };
 
-type UpdateSessionError = "invalid" | "too_early" | "expired";
+type UpdateSessionError = "invalid" | "too_early" | "expired" | "unexpected_error";
 
 type UpdateSessionFailedRes = { success: false, error: UpdateSessionError }
 

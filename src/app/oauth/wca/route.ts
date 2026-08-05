@@ -4,7 +4,7 @@ import { createSession, setAuthCookies } from "@/lib/auth";
 import { getBaseUrl } from "@/lib/utils";
 
 export async function GET(req: NextRequest) {
-  const url = getBaseUrl(req)
+  const url = getBaseUrl()
   const code = req.nextUrl.searchParams.get("code") || null;
   if (!code) {
     return NextResponse.redirect(new URL("/login?error", url));

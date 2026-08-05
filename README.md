@@ -52,4 +52,5 @@ VIPPS_REF={unique reference}
 RESEND_API_KEY={secret}
 RESEND_DOMAIN={domain}
 CRON_SECRET={secret} # openssl rand -base64 32
+APP_URL=http://localhost:3000 # https://kubing.no for production
 ```

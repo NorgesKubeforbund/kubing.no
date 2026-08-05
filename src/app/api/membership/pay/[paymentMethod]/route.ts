@@ -15,7 +15,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ pay
   if (userId === null) {
     return NextResponse.json({ error: "Ingen bruker er laget enda." }, { status: 403 });
   }
-  const orderCreation = await createVippsPaymentAndGetRedirectUrl(userId, paymentMethod, getBaseUrl(req));
+  const orderCreation = await createVippsPaymentAndGetRedirectUrl(userId, paymentMethod, getBaseUrl());
   if (!orderCreation.success) {
     return NextResponse.json({ error: "Noe gikk galt." }, { status: 500 });
   }

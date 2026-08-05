@@ -16,6 +16,17 @@ jobs:
       POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
       POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
       RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+      WCA_OAUTH_CLIENT_ID: ${{ secrets.WCA_OAUTH_CLIENT_ID }}
+      WCA_OAUTH_SECRET: ${{ secrets.WCA_OAUTH_SECRET }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      TOKEN_ENCRYPTION_SECRET: ${{ secrets.TOKEN_ENCRYPTION_SECRET }}
+      VIPPS_CLIENT_ID: ${{ secrets.VIPPS_CLIENT_ID }}
+      VIPPS_CLIENT_SECRET: ${{ secrets.VIPPS_CLIENT_SECRET }}
+      VIPPS_SUBSCRIPTION_KEY: ${{ secrets.VIPPS_SUBSCRIPTION_KEY }}
+      VIPPS_MSN: ${{ secrets.VIPPS_MSN }}
+      VIPPS_URL: ${{ secrets.VIPPS_URL }}
+      VIPPS_REF: ${{ secrets.VIPPS_REF }}
+      APP_URL: ${{ secrets.APP_URL }}
 
     steps:
       - uses: actions/checkout@v5

@@ -1,8 +1,8 @@
 import { getAuth, updateWCAInfo } from "@/lib/auth";
 import { getBaseUrl } from "@/lib/utils";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
-export async function POST(req: NextRequest) {
+export async function POST() {
   const { isAuthenticated, userId, sessionId } = await getAuth();
   if (!isAuthenticated) {
     return NextResponse.json({ error: "Ikke autentisert." }, { status: 401 });
@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
   if (userId === null) {
     return NextResponse.json({ error: "Ingen bruker er laget enda." }, { status: 403 });
   }
-  const success = await updateWCAInfo(userId, sessionId, getBaseUrl(req));
+  const success = await updateWCAInfo(userId, sessionId, getBaseUrl());
   if (!success) {
     return NextResponse.json({ error: "Noe gikk galt." }, { status: 500 });
   }
