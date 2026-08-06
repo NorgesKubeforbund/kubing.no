@@ -1,5 +1,6 @@
 import { Maybe } from "@/types";
 import { WCAOAuthTokenResponse, WCAProfileResponse } from "@/types/responses";
+import { UUID } from "crypto";
 
 if (!process.env.WCA_OAUTH_CLIENT_ID) throw new Error("WCA_OAUTH_CLIENT_ID is missing");
 if (!process.env.WCA_OAUTH_SECRET) throw new Error("WCA_OAUTH_SECRET is missing");
@@ -7,8 +8,8 @@ if (!process.env.WCA_OAUTH_SECRET) throw new Error("WCA_OAUTH_SECRET is missing"
 export const clientId = process.env.WCA_OAUTH_CLIENT_ID;
 const clientSecret = process.env.WCA_OAUTH_SECRET;
 
-export function getWCALoginUrl(url: string, clientId: string): string {
-  return `https://www.worldcubeassociation.org/oauth/authorize?client_id=${clientId}&redirect_uri=${getRedirectUri(url)}&response_type=code&scope=public+email+dob`
+export function getWCALoginUrl(url: string, state: UUID): string {
+  return `https://www.worldcubeassociation.org/oauth/authorize?client_id=${clientId}&redirect_uri=${getRedirectUri(url)}&response_type=code&scope=public+email+dob&state=${state}`
 }
 
 function getRedirectUri(url: string): string {

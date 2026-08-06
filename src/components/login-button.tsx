@@ -1,16 +1,23 @@
 "use client";
 
-import { getWCALoginUrl } from "@/lib/wca-oauth";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-function LoginButton({ clientId }: { clientId: string }) {
+function LoginButton() {
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
 
-  function login() {
+  async function login() {
     setLoading(true);
-    router.push(getWCALoginUrl(window.location.origin, clientId));
+    const res = await fetch("/api/auth/login");
+    if (!res.ok) {
+      setLoading(false);
+      alert("Noe gikk galt");
+      return;
+    }
+    const { wcaLoginUrl } = await res.json();
+    router.push(wcaLoginUrl);
+    setLoading(false);
   }
 
   return (
