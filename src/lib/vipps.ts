@@ -4,7 +4,7 @@ import { getCurrentYear } from "@/lib/time";
 import { Maybe, OrderCreated, OrderCreation, User, VippsPaymentStatus, VippsPaymentType } from "@/types";
 import { sendMembershipConfirmation } from "@/lib/mail";
 import { PoolClient } from "pg";
-import { isUserMemberInYearWithClient } from "./membership";
+import { isUserMemberInYearWithClient } from "@/lib/membership";
 
 if (!process.env.VIPPS_URL) throw new Error("VIPPS_URL is missing");
 if (!process.env.VIPPS_CLIENT_ID) throw new Error("VIPPS_CLIENT_ID is missing");
