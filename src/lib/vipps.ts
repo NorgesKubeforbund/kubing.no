@@ -388,3 +388,89 @@ async function addMember(userId: number, orderNumber: number, year: number, clie
   `, [userId, year]);
   return res.rowCount !== null && res.rowCount > 0;
 }
+
+export async function handleOpenOrders(): Promise<boolean> {
+  const client = await getClient();
+  let openOrders: { id: number, userId: number, vippsReference: string, year: number }[];
+  try {
+    openOrders = (await client.query(`
+      SELECT
+        id,
+        user_id AS "userId",
+        vipps_reference AS "vippsReference",
+        year
+      FROM orders
+      WHERE status = 'CREATED' AND created_at < NOW() - INTERVAL '3 minutes'
+    `)).rows;
+  } catch (e) {
+    console.error(e);
+    return false;
+  } finally {
+    client.release();
+  }
+
+  const accessTokenRes = await getAccessToken();
+  if (!accessTokenRes.success) {
+    return false;
+  }
+  const accessToken = accessTokenRes.data;
+
+  for (const order of openOrders) {
+    await handleOpenOrder(order, accessToken);
+  }
+  return true;
+}
+
+async function handleOpenOrder(order: { id: number, userId: number, vippsReference: string, year: number }, accessToken: string): Promise<void> {
+  const client = await getClient();
+  try {
+    await client.query("BEGIN");
+    const user = (await client.query(`
+      SELECT *
+      FROM users
+      WHERE id = $1
+      FOR UPDATE
+    `, [order.userId])).rows.at(0) as User | undefined;
+    if (!user) {
+      await client.query("ROLLBACK");
+      return;
+    }
+    const paymentRes = await getPayment(order.vippsReference, accessToken);
+    if (!paymentRes.success) {
+      await client.query("ROLLBACK");
+      return;
+    }
+    const payment = paymentRes.data;
+    const alreadyCaptured = payment.capturedAmount >= MEMBERSHIP_COST;
+    if (alreadyCaptured || payment.state === "AUTHORIZED") {
+      const addMemberSuccess = await addMember(order.userId, order.id, order.year, client);
+      if (!addMemberSuccess) {
+        await client.query("ROLLBACK");
+        return;
+      }
+      if (!alreadyCaptured) {
+        const captureRes = await capturePayment(order.vippsReference, accessToken);
+        if (!captureRes.success) {
+          await client.query("ROLLBACK");
+          return;
+        }
+      }
+      await client.query("COMMIT");
+      await sendMembershipConfirmation(user, { id: order.id, vippsReference: order.vippsReference, year: order.year });
+    } else if (payment.state === "CREATED") {
+      await client.query("ROLLBACK");
+    } else {
+      await client.query(`
+        UPDATE orders
+        SET status = 'CANCELLED'
+        WHERE id = $1
+      `, [order.id]);
+      await client.query("COMMIT");
+    }
+  } catch (e) {
+    await client.query("ROLLBACK").catch(() => { });
+    console.error(e);
+  } finally {
+    client.release();
+  }
+}
