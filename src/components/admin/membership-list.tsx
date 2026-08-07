@@ -1,8 +1,10 @@
 "use client";
 
 import { Member } from "@/types";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import Spinner from "@/components/ui/spinner";
+
+const PAGE_SIZE = 25;
 
 function membershipRowCSV(member: Member): string {
   const parts = member.name.split(" ");
@@ -39,6 +41,14 @@ export default function MembershipList({
   const [members, setMembers] = useState<Member[]>(initialMembers);
   const [selectedYear, setSelectedYear] = useState<number>(initialYear);
   const [loading, setLoading] = useState<boolean>(false);
+  const [page, setPage] = useState<number>(1);
+
+  const pageCount = Math.max(1, Math.ceil(members.length / PAGE_SIZE));
+
+  const paginatedMembers = useMemo(() => {
+    const start = (page - 1) * PAGE_SIZE;
+    return members.slice(start, start + PAGE_SIZE);
+  }, [members, page]);
 
   async function loadMembers(year: number) {
     setLoading(true);
@@ -51,6 +61,7 @@ export default function MembershipList({
     const { members } = await res.json();
     setMembers(members);
     setSelectedYear(year);
+    setPage(1);
     setLoading(false);
   }
 
@@ -72,22 +83,45 @@ export default function MembershipList({
       {loading ?
         <Spinner className="self-center mt-8" />
         :
-        <table>
-          <thead>
-            <tr>
-              <th>Navn</th>
-              <th>WCA ID</th>
-            </tr>
-          </thead>
-          <tbody>
-            {members.map(member =>
-              <tr key={member.wcaId}>
-                <td>{member.name}</td>
-                <td>{member.wcaId ?? "Ingen WCA ID"}</td>
+        <>
+          <table>
+            <thead>
+              <tr>
+                <th>Navn</th>
+                <th>WCA ID</th>
               </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {paginatedMembers.map(member =>
+                <tr key={member.wcaId}>
+                  <td>{member.name}</td>
+                  <td>{member.wcaId ?? "Ingen WCA ID"}</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+          {pageCount > 1 &&
+            <div className="flex items-center gap-6 self-center mt-2">
+              <button
+                onClick={() => setPage(p => Math.max(1, p - 1))}
+                disabled={page === 1}
+                className="bg-neutral-100 hover:bg-neutral-400 cursor-pointer disabled:cursor-not-allowed disabled:hover:bg-neutral-100 disabled:text-neutral-400 border rounded-md px-2 py-1"
+              >
+                Forrige
+              </button>
+              <span className="text-sm">
+                Side {page} av {pageCount}
+              </span>
+              <button
+                onClick={() => setPage(p => Math.min(pageCount, p + 1))}
+                disabled={page === pageCount}
+                className="bg-neutral-100 hover:bg-neutral-400 cursor-pointer disabled:cursor-not-allowed disabled:hover:bg-neutral-100 disabled:text-neutral-400 border rounded-md px-2 py-1"
+              >
+                Neste
+              </button>
+            </div>
+          }
+        </>
       }
     </div>
   );
