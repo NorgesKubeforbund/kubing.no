@@ -55,7 +55,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS orders_one_created_per_user_year
 CREATE TABLE IF NOT EXISTS manual_payments (
     wca_id VARCHAR(10) PRIMARY KEY,
     name VARCHAR(150) NOT NULL,
-    email VARCHAR(150) UNIQUE NOT NULL,
+    email VARCHAR(150) NOT NULL,
     dob DATE NOT NULL,
     address VARCHAR(200),
     post_code VARCHAR(4),
