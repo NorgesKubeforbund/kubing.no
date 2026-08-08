@@ -7,7 +7,7 @@ import Spinner from "@/components/ui/spinner";
 const PAGE_SIZE = 25;
 
 function membershipRowCSV(member: Member): string {
-  const parts = member.name.split(" ");
+  const parts = member.name.trim().split(" ");
   const lastName = parts.pop();
   const firstName = parts.join(" ");
   return [firstName, lastName, member.dob, member.address?.address, member.address?.postCode, member.email, member.createdAt].join(";");
