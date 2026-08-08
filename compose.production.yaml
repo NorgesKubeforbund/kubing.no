@@ -34,6 +34,7 @@ services:
     restart: always
     volumes:
       - db_prod:/var/lib/postgresql
+      - ./schema:/docker-entrypoint-initdb.d
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}

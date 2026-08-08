@@ -6,6 +6,7 @@ services:
     restart: unless-stopped
     volumes:
       - db_dev:/var/lib/postgresql
+      - ./schema:/docker-entrypoint-initdb.d
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
