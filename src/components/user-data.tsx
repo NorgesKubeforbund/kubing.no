@@ -12,6 +12,10 @@ async function UserDataTable({ userData }: { userData: UserData }) {
           <td>WCA ID:</td>
           <td>{userData.wcaId}</td>
         </tr>
+        <tr>
+          <td>NKF ID:</td>
+          <td>{userData.userId}</td>
+        </tr>
         <tr className="wrap-anywhere">
           <td>E-post:</td>
           <td>{userData.email}</td>

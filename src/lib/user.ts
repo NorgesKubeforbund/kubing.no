@@ -14,6 +14,7 @@ export async function getUserData(userId: number): Promise<Maybe<UserData>> {
     data: {
       ...user,
       isMember,
+      userId,
     }
   };
 }
