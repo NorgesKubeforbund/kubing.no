@@ -65,9 +65,9 @@ export async function sendMembershipConfirmation(user: User, order: OrderCreated
           i Norges Kubeforbund for året ${year}. Medlemskapet varer ut kalenderåret.
       </p>
       <p>Ditt referansenummer for betalingen er #${orderNumber}.</p>
-      <p>Takk for at du bidrar til å støtte NFK!
+      <p>Takk for at du bidrar til å støtte NKF!
       Vi ser frem til å ha deg som medlem og ønsker deg et hyggelig medlemskap hos NKF.</p>
-      <p>Med vennlig hilsen,<br />Styret i Norges Kubeforbund</p>
+      <p>Med vennlig hilsen,<br />Norges Kubeforbund</p>
       <br />
       <hr />
       <br />
@@ -80,7 +80,7 @@ export async function sendMembershipConfirmation(user: User, order: OrderCreated
       <p>Thank you for supporting NKF!
       We look forward to having you as a member and wish
       you a pleasant membership experience with NKF.</p>
-      <p>Best regards,<br />Leadership of Norges Kubeforbund</p>
+      <p>Best regards,<br />Norges Kubeforbund</p>
   </td>
 </tr>`;
   const html = htmlTemplate(orderConfirmationHtml);
