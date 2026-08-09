@@ -84,17 +84,22 @@ export default function MembershipList({
         <Spinner className="self-center mt-8" />
         :
         <>
+        <div>
+          Antall medlemmer: {members.length}
+        </div>
           <table>
             <thead>
               <tr>
                 <th>Navn</th>
+                <th>NKF ID</th>
                 <th>WCA ID</th>
               </tr>
             </thead>
             <tbody>
               {paginatedMembers.map(member =>
-                <tr key={member.wcaId}>
+                <tr key={member.id ?? member.wcaId}>
                   <td>{member.name}</td>
+                  <td>{member.id ?? "Ingen NKF ID"}</td>
                   <td>{member.wcaId ?? "Ingen WCA ID"}</td>
                 </tr>
               )}
