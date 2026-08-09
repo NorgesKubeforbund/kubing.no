@@ -93,7 +93,7 @@ export default function MembershipList({
             </thead>
             <tbody>
               {paginatedMembers.map(member =>
-                <tr key={member.wcaId}>
+                <tr key={member.id ?? member.wcaId}>
                   <td>{member.name}</td>
                   <td>{member.wcaId ?? "Ingen WCA ID"}</td>
                 </tr>

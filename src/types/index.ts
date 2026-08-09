@@ -15,6 +15,7 @@ export type UserData = User & {
 };
 
 export type Member = User & {
+  id: number | null; // TODO: Change to number when manual_payments is removed
   createdAt: string;
 };
 

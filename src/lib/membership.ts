@@ -54,7 +54,8 @@ export async function isUserMember(userId: number): Promise<boolean> {
 
 export async function getAllMembers(year: number): Promise<Member[]> {
   const members = (await query(`
-    SELECT 
+    SELECT
+      u.id,
       u.name,
       u.wca_id AS "wcaId",
       u.email,
@@ -67,6 +68,7 @@ export async function getAllMembers(year: number): Promise<Member[]> {
     JOIN memberships m ON u.id = m.user_id AND m.year = $1
     ORDER BY u.name
   `, [year])).rows.map(row => ({
+    id: row.id,
     name: row.name,
     wcaId: row.wcaId,
     email: row.email,
@@ -82,7 +84,7 @@ export async function getAllMembers(year: number): Promise<Member[]> {
     return members;
   }
   const manualMembers = (await query(`
-    SELECT 
+    SELECT
       name,
       wca_id AS "wcaId",
       email,
@@ -93,6 +95,7 @@ export async function getAllMembers(year: number): Promise<Member[]> {
       created_at AS "createdAt"
     FROM manual_payments
   `, [])).rows.map(row => ({
+    id: null,
     name: row.name,
     wcaId: row.wcaId,
     email: row.email,
