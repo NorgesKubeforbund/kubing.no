@@ -109,7 +109,7 @@ export async function createSession(wcaTokens: WCAOAuthTokenResponse, user: WCAP
     FROM super_admins
     WHERE id = $1
   `, [userId])).rowCount;
-  const permissions: UserPermission[] = isSuperAdmin ? ["membership_list", "members_comp"] : [];
+  const permissions: UserPermission[] = isSuperAdmin ? getAllPermissions() : [];
   await saveSession(encryptedWcaTokens, user, refreshToken.hash, sessionId, userId);
   const sessionToken = await createSessionToken(sessionId, userId, permissions);
   return {
@@ -452,7 +452,7 @@ export async function updateSession(refreshTokenHash: string, newRefreshTokenHas
       FROM super_admins
       WHERE id = $1
     `, [row.user_id])).rowCount;
-    const permissions: UserPermission[] = isSuperAdmin ? ["membership_list", "members_comp"] : [];
+    const permissions: UserPermission[] = isSuperAdmin ? getAllPermissions() : [];
     await client.query("COMMIT");
     return {
       success: true,
@@ -543,4 +543,9 @@ export async function deleteExpiredSessions(): Promise<void> {
     DELETE FROM sessions
     WHERE expires_at < NOW() OR last_access < $1
   `, [new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 7)]);
+}
+
+
+function getAllPermissions(): UserPermission[] {
+  return ["membership_list", "members_comp", "order_overview"];
 }

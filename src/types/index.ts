@@ -32,6 +32,14 @@ export type OrderCreated = {
 
 export type OrderCreation = { success: true, status: "created_order", redirectUrl: string } | { success: true, status: "order_paid" } | { success: true, status: "already_member" } |  { success: false };
 
+export type Order = OrderCreated & {
+  status: string;
+  createdAt: Date;
+  userId: number;
+  userName: string;
+  email: string;
+};
+
 export type Address = {
   address: string,
   postCode: string,
@@ -93,7 +101,7 @@ export type WCATokens = {
 
 export type Maybe<T> = { success: true, data: T } | { success: false };
 
-export type UserPermission = "membership_list" | "members_comp";
+export type UserPermission = "membership_list" | "members_comp" | "order_overview";
 
 export type CompWCIF = {
   persons: {
