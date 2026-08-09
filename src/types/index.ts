@@ -11,7 +11,8 @@ export type User = {
 };
 
 export type UserData = User & {
-  isMember: boolean
+  isMember: boolean;
+  userId: number;
 };
 
 export type Member = User & {
