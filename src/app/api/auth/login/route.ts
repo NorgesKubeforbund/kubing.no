@@ -1,4 +1,4 @@
-import { getBaseUrl } from "@/lib/utils";
+import { getBaseUrl } from "@/lib/config";
 import { getWCALoginUrl } from "@/lib/wca-oauth";
 import { randomUUID } from "crypto";
 import { cookies } from "next/headers";

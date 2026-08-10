@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getWCATokens, getWCAUserInfo } from "@/lib/wca-oauth";
 import { createSession, setAuthCookies } from "@/lib/auth";
-import { getBaseUrl } from "@/lib/utils";
+import { getBaseUrl } from "@/lib/config";
 
 function redirectAndClearState(path: string) {
   const url = getBaseUrl();

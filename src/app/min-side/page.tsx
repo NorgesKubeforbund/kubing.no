@@ -22,7 +22,7 @@ export default async function MyPage() {
   const hasPermissions = (permissions?.length ?? 0) > 0;
 
   return (
-    <div className="flex flex-col min-h-[50vh] px-4 sm:px-8 gap-8 text-center">
+    <div className="flex flex-col min-h-[50vh] px-4 sm:px-8 gap-8 text-center max-w-5xl">
       <div className="flex flex-col gap-2">
         <Title>Min side</Title>
         {user.success && <div className="text-base">Hei {user.data.name.split(" ")[0]}!</div>}
@@ -54,7 +54,7 @@ function MembershipBadge({ isMember }: { isMember: boolean }) {
 
 function IsMemberBadge() {
   return (
-    <div className="mt-6 bg-green-600 border-4 border-green-700 text-white rounded-xl p-4">
+    <div className="mt-6 bg-green-600 border-4 border-green-700 text-white rounded-xl p-4 w-fit self-center">
       <div className="text-2xl font-semibold">Aktivt medlemskap i NKF</div>
       <p>Medlemskapet varer ut inneværende kalenderår.</p>
     </div>
@@ -63,7 +63,7 @@ function IsMemberBadge() {
 
 function NotMemberBadge() {
   return (
-    <div className="bg-red-600 border-4 border-red-700 text-white rounded-xl p-4">
+    <div className="bg-red-600 border-4 border-red-700 text-white rounded-xl p-4 w-fit self-center">
       <div className="text-2xl font-semibold">Ingen medlemskap i NKF</div>
       <p>Medlemskapet følger kalenderåret og må fornyes hvert år.</p>
     </div>

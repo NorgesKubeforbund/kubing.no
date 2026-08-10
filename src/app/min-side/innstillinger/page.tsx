@@ -6,6 +6,7 @@ import Title from "@/components/ui/title";
 import { getAuth } from "@/lib/auth";
 import { getUserData } from "@/lib/user";
 import { notFound, redirect } from "next/navigation";
+import BackArrow from "@/components/ui/back-arrow";
 
 export default async function SettingsPage() {
   const { isAuthenticated, userId } = await getAuth()
@@ -22,7 +23,10 @@ export default async function SettingsPage() {
   const userData = userDataRes.data;
   return (
     <div className="flex flex-col px-4 sm:px-8 max-w-5xl gap-8 text-center">
-      <Title>Innstillinger</Title>
+      <div className="flex flex-col gap-2">
+        <BackArrow href="/min-side" />
+        <Title>Innstillinger</Title>
+      </div>
       <div className="flex flex-col gap-4">
         <Title small>Personlig data</Title>
         <UserData userData={userData} />
