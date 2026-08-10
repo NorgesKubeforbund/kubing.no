@@ -1,5 +1,5 @@
 import { getAuth, updateWCAInfo } from "@/lib/auth";
-import { getBaseUrl } from "@/lib/utils";
+import { getBaseUrl } from "@/lib/config";
 import { NextResponse } from "next/server";
 
 export async function POST() {

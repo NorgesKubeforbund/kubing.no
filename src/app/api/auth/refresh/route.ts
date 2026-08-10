@@ -1,5 +1,5 @@
 import { getAuth, REFRESH_TOKEN_NAME, SESSION_TOKEN_NAME, setAuthCookies, updateTokens } from "@/lib/auth";
-import { getBaseUrl } from "@/lib/utils";
+import { getBaseUrl } from "@/lib/config";
 import { NextResponse } from "next/server";
 
 export async function POST() {

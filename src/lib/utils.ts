@@ -1,6 +1,6 @@
-if (!process.env.APP_URL) throw new Error("APP_URL is missing");
-const APP_URL = process.env.APP_URL;
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 
-export function getBaseUrl(): string {
-  return APP_URL;
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
 }
