@@ -47,7 +47,7 @@ export default function BecomeMemberButtons() {
           onChange={(e) => setConsent(e.target.checked)}
           className="cursor-pointer"
         />
-        <p>Jeg bekrefter at jeg har lest og samtykker til innholdet i <BlueLink href="/NKF-medlem-salgskontrakt.pdf">salgsavtalen</BlueLink>.</p>
+        <p className="text-lg">Jeg bekrefter at jeg har lest og samtykker til innholdet i <BlueLink href="/NKF-medlem-salgskontrakt.pdf">salgsavtalen</BlueLink>.</p>
       </label>
 
       <div className="grid sm:grid-cols-2 grid-cols-1 sm:gap-8 gap-4 sm:justify-items-stretch">
