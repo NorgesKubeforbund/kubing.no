@@ -3,7 +3,7 @@ FROM node:20 AS builder
 WORKDIR /app
 
 COPY package.json package-lock.json* ./
-RUN npm ci
+RUN npm clean-install
 
 COPY . .
 
@@ -14,7 +14,7 @@ FROM node:20 AS runner
 WORKDIR /app
 
 COPY package.json package-lock.json* ./
-RUN npm ci --omit=dev
+RUN npm clean-install --omit=dev
 
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
