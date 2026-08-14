@@ -42,13 +42,20 @@ export default function MembershipList({
   const [selectedYear, setSelectedYear] = useState<number>(initialYear);
   const [loading, setLoading] = useState<boolean>(false);
   const [page, setPage] = useState<number>(1);
+  const [search, setSearch] = useState<string>("");
 
-  const pageCount = Math.max(1, Math.ceil(members.length / PAGE_SIZE));
+  const filteredMembers = useMemo(() => members.filter(member =>
+    search.trim().toUpperCase().split(" ").every(subSearch =>
+      member.name.toUpperCase().includes(subSearch)
+    )
+  ), [members, search]);
+
+  const pageCount = Math.max(1, Math.ceil(filteredMembers.length / PAGE_SIZE));
 
   const paginatedMembers = useMemo(() => {
     const start = (page - 1) * PAGE_SIZE;
-    return members.slice(start, start + PAGE_SIZE);
-  }, [members, page]);
+    return filteredMembers.slice(start, start + PAGE_SIZE);
+  }, [filteredMembers, page]);
 
   async function loadMembers(year: number) {
     setLoading(true);
@@ -63,6 +70,7 @@ export default function MembershipList({
     setSelectedYear(year);
     setPage(1);
     setLoading(false);
+    setSearch("");
   }
 
   return (
@@ -84,9 +92,19 @@ export default function MembershipList({
         <Spinner className="self-center mt-8" />
         :
         <>
-        <div>
-          Antall medlemmer: {members.length}
-        </div>
+          <div>
+            Antall medlemmer: {members.length}
+          </div>
+          <input
+            className="w-full max-w-96 border border-neutral-400 rounded-md px-3 py-2 self-center"
+            type="text"
+            placeholder="Medlemssøk"
+            onChange={e => {
+              setSearch(e.target.value)
+              setPage(1);
+            }}
+            value={search}
+          />
           <table>
             <thead>
               <tr>
