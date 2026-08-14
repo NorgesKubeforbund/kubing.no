@@ -1,7 +1,7 @@
 "use client";
 
 import { Member } from "@/types";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import Spinner from "@/components/ui/spinner";
 
 const PAGE_SIZE = 25;
@@ -44,6 +44,8 @@ export default function MembershipList({
   const [page, setPage] = useState<number>(1);
   const [search, setSearch] = useState<string>("");
 
+  const requestIdRef = useRef(0);
+
   const filteredMembers = useMemo(() => members.filter(member =>
     search.trim().toUpperCase().split(" ").every(subSearch =>
       member.name.toUpperCase().includes(subSearch)
@@ -58,14 +60,25 @@ export default function MembershipList({
   }, [filteredMembers, page]);
 
   async function loadMembers(year: number) {
+    const requestId = ++requestIdRef.current;
     setLoading(true);
     const res = await fetch(`/api/admin/members/${year}`);
+
+    if (requestId !== requestIdRef.current) {
+      return;
+    }
+
     if (!res.ok) {
       alert("Noe gikk galt");
       setLoading(false);
       return;
     }
     const { members } = await res.json();
+
+    if (requestId !== requestIdRef.current) {
+      return;
+    }
+
     setMembers(members);
     setSelectedYear(year);
     setPage(1);
