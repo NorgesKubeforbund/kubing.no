@@ -66,13 +66,13 @@ export default function OrderOverview({ orders }: { orders: Order[] }) {
           </tr>
         </thead>
         <tbody>
-          {paginatedOrders.map(order => {
+          {paginatedOrders.map((order, index) => {
             const isExpanded = expandedIds.has(order.id);
             return (
               <Fragment key={order.id}>
                 <tr
                   onClick={() => toggleExpanded(order.id)}
-                  className="cursor-pointer hover:bg-neutral-200"
+                  className={`cursor-pointer hover:bg-neutral-400 ${index % 2 === 0 ? "bg-neutral-300" : "bg-neutral-200"}`}
                 >
                   <td>{order.id}</td>
                   <td>{order.userName}</td>
@@ -87,19 +87,19 @@ export default function OrderOverview({ orders }: { orders: Order[] }) {
                             <td>NKF ID</td>
                             <td>{order.userId}</td>
                           </tr>
-                          <tr className="border-t border-neutral-200">
+                          <tr className="border-t border-neutral-300">
                             <td>E-post</td>
                             <td>{order.email}</td>
                           </tr>
-                          <tr className="border-t border-neutral-200">
+                          <tr className="border-t border-neutral-300">
                             <td>Vipps-referanse</td>
                             <td>{order.vippsReference}</td>
                           </tr>
-                          <tr className="border-t border-neutral-200">
+                          <tr className="border-t border-neutral-300">
                             <td>Medlemsår</td>
                             <td>{order.year}</td>
                           </tr>
-                          <tr className="border-t border-neutral-200">
+                          <tr className="border-t border-neutral-300">
                             <td>Opprettet</td>
                             <td>{new Date(order.createdAt).toLocaleString("nb-NO", { dateStyle: "full", timeStyle: "medium" })}</td>
                           </tr>
