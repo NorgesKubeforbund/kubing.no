@@ -29,6 +29,10 @@ function exportMembershipCSV(members: Member[]) {
   URL.revokeObjectURL(url);
 }
 
+function stripDiacritics(text: string): string {
+  return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim().toUpperCase();
+}
+
 export default function MembershipList({
   initialYear,
   initialMembers,
@@ -47,8 +51,8 @@ export default function MembershipList({
   const requestIdRef = useRef(0);
 
   const filteredMembers = useMemo(() => members.filter(member =>
-    search.trim().toUpperCase().split(" ").every(subSearch =>
-      member.name.toUpperCase().includes(subSearch)
+    stripDiacritics(search).split(" ").every(subSearch =>
+      stripDiacritics(member.name).includes(subSearch)
     )
   ), [members, search]);
 
