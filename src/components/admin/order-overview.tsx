@@ -10,12 +10,17 @@ export default function OrderOverview({ orders }: { orders: Order[] }) {
   const [page, setPage] = useState<number>(1);
   const [orderFilter, setOrderFilter] = useState<OrderStatus | "ALL">("ALL");
   const [expandedIds, setExpandedIds] = useState<Set<number>>(new Set());
-  const pageCount = Math.max(1, Math.ceil(orders.length / PAGE_SIZE));
+
+  const filteredOrders = useMemo(() => {
+    return orders.filter(order => orderFilter === "ALL" || order.status === orderFilter);
+  }, [orders, orderFilter]);
 
   const paginatedOrders = useMemo(() => {
     const start = (page - 1) * PAGE_SIZE;
-    return orders.filter(order => orderFilter === "ALL" || order.status === orderFilter).slice(start, start + PAGE_SIZE);
-  }, [orders, page, orderFilter]);
+    return filteredOrders.slice(start, start + PAGE_SIZE);
+  }, [filteredOrders, page]);
+
+  const pageCount = Math.max(1, Math.ceil(filteredOrders.length / PAGE_SIZE));
 
   function toggleExpanded(id: number) {
     setExpandedIds(prev => {
@@ -33,7 +38,10 @@ export default function OrderOverview({ orders }: { orders: Order[] }) {
     <div className="flex flex-col gap-4">
 
       <select
-        onChange={e => setOrderFilter(e.target.value as OrderStatus)}
+        onChange={e => {
+          setOrderFilter(e.target.value as OrderStatus);
+          setPage(1);
+        }}
         className="self-center bg-neutral-100 cursor-pointer disabled:cursor-not-allowed disabled:hover:bg-neutral-100 disabled:text-neutral-400 border rounded-md px-2 py-1 w-fit justify-self-center sm:justify-self-start"
       >
         <option value="ALL">
