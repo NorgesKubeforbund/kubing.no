@@ -122,27 +122,29 @@ export default function MembershipList({
             }}
             value={search}
           />
-          <table>
-            <thead>
-              <tr>
-                <th>Navn</th>
-                <th>NKF ID</th>
-                <th>WCA ID</th>
-              </tr>
-            </thead>
-            <tbody>
-              {paginatedMembers.map((member, index) =>
-                <tr
-                  key={member.id ?? member.wcaId}
-                  className={`hover:bg-table-hover ${index % 2 === 0 ? "bg-table-odd" : "bg-table-even"}`}
-                >
-                  <td>{member.name}</td>
-                  <td>{member.id ?? "Ingen NKF ID"}</td>
-                  <td>{member.wcaId ?? "Ingen WCA ID"}</td>
+          <div className="overflow-x-auto self-center-safe max-w-full sm:text-xl text-sm">
+            <table>
+              <thead>
+                <tr>
+                  <th>Navn</th>
+                  <th>NKF ID</th>
+                  <th>WCA ID</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {paginatedMembers.map((member, index) =>
+                  <tr
+                    key={member.id ?? member.wcaId}
+                    className={`hover:bg-table-hover ${index % 2 === 0 ? "bg-table-odd" : "bg-table-even"}`}
+                  >
+                    <td>{member.name}</td>
+                    <td>{member.id ?? "Ingen NKF ID"}</td>
+                    <td>{member.wcaId ?? "Ingen WCA ID"}</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
           {pageCount > 1 &&
             <div className="flex items-center gap-6 self-center mt-2">
               <button
