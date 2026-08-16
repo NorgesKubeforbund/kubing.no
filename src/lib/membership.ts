@@ -73,11 +73,11 @@ export async function getAllMembers(year: number): Promise<Member[]> {
     wcaId: row.wcaId,
     email: row.email,
     dob: row.dob,
-    address: {
+    address: row.address ? {
       address: row.address,
       postCode: row.postCode,
       postArea: row.postArea,
-    },
+    } : null,
     createdAt: toNorwayDateString(row.createdAt),
   }));
   if (year !== 2026) {
@@ -100,11 +100,11 @@ export async function getAllMembers(year: number): Promise<Member[]> {
     wcaId: row.wcaId,
     email: row.email,
     dob: row.dob,
-    address: {
+    address: row.address ? {
       address: row.address,
       postCode: row.postCode,
       postArea: row.postArea,
-    },
+    } : null,
     createdAt: toNorwayDateString(row.createdAt),
   }));
   return [...members, ...manualMembers].sort(sortMembers)
