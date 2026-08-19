@@ -43,7 +43,11 @@ export async function getUser(userId: number): Promise<Maybe<User>> {
       wcaId: row.wcaId,
       email: row.email,
       dob: row.dob,
-      address: row.address ? { address: row.address, postCode: row.postCode, postArea: row.postArea } : null,
+      address: row.address ? {
+        address: row.address,
+        postCode: row.postCode,
+        postArea: row.postArea,
+      } : null,
     }
   };
 }

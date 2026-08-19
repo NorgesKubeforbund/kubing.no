@@ -36,7 +36,6 @@ export default function OrderOverview({ orders }: { orders: Order[] }) {
 
   return (
     <div className="flex flex-col gap-4">
-
       <select
         onChange={e => {
           setOrderFilter(e.target.value as OrderStatus);
@@ -57,62 +56,64 @@ export default function OrderOverview({ orders }: { orders: Order[] }) {
           Kansellert
         </option>
       </select>
-      <table>
-        <thead>
-          <tr>
-            <th>Ordrenummer</th>
-            <th>Navn</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {paginatedOrders.map((order, index) => {
-            const isExpanded = expandedIds.has(order.id);
-            return (
-              <Fragment key={order.id}>
-                <tr
-                  onClick={() => toggleExpanded(order.id)}
-                  className={`cursor-pointer hover:bg-neutral-400 ${index % 2 === 0 ? "bg-neutral-300" : "bg-neutral-200"}`}
-                >
-                  <td>{order.id}</td>
-                  <td>{order.userName}</td>
-                  <td>{translateStatus(order.status)}</td>
-                </tr>
-                {isExpanded && (
-                  <tr className="bg-neutral-100">
-                    <td colSpan={3} className="p-0">
-                      <table className="w-full text-left text-sm">
-                        <tbody>
-                          <tr>
-                            <td>NKF ID</td>
-                            <td>{order.userId}</td>
-                          </tr>
-                          <tr className="border-t border-neutral-300">
-                            <td>E-post</td>
-                            <td>{order.email}</td>
-                          </tr>
-                          <tr className="border-t border-neutral-300">
-                            <td>Vipps-referanse</td>
-                            <td>{order.vippsReference}</td>
-                          </tr>
-                          <tr className="border-t border-neutral-300">
-                            <td>Medlemsår</td>
-                            <td>{order.year}</td>
-                          </tr>
-                          <tr className="border-t border-neutral-300">
-                            <td>Opprettet</td>
-                            <td>{new Date(order.createdAt).toLocaleString("nb-NO", { dateStyle: "full", timeStyle: "medium" })}</td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </td>
+      <div className="overflow-x-auto self-center-safe max-w-full sm:text-xl text-sm">
+        <table>
+          <thead>
+            <tr>
+              <th>Ordrenummer</th>
+              <th>Navn</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {paginatedOrders.map((order, index) => {
+              const isExpanded = expandedIds.has(order.id);
+              return (
+                <Fragment key={order.id}>
+                  <tr
+                    onClick={() => toggleExpanded(order.id)}
+                    className={`cursor-pointer hover:bg-neutral-400 ${index % 2 === 0 ? "bg-neutral-300" : "bg-neutral-200"}`}
+                  >
+                    <td>{order.id}</td>
+                    <td>{order.userName}</td>
+                    <td>{translateStatus(order.status)}</td>
                   </tr>
-                )}
-              </Fragment>
-            );
-          })}
-        </tbody>
-      </table>
+                  {isExpanded && (
+                    <tr className="bg-neutral-100">
+                      <td colSpan={3} className="p-0">
+                        <table className="w-full text-left text-sm">
+                          <tbody>
+                            <tr>
+                              <td>NKF ID</td>
+                              <td>{order.userId}</td>
+                            </tr>
+                            <tr className="border-t border-neutral-300">
+                              <td>E-post</td>
+                              <td>{order.email}</td>
+                            </tr>
+                            <tr className="border-t border-neutral-300">
+                              <td>Vipps-referanse</td>
+                              <td>{order.vippsReference}</td>
+                            </tr>
+                            <tr className="border-t border-neutral-300">
+                              <td>Medlemsår</td>
+                              <td>{order.year}</td>
+                            </tr>
+                            <tr className="border-t border-neutral-300">
+                              <td>Opprettet</td>
+                              <td>{new Date(order.createdAt).toLocaleString("nb-NO", { dateStyle: "full", timeStyle: "medium" })}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                  )}
+                </Fragment>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
       {pageCount > 1 &&
         <div className="flex items-center gap-6 self-center mt-2">
           <button
