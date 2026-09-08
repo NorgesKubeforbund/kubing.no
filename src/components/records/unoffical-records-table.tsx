@@ -17,7 +17,7 @@ async function UnofficialWCATable() {
         {unofficialWcaRecords.map((row: string[], index: number) => (
           <tr key={row[0]} className={`${index % 2 === 0 ? "bg-table-odd" : "bg-table-even"}`}>
             {row.map((cell, cellIndex) => (
-              <td key={cellIndex} className="Cell">{cell !== "" ? cell : "N/A"}</td>
+              <td key={cellIndex}>{cell !== "" ? cell : "N/A"}</td>
             ))}
           </tr>
         ))}

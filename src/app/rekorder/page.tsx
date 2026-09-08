@@ -3,6 +3,8 @@ import WCATable from "@/components/records/wca-table";
 import RecordTables from "@/components/records/record-tables";
 import UnofficialWCATable from "@/components/records/unoffical-records-table";
 import NonWCATable from "@/components/records/non-wca-table";
+import { Suspense } from "react";
+import RecordTableSkeleton from "@/components/records/record-table-skeleton";
 
 function Records() {
   return (
@@ -16,7 +18,10 @@ function Records() {
         </p>
       </div>
       <div className="flex flex-row justify-center">
-        <RecordTables WCATable={<WCATable />} UnofficialRecordsTable={<UnofficialWCATable />} NonWCATable={<NonWCATable />} />
+        <RecordTables
+          WCATable={<Suspense fallback={<RecordTableSkeleton />}><WCATable /></Suspense>}
+          UnofficialRecordsTable={<Suspense fallback={<RecordTableSkeleton />}><UnofficialWCATable /></Suspense>}
+          NonWCATable={<Suspense fallback={<RecordTableSkeleton />}><NonWCATable /></Suspense>} />
       </div>
     </div>
   )
