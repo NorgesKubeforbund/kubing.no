@@ -2,7 +2,6 @@
 This code runs at [kubing.no](https://kubing.no).
 
 ## Run the website locally
-This guide is in the works and will be updated in the future.
 The following is a step by step guide to run the website locally.
 Here is the list of necessary dependencies, make sure to have all installed:
 * git
@@ -54,3 +53,12 @@ RESEND_DOMAIN={domain}
 CRON_SECRET={secret} # openssl rand -base64 32
 APP_URL=http://localhost:3000 # https://kubing.no for production
 ```
+## Database migration
+When running the database for the first time, no migration is needed
+and the schema will be automatically created.
+
+If there are any new migration files created in the `schema` directory,
+the migrations need to be applied in the correct order based on their file names.
+
+Note: Migrating the database is really only important for production. For staging
+and local developement, you might as well just delete the docker volume for the database.
