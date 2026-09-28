@@ -30,7 +30,9 @@ export type OrderCreated = {
   vippsReference: string;
 };
 
-export type OrderCreation = { success: true, status: "created_order", redirectUrl: string } | { success: true, status: "order_paid" } | { success: true, status: "already_member" } |  { success: false };
+export type OrderCreation = { success: true, status: "created_order", redirectUrl: string } | { success: true, status: "order_paid" } | { success: true, status: "already_member" } | { success: true, status: "already_has_agreement" } |  { success: false };
+
+export type AgreementCreation = { success: true, status: "created_agreement", redirectUrl: string } | { success: true, status: "already_has_agreement" } |  { success: false };
 
 export type Order = OrderCreated & {
   status: string;

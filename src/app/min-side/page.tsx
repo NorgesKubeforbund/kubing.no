@@ -3,11 +3,11 @@ import { getAuth } from "@/lib/auth";
 import BlueLink from "@/components/ui/blue-link";
 import BecomeMemberButtons from "@/components/become-member-buttons";
 import { isUserMember } from "@/lib/membership";
-import { getCurrentYear } from "@/lib/time";
 import { claimMembership } from "@/lib/vipps";
 import { redirect } from "next/navigation";
 import RegisterUser from "@/components/forms/register-user";
 import { getUser } from "@/lib/user";
+import { hasUserActiveAgreement } from "@/lib/agreement";
 
 export default async function MyPage() {
   const { isAuthenticated, userId, permissions } = await getAuth();
@@ -19,6 +19,7 @@ export default async function MyPage() {
   }
   const user = await getUser(userId);
   const isMember = (await isUserMember(userId)) || (await claimMembership(userId));
+  const hasActiveAgreement = await hasUserActiveAgreement(userId);
   const hasPermissions = (permissions?.length ?? 0) > 0;
 
   return (
@@ -28,18 +29,7 @@ export default async function MyPage() {
         {user.success && <div className="text-base">Hei {user.data.name.split(" ")[0]}!</div>}
       </div>
       <MembershipBadge isMember={isMember} />
-      {!isMember && (
-        <div className="flex flex-col gap-4">
-          <Title small>Bli medlem</Title>
-          {getCurrentYear() === 2026 &&
-            <p className="mb-4 text-lg">
-              Hvis du betalte medlemskontigent før den nye betalingsløsningen,
-              ta kontakt <BlueLink href="/om-oss#kontakt-oss">her</BlueLink>.
-            </p>
-          }
-          <BecomeMemberButtons />
-        </div>
-      )}
+      <BecomeMemberButtons isMember={isMember} hasActiveAgreement={hasActiveAgreement} />
       <div className="flex flex-col gap-4 mt-auto">
         <BlueLink href="/min-side/innstillinger">Innstillinger</BlueLink>
         {hasPermissions && <BlueLink href="/admin">Admin-side</BlueLink>}
