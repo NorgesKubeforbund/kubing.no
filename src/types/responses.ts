@@ -1,4 +1,5 @@
 import { VippsPaymentStatus, VippsPaymentType } from "@/types";
+import { UUID } from "crypto";
 
 export type CompResponse = {
   id: string,
@@ -221,6 +222,13 @@ export type VippsAccessTokenResponse = {
 export type VippsPaymentCreateReponse = {
   redirectUrl: string,
   reference: string,
+}
+
+export type VippsAgreementCreateReponse = {
+  agreementId: string,
+  uuid: UUID,
+  vippsConfirmationUrl: string,
+  chargeId: string | null,
 }
 
 export type VippsCancelPayment = {
