@@ -1,10 +1,11 @@
 import { getClient, query } from "@/db";
-import { VippsAccessTokenResponse, VippsCancelPayment, VippsPaymentCreateReponse, VippsPaymentStatusReponse } from "@/types/responses";
+import { VippsAccessTokenResponse, VippsAgreementCreateReponse, VippsCancelPayment, VippsPaymentCreateReponse, VippsPaymentStatusReponse } from "@/types/responses";
 import { getCurrentYear } from "@/lib/time";
-import { Maybe, Order, OrderCreated, OrderCreation, User, VippsPaymentStatus, VippsPaymentType } from "@/types";
+import { AgreementCreation, Maybe, Order, OrderCreated, OrderCreation, User, VippsPaymentStatus, VippsPaymentType } from "@/types";
 import { sendMembershipConfirmation } from "@/lib/mail";
 import { PoolClient } from "pg";
 import { isUserMemberInYearWithClient } from "@/lib/membership";
+import { hasUserActiveAgreementWithClient } from "@/lib/agreement";
 
 if (!process.env.VIPPS_URL) throw new Error("VIPPS_URL is missing");
 if (!process.env.VIPPS_CLIENT_ID) throw new Error("VIPPS_CLIENT_ID is missing");
@@ -82,6 +83,12 @@ export async function createVippsPaymentAndGetRedirectUrl(userId: number, paymen
       await client.query("ROLLBACK");
       return { success: true, status: "already_member" };
     }
+    const hasActiveAgreement = await hasUserActiveAgreementWithClient(userId, client);
+    if (hasActiveAgreement) {
+      await client.query("ROLLBACK");
+      return { success: true, status: "already_has_agreement" };
+    }
+    // TODO: Handle possibility of created agreement order 
     const createdOrder = await getCreatedOrder(userId, year, client);
     const accessTokenRes = await getAccessToken();
     if (!accessTokenRes.success) {
@@ -162,7 +169,7 @@ export async function createVippsPaymentAndGetRedirectUrl(userId: number, paymen
       return { success: false };
     }
     const payment = await res.json() as VippsPaymentCreateReponse;
-    await createOrder(userId, year, vippsReference, client);
+    await saveCreatedOrder(userId, year, vippsReference, client);
     await client.query("COMMIT");
     return {
       success: true,
@@ -357,7 +364,7 @@ async function getOrderNumber(client: PoolClient): Promise<number> {
   return res.rows[0].nextval as number;
 }
 
-async function createOrder(userId: number, year: number, vippsReference: string, client: PoolClient): Promise<boolean> {
+async function saveCreatedOrder(userId: number, year: number, vippsReference: string, client: PoolClient): Promise<boolean> {
   const res = await client.query(`
     INSERT INTO orders
     (user_id, year, status, vipps_reference)
@@ -490,4 +497,172 @@ export async function getAllOrders(): Promise<Order[]> {
     JOIN users u ON u.id = o.user_id
     ORDER by o.created_at DESC
   `, [])).rows;
+}
+
+export async function createVippsAgreementAndGetRedirectUrl(userId: number, baseUrl: string): Promise<AgreementCreation> {
+  const year = getCurrentYear();
+  const client = await getClient();
+  try {
+    await client.query("BEGIN");
+    const user = (await client.query(`
+      SELECT *
+      FROM users
+      WHERE id = $1
+      FOR UPDATE
+    `, [userId])).rows.at(0) as User | undefined;
+    if (!user) {
+      await client.query("ROLLBACK");
+      return { success: false };
+    }
+    const hasActiveAgreement = await hasUserActiveAgreementWithClient(userId, client);
+    if (hasActiveAgreement) {
+      return {
+        success: true,
+        status: "already_has_agreement",
+      };
+    }
+    const isMember = await isUserMemberInYearWithClient(userId, year, client);
+    // TODO: Handle case when user has open order for payment or agreement
+    const accessTokenRes = await getAccessToken();
+    if (!accessTokenRes.success) {
+      await client.query("ROLLBACK");
+      return { success: false };
+    }
+    const accessToken = accessTokenRes.data;
+    if (isMember) {
+      const orderNumber = await getOrderNumber(client);
+      // TODO: Don't rely on order number for idempotency key when request does not use order number
+      const vippsReference = `${VIPPS_REF}-${orderNumber}`;
+      const res = await fetch(
+        `${VIPPS_URL}/recurring/v3/agreements`,
+        {
+          method: "POST",
+          signal: AbortSignal.timeout(VIPPS_TIMEOUT),
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${accessToken}`,
+            "Ocp-Apim-Subscription-Key": VIPPS_SUBSCRIPTION_KEY,
+            "Merchant-Serial-Number": VIPPS_MSN,
+            "Idempotency-Key": vippsReference,
+            ...STANDARD_HEADERS,
+          },
+          body: JSON.stringify({
+            "pricing": {
+              "type": "LEGACY",
+              "amount": MEMBERSHIP_COST,
+              "currency": "NOK",
+            },
+            "interval": {
+              "unit": "YEAR",
+              "count": 1,
+            },
+            "merchantRedirectUrl": `${baseUrl}/min-side`,
+            "merchantAgreementUrl": `${baseUrl}/min-side`,
+            "productName": `Medlemskap i NKF`,
+          }),
+        }
+      );
+      if (!res.ok) {
+        console.error(await res.text());
+        await client.query("ROLLBACK");
+        return { success: false };
+      }
+      const agreement = await res.json() as VippsAgreementCreateReponse;
+      await saveCreatedAgreement(userId, agreement.agreementId, client);
+      await client.query("COMMIT");
+      return {
+        success: true,
+        status: "created_agreement",
+        redirectUrl: agreement.vippsConfirmationUrl,
+      };
+    }
+    const orderNumber = await getOrderNumber(client);
+    const vippsReference = `${VIPPS_REF}-${orderNumber}`;
+    const res = await fetch(
+      `${VIPPS_URL}/recurring/v3/agreements`,
+      {
+        method: "POST",
+        signal: AbortSignal.timeout(VIPPS_TIMEOUT),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${accessToken}`,
+          "Ocp-Apim-Subscription-Key": VIPPS_SUBSCRIPTION_KEY,
+          "Merchant-Serial-Number": VIPPS_MSN,
+          "Idempotency-Key": vippsReference,
+          ...STANDARD_HEADERS,
+        },
+        body: JSON.stringify({
+          "pricing": {
+            "type": "LEGACY",
+            "amount": MEMBERSHIP_COST,
+            "currency": "NOK",
+          },
+          "interval": {
+            "unit": "YEAR",
+            "count": 1,
+          },
+          "merchantRedirectUrl": `${baseUrl}/min-side`,
+          "merchantAgreementUrl": `${baseUrl}/min-side`,
+          "productName": `Medlemskap i NKF`,
+          "initialCharge": {
+            "amount": MEMBERSHIP_COST,
+            "description": `Medlemskap i NKF ${year}`,
+            "transactionType": "DIRECT_CAPTURE"
+          }
+        }),
+      }
+    );
+    if (!res.ok) {
+      console.error(await res.text());
+      await client.query("ROLLBACK");
+      return { success: false };
+    }
+    const agreement = await res.json() as VippsAgreementCreateReponse;
+    const agreementId = await saveCreatedAgreement(userId, agreement.agreementId, client);
+    await saveCreatedCharge(agreementId, year, vippsReference, client);
+    await client.query("COMMIT");
+    return {
+      success: true,
+      status: "created_agreement",
+      redirectUrl: agreement.vippsConfirmationUrl,
+    };
+  } catch (e) {
+    await client.query("ROLLBACK").catch(() => { });
+    console.error(e);
+    return { success: false };
+  } finally {
+    client.release();
+  }
+}
+
+async function saveCreatedAgreement(userId: number, vippsReference: string, client: PoolClient): Promise<number> {
+  const res = await client.query(`
+    INSERT INTO agreements
+    (user_id, status, vipps_reference)
+    VALUES
+    ($1, 'CREATED', $2)
+    RETURNING id
+    `,
+    [
+      userId,
+      vippsReference,
+    ]
+  )
+  return res.rows[0].id;
+}
+
+async function saveCreatedCharge(agreementId: number, year: number, vippsReference: string, client: PoolClient): Promise<boolean> {
+  const res = await client.query(`
+    INSERT INTO charges
+    (agreement_id, year, status, vipps_reference, type)
+    VALUES
+    ($1, $2, 'CREATED', $3, 'INITIAL')
+    `,
+    [
+      agreementId,
+      year,
+      vippsReference,
+    ]
+  )
+  return res.rowCount !== null && res.rowCount > 0;
 }
