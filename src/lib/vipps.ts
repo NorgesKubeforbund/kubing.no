@@ -152,7 +152,7 @@ export async function createVippsPaymentAndGetRedirectUrl(userId: number, paymen
           "reference": vippsReference,
           "returnUrl": `${baseUrl}/min-side`,
           "userFlow": "WEB_REDIRECT",
-          "paymentDescription": `Medlemsskap i NKF ${year}`,
+          "paymentDescription": `Medlemskap i NKF ${year}`,
         }),
       }
     );
