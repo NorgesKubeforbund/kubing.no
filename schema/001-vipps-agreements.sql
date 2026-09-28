@@ -13,7 +13,10 @@ CREATE TABLE IF NOT EXISTS charges (
     year INTEGER NOT NULL,
     status VARCHAR(100) NOT NULL,
     vipps_reference VARCHAR(100) UNIQUE NOT NULL,
-    payment_due DATE NOT NULL,
+    type VARCHAR(20) NOT NULL,
+    payment_due DATE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (agreement_id) REFERENCES agreements(id) ON DELETE CASCADE
+    FOREIGN KEY (agreement_id) REFERENCES agreements(id) ON DELETE CASCADE,
+    CONSTRAINT payment_due_required_unless_initial
+        CHECK (type = 'INITIAL' OR payment_due IS NOT NULL)
 );
