@@ -607,7 +607,8 @@ export async function createVippsAgreementAndGetRedirectUrl(userId: number, base
           "initialCharge": {
             "amount": MEMBERSHIP_COST,
             "description": `Medlemskap i NKF ${year}`,
-            "transactionType": "DIRECT_CAPTURE"
+            "transactionType": "DIRECT_CAPTURE",
+            "orderId": vippsReference,
           }
         }),
       }
