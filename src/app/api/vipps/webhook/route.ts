@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
+import { WebhookPayload } from "@/types/webhook";
+import { handleWebhook } from "@/lib/vipps";
 
 export async function POST(request: NextRequest) {
   const VIPPS_WEBHOOK_SECRET = process.env.VIPPS_WEBHOOK_SECRET;
@@ -48,7 +50,11 @@ export async function POST(request: NextRequest) {
   } catch {
     return NextResponse.json({ error: "Ugyldig JSON" }, { status: 400 });
   }
-  const json = parsedJson;
+  const json: WebhookPayload = parsedJson;
+  const success = await handleWebhook(json);
+  if (!success) {
+    return NextResponse.json({ error: "Kunne ikke håndtere webhook" }, { status: 500 });
+  }
 
   return NextResponse.json({});
 }
