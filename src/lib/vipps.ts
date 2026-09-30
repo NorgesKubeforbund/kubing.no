@@ -140,8 +140,8 @@ export async function createVippsPaymentAndGetRedirectUrl(userId: number, paymen
         `, [order.id]);
       }
     }
-    const orderNumber = await getOrderNumber(client);
-    const vippsReference = `${VIPPS_REF}-${orderNumber}`;
+    const orderId = await getOrderNumber(client);
+    const vippsReference = `${VIPPS_REF}-${orderId}`;
     const res = await fetch(
       `${VIPPS_URL}/epayment/v1/payments`,
       {
@@ -171,7 +171,7 @@ export async function createVippsPaymentAndGetRedirectUrl(userId: number, paymen
       return { success: false };
     }
     const payment = await res.json() as VippsPaymentCreateReponse;
-    await saveCreatedOrder(userId, year, vippsReference, client);
+    await saveCreatedOrder(orderId, userId, year, vippsReference, client);
     await client.query("COMMIT");
     return {
       success: true,
@@ -366,14 +366,15 @@ async function getOrderNumber(client: PoolClient): Promise<number> {
   return res.rows[0].nextval as number;
 }
 
-async function saveCreatedOrder(userId: number, year: number, vippsReference: string, client: PoolClient): Promise<boolean> {
+async function saveCreatedOrder(orderId: number, userId: number, year: number, vippsReference: string, client: PoolClient): Promise<boolean> {
   const res = await client.query(`
     INSERT INTO orders
-    (user_id, year, status, vipps_reference)
+    (id, user_id, year, status, vipps_reference)
     VALUES
-    ($1, $2, 'CREATED', $3)
+    ($1, $2, $3, 'CREATED', $4)
     `,
     [
+      orderId,
       userId,
       year,
       vippsReference,
@@ -591,8 +592,8 @@ export async function createVippsAgreementAndGetRedirectUrl(userId: number, base
         redirectUrl: agreement.vippsConfirmationUrl,
       };
     }
-    const orderNumber = await getOrderNumber(client);
-    const vippsReference = `${VIPPS_REF}-${orderNumber}`;
+    const chargeId = await getOrderNumber(client);
+    const vippsReference = `${VIPPS_REF}-${chargeId}`;
     const res = await fetch(
       `${VIPPS_URL}/recurring/v3/agreements`,
       {
@@ -635,7 +636,7 @@ export async function createVippsAgreementAndGetRedirectUrl(userId: number, base
     }
     const agreement = await res.json() as VippsAgreementCreateReponse;
     const agreementId = await saveCreatedAgreement(userId, agreement.agreementId, client);
-    await saveCreatedCharge(agreementId, year, vippsReference, client);
+    await saveCreatedCharge(chargeId, agreementId, year, vippsReference, client);
     await client.query("COMMIT");
     return {
       success: true,
@@ -667,14 +668,15 @@ async function saveCreatedAgreement(userId: number, vippsReference: string, clie
   return res.rows[0].id;
 }
 
-async function saveCreatedCharge(agreementId: number, year: number, vippsReference: string, client: PoolClient): Promise<boolean> {
+async function saveCreatedCharge(orderId: number, agreementId: number, year: number, vippsReference: string, client: PoolClient): Promise<boolean> {
   const res = await client.query(`
     INSERT INTO charges
-    (agreement_id, year, status, vipps_reference, type)
+    (id, agreement_id, year, status, vipps_reference, type)
     VALUES
-    ($1, $2, 'CREATED', $3, 'INITIAL')
+    ($1, $2, $3, 'CREATED', $4, 'INITIAL')
     `,
     [
+      orderId,
       agreementId,
       year,
       vippsReference,
@@ -799,19 +801,23 @@ async function handleChargeCaptured(payload: RecurringChargeEvent): Promise<bool
   const client = await getClient();
   try {
     await client.query("BEGIN");
-    const user = (await client.query(`
-      SELECT u.*, c.year
+    const res = (await client.query(`
+      SELECT
+        u.*,
+        u.id AS "userId",
+        c.year,
+        c.id AS "chargeId"
       FROM users u
       JOIN agreements a ON u.id = a.user_id
       JOIN charges c ON a.id = c.agreement_id
       WHERE c.vipps_reference = $1
       FOR UPDATE OF u
-    `, [payload.chargeId])).rows.at(0) as (User & { id: number, year: number }) | undefined;
-    if (!user) {
+    `, [payload.chargeId])).rows.at(0) as (User & { userId: number, year: number, chargeId: number }) | undefined;
+    if (!res) {
       await client.query("ROLLBACK");
       return false;
     }
-    const addMemberSuccess = await addMemberFromCharge(user.id, payload.chargeId, user.year, client);
+    const addMemberSuccess = await addMemberFromCharge(res.userId, payload.chargeId, res.year, client);
     if (!addMemberSuccess) {
       await client.query("ROLLBACK");
       return true;
@@ -819,7 +825,7 @@ async function handleChargeCaptured(payload: RecurringChargeEvent): Promise<bool
     await client.query("COMMIT");
     try {
       // TODO: Fix numbering
-      await sendMembershipConfirmation(user, { id: 0, vippsReference: payload.agreementId, year: user.year });
+      await sendMembershipConfirmation(res, { id: res.chargeId, vippsReference: payload.agreementId, year: res.year });
     } catch (e) {
       console.error(e);
     }
