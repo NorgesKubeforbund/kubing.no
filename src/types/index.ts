@@ -12,6 +12,7 @@ export type User = {
 
 export type UserData = User & {
   isMember: boolean;
+  hasActiveAgreement: boolean;
   userId: number;
 };
 
