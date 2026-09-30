@@ -35,13 +35,29 @@ export type OrderCreation = { success: true, status: "created_order", redirectUr
 
 export type AgreementCreation = { success: true, status: "created_agreement", redirectUrl: string } | { success: true, status: "already_has_agreement" } |  { success: false };
 
-export type Order = OrderCreated & {
+type PaymentBase = {
+  id: number;
+  year: number;
+  vippsReference: string;
   status: string;
   createdAt: Date;
   userId: number;
   userName: string;
   email: string;
 };
+
+export type Order = PaymentBase & {
+  kind: "order";
+};
+
+export type Charge = PaymentBase & {
+  kind: "charge";
+  type: "INITIAL" | "RECURRING";
+  paymentDue: Date | null;
+  agreementId: number;
+};
+
+export type Payment = Order | Charge;
 
 export type Address = {
   address: string,
