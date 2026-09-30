@@ -1,12 +1,14 @@
 "use client";
-import { Order } from "@/types";
+import { cn } from "@/lib/utils";
+import { Payment } from "@/types";
+import { ChevronDownIcon } from "lucide-react";
 import { Fragment, useMemo, useState } from "react";
 
 const PAGE_SIZE = 25;
 
 type OrderStatus = "CREATED" | "CANCELLED" | "COMPLETED";
 
-export default function OrderOverview({ orders }: { orders: Order[] }) {
+export default function OrderOverview({ orders }: { orders: Payment[] }) {
   const [page, setPage] = useState<number>(1);
   const [orderFilter, setOrderFilter] = useState<OrderStatus | "ALL">("ALL");
   const [expandedIds, setExpandedIds] = useState<Set<number>>(new Set());
@@ -60,7 +62,8 @@ export default function OrderOverview({ orders }: { orders: Order[] }) {
         <table>
           <thead>
             <tr>
-              <th>Ordrenummer</th>
+              <th></th>
+              <th>Ordrenr.</th>
               <th>Navn</th>
               <th>Status</th>
             </tr>
@@ -74,13 +77,14 @@ export default function OrderOverview({ orders }: { orders: Order[] }) {
                     onClick={() => toggleExpanded(order.id)}
                     className={`cursor-pointer hover:bg-neutral-400 ${index % 2 === 0 ? "bg-neutral-300" : "bg-neutral-200"}`}
                   >
+                    <td><ChevronDownIcon className={cn(`transition-transform duration-200`, isExpanded && "-rotate-180")}/> </td>
                     <td>{order.id}</td>
                     <td>{order.userName}</td>
                     <td>{translateStatus(order.status)}</td>
                   </tr>
                   {isExpanded && (
                     <tr className="bg-neutral-100">
-                      <td colSpan={3} className="p-0">
+                      <td colSpan={4} className="p-0">
                         <table className="w-full text-left text-sm">
                           <tbody>
                             <tr>
@@ -103,6 +107,22 @@ export default function OrderOverview({ orders }: { orders: Order[] }) {
                               <td>Opprettet</td>
                               <td>{new Date(order.createdAt).toLocaleString("nb-NO", { dateStyle: "full", timeStyle: "medium" })}</td>
                             </tr>
+                            <tr className="border-t border-neutral-300">
+                              <td>Ordretype</td>
+                              <td>{order.kind === "order" ? "Engangsbetaling" : (order.type === "INITIAL" ? "Startbetaling" : "Automatisk")}</td>
+                            </tr>
+                            {order.kind === "charge" && order.paymentDue &&
+                              <tr className="border-t border-neutral-300">
+                                <td>Forfall</td>
+                                <td>
+                                  {new Date(order.paymentDue).toLocaleDateString("nb-NO", {
+                                    month: "long",
+                                    day: "numeric",
+                                    year: "numeric",
+                                  })}
+                                </td>
+                              </tr>
+                            }
                           </tbody>
                         </table>
                       </td>
