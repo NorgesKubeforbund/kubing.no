@@ -69,7 +69,20 @@ python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 cd ..
-python3 webhook/main.py
+python3 webhook/add_webhook.py
+deactivate
+rm -r webhook/.venv
+```
+
+If you need to delete a webhook, run this the same way:
+
+```bash
+cd webhook
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+cd ..
+python3 webhook/delete_webhook.py
 deactivate
 rm -r webhook/.venv
 ```
