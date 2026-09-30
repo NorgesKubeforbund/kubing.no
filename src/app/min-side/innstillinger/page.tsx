@@ -1,12 +1,13 @@
 import AddressUpdateForm from "@/components/forms/address-update-form";
-import UpdateWCAUserData from "@/components/update-wca-user-data";
-import UserData from "@/components/user-data";
+import UpdateWCAUserData from "@/components/settings/update-wca-user-data";
+import UserData from "@/components/settings/user-data";
 import BlueLink from "@/components/ui/blue-link";
 import Title from "@/components/ui/title";
 import { getAuth } from "@/lib/auth";
 import { getUserData } from "@/lib/user";
 import { notFound, redirect } from "next/navigation";
 import BackArrow from "@/components/ui/back-arrow";
+import ManageAgreement from "@/components/settings/manage-agreement";
 
 export default async function SettingsPage() {
   const { isAuthenticated, userId } = await getAuth()
@@ -26,6 +27,10 @@ export default async function SettingsPage() {
       <div className="flex flex-col gap-2">
         <BackArrow href="/min-side" />
         <Title>Innstillinger</Title>
+      </div>
+      <div className="flex flex-col gap-4">
+        <Title small>Fast betaling</Title>
+        <ManageAgreement hasActiveAgreement={userData.hasActiveAgreement} />
       </div>
       <div className="flex flex-col gap-4">
         <Title small>Personlig data</Title>
