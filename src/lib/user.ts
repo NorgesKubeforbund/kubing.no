@@ -1,6 +1,7 @@
 import { query } from "@/db";
 import { Maybe, User, UserData } from "@/types";
 import { isUserMember } from "@/lib/membership";
+import { hasUserActiveAgreement } from "./agreement";
 
 export async function getUserData(userId: number): Promise<Maybe<UserData>> {
   const userRes = await getUser(userId);
@@ -9,11 +10,13 @@ export async function getUserData(userId: number): Promise<Maybe<UserData>> {
   }
   const user = userRes.data;
   const isMember = await isUserMember(userId);
+  const hasActiveAgreement = await hasUserActiveAgreement(userId);
   return {
     success: true,
     data: {
       ...user,
       isMember,
+      hasActiveAgreement,
       userId,
     }
   };
