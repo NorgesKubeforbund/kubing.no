@@ -7,6 +7,7 @@ import { PoolClient } from "pg";
 import { isUserMemberInYearWithClient } from "@/lib/membership";
 import { hasUserActiveAgreementWithClient } from "@/lib/agreement";
 import { RecurringAgreementActivated, RecurringAgreementExpired, RecurringAgreementRejected, RecurringAgreementStopped, RecurringChargeEvent, WebhookPayload } from "@/types/webhook";
+import { randomUUID } from "crypto";
 
 if (!process.env.VIPPS_URL) throw new Error("VIPPS_URL is missing");
 if (!process.env.VIPPS_CLIENT_ID) throw new Error("VIPPS_CLIENT_ID is missing");
@@ -547,9 +548,6 @@ export async function createVippsAgreementAndGetRedirectUrl(userId: number, base
     }
     const accessToken = accessTokenRes.data;
     if (isMember) {
-      const orderNumber = await getOrderNumber(client);
-      // TODO: Don't rely on order number for idempotency key when request does not use order number
-      const vippsReference = `${VIPPS_REF}-${orderNumber}`;
       const res = await fetch(
         `${VIPPS_URL}/recurring/v3/agreements`,
         {
@@ -560,7 +558,7 @@ export async function createVippsAgreementAndGetRedirectUrl(userId: number, base
             "Authorization": `Bearer ${accessToken}`,
             "Ocp-Apim-Subscription-Key": VIPPS_SUBSCRIPTION_KEY,
             "Merchant-Serial-Number": VIPPS_MSN,
-            "Idempotency-Key": vippsReference,
+            "Idempotency-Key": randomUUID(),
             ...STANDARD_HEADERS,
           },
           body: JSON.stringify({
@@ -754,6 +752,9 @@ async function handleAgreementCancelled(payload: RecurringAgreementExpired | Rec
 }
 
 async function handleAgreementStopped(payload: RecurringAgreementStopped): Promise<boolean> {
+  if (payload.actor === "MERCHANT") {
+    return true;
+  }
   const client = await getClient();
   try {
     await client.query("BEGIN");
@@ -822,6 +823,79 @@ async function handleChargeCaptured(payload: RecurringChargeEvent): Promise<bool
     } catch (e) {
       console.error(e);
     }
+    return true;
+  } catch (e) {
+    await client.query("ROLLBACK").catch(() => { });
+    console.error(e);
+    return false;
+  } finally {
+    client.release();
+  }
+}
+
+export async function stopAgreement(userId: number): Promise<boolean> {
+  const client = await getClient();
+  try {
+    await client.query("BEGIN");
+    const user = (await client.query(`
+      SELECT *
+      FROM users u
+      WHERE id = $1
+      FOR UPDATE
+    `, [userId])).rows.at(0) as User | undefined;
+    if (!user) {
+      await client.query("ROLLBACK");
+      return false;
+    }
+    const agreement = (await client.query(`
+      select *
+      from agreements
+      where user_id = $1 AND status = 'ACTIVE'
+    `, [userId])).rows.at(0);
+    if (!agreement) {
+      await client.query("ROLLBACK");
+      return true;
+    }
+    const accessTokenRes = await getAccessToken();
+    if (!accessTokenRes.success) {
+      await client.query("ROLLBACK");
+      return false;
+    }
+    const accessToken = accessTokenRes.data;
+    const res = await fetch(
+      `${VIPPS_URL}/recurring/v3/agreements/${agreement.vipps_reference}`,
+      {
+        method: "PATCH",
+        signal: AbortSignal.timeout(VIPPS_TIMEOUT),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${accessToken}`,
+          "Ocp-Apim-Subscription-Key": VIPPS_SUBSCRIPTION_KEY,
+          "Merchant-Serial-Number": VIPPS_MSN,
+          "Idempotency-Key": randomUUID(),
+          ...STANDARD_HEADERS,
+        },
+        body: JSON.stringify({
+          status: "STOPPED",
+        }),
+      }
+    );
+    if (!res.ok) {
+      console.error(await res.text());
+      await client.query("ROLLBACK");
+      return false;
+    }
+    await client.query(`
+      UPDATE agreements
+      SET status = 'STOPPED'
+      WHERE id = $1
+    `, [agreement.id]);
+    await client.query(`
+      UPDATE charges
+      SET status = 'CANCELLED'
+      WHERE agreement_id = $1 AND status = 'CREATED'
+    `, [agreement.id]);
+    await client.query("COMMIT");
     return true;
   } catch (e) {
     await client.query("ROLLBACK").catch(() => { });
