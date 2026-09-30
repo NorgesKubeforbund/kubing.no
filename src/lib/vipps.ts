@@ -1,7 +1,7 @@
 import { getClient, query } from "@/db";
 import { VippsAccessTokenResponse, VippsAgreementCreateReponse, VippsCancelPayment, VippsPaymentCreateReponse, VippsPaymentStatusReponse } from "@/types/responses";
 import { getCurrentYear } from "@/lib/time";
-import { AgreementCreation, Maybe, Order, OrderCreated, OrderCreation, User, VippsPaymentStatus, VippsPaymentType } from "@/types";
+import { AgreementCreation, Maybe, Payment, OrderCreated, OrderCreation, User, VippsPaymentStatus, VippsPaymentType } from "@/types";
 import { sendMembershipConfirmation } from "@/lib/mail";
 import { PoolClient } from "pg";
 import { isUserMemberInYearWithClient } from "@/lib/membership";
@@ -501,20 +501,44 @@ async function handleOpenOrder(order: { id: number, userId: number, vippsReferen
   }
 }
 
-export async function getAllOrders(): Promise<Order[]> {
+export async function getAllOrders(): Promise<Payment[]> {
   return (await query(`
     SELECT
+      'order' AS "kind",
       o.id,
       o.year,
       o.vipps_reference AS "vippsReference",
       o.status,
       o.created_at AS "createdAt",
+      NULL AS "type",
+      NULL AS "paymentDue",
+      NULL AS "agreementId",
       u.id AS "userId",
       u.name AS "userName",
       u.email
     FROM orders o
     JOIN users u ON u.id = o.user_id
-    ORDER by o.created_at DESC
+
+    UNION ALL
+
+    SELECT
+      'charge' AS "kind",
+      c.id,
+      c.year,
+      c.vipps_reference AS "vippsReference",
+      c.status,
+      c.created_at AS "createdAt",
+      c.type AS "type",
+      c.payment_due AS "paymentDue",
+      c.agreement_id AS "agreementId",
+      u.id AS "userId",
+      u.name AS "userName",
+      u.email
+    FROM charges c
+    JOIN agreements a ON a.id = c.agreement_id
+    JOIN users u ON u.id = a.user_id
+
+    ORDER BY "createdAt" DESC
   `, [])).rows;
 }
 
