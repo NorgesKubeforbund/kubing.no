@@ -1,5 +1,6 @@
 import { OrderCreated, User } from "@/types";
 import { Resend } from "resend";
+import { formatDate } from "@/lib/time";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const fromDomain = process.env.RESEND_DOMAIN;
@@ -85,4 +86,39 @@ export async function sendMembershipConfirmation(user: User, order: OrderCreated
 </tr>`;
   const html = htmlTemplate(orderConfirmationHtml);
   await sendMail(email, `Bekreftelse på medlemskap hos Norges Kubeforbund ${year}`, html);
+}
+
+export async function notifyOfPaymentDue(user: User, price: string, due: string) {
+  const { name, email } = user;
+  const { norwegian: norwegianDueDate, english: englishDueDate } = formatDate(due);
+  const paymentDueHtml = `\
+<tr>
+  <td style="margin: 8px; padding: 16px; padding-bottom: 8px; color:#171717; font-size:14px; line-height:1.5;">
+      <p>Kjære ${name},</p>
+      <p>Vi ønsker å informere om at ditt medlemskap hos NKF vil fornyes
+        for ${price} kroner den ${norwegianDueDate}.
+      </p>
+      <p>Hvis du ikke lenger ønsker å være medlem, kan du avslutte fast betaling
+        på <a href="https://kubing.no/min-side/innstillinger">Min side</a> eller
+        direkte i Vipps-appen.
+      </p>
+      <p>Takk for at du er medlem i NKF!</p>
+      <p>Med vennlig hilsen,<br />Norges Kubeforbund</p>
+      <br />
+      <hr />
+      <br />
+      <p>Dear ${name},</p>
+      <p>We want to let you know that your membership with NKF will be renewed
+        for ${price} kroner on ${englishDueDate}.
+      </p>
+      <p>If you no longer wish to be a member, you can end the recurring payment
+        at <a href="https://kubing.no/min-side/innstillinger">My page</a> or
+        directly in the Vipps app.
+      </p>
+      <p>Thank you for being a member of NKF!</p>
+      <p>Best regards,<br />Norges Kubeforbund</p>
+  </td>
+</tr>`;
+  const html = htmlTemplate(paymentDueHtml);
+  await sendMail(email, "Kommende fornyelse av medlemskap i Norges Kubeforbund", html);
 }
