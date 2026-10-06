@@ -21,7 +21,7 @@ export default function ManageAgreement({ hasActiveAgreement }: { hasActiveAgree
 
   if (!hasActiveAgreement) {
     return (
-      <div>Du har ikke fast betaling på. Du kan sette opp dette på <BlueLink href="/min-side">Min side</BlueLink>.</div>
+      <div>Du har ingen aktiv fast betaling. Du kan sette opp dette på <BlueLink href="/min-side">Min side</BlueLink>.</div>
     );
   }
 
