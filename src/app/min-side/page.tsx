@@ -28,7 +28,7 @@ export default async function MyPage() {
         <Title>Min side</Title>
         {user.success && <div className="text-base">Hei {user.data.name.split(" ")[0]}!</div>}
       </div>
-      <MembershipBadge isMember={isMember} />
+      <MembershipBadge isMember={isMember} hasActiveAgreement={hasActiveAgreement} />
       <BecomeMemberButtons isMember={isMember} hasActiveAgreement={hasActiveAgreement} />
       <div className="flex flex-col gap-4 mt-auto">
         <BlueLink href="/min-side/innstillinger">Innstillinger</BlueLink>
@@ -38,8 +38,16 @@ export default async function MyPage() {
   );
 }
 
-function MembershipBadge({ isMember }: { isMember: boolean }) {
-  return isMember ? <IsMemberBadge /> : <NotMemberBadge />;
+function MembershipBadge({
+  isMember,
+  hasActiveAgreement,
+}: {
+  isMember: boolean;
+  hasActiveAgreement: boolean;
+}) {
+  if (isMember) return <IsMemberBadge />;
+  if (hasActiveAgreement) return <RenewalPendingBadge />;
+  return <NotMemberBadge />;
 }
 
 function IsMemberBadge() {
@@ -47,6 +55,15 @@ function IsMemberBadge() {
     <div className="mt-6 bg-green-600 border-4 border-green-700 text-white rounded-xl p-4 w-fit self-center">
       <div className="text-2xl font-semibold">Aktivt medlemskap i NKF</div>
       <p>Medlemskapet varer ut inneværende kalenderår.</p>
+    </div>
+  );
+}
+
+function RenewalPendingBadge() {
+  return (
+    <div className="mt-6 bg-yellow-500 border-4 border-yellow-600 text-white rounded-xl p-4 w-fit self-center">
+      <div className="text-2xl font-semibold">Medlemskapet fornyes snart</div>
+      <p>Du har aktiv fast betaling og medlemskapet ditt vil bli fornyet automatisk om kort tid.</p>
     </div>
   );
 }
