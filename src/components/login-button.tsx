@@ -3,13 +3,13 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-function LoginButton() {
+export default function LoginButton({ redirect }: { redirect?: string}) {
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
 
   async function login() {
     setLoading(true);
-    const res = await fetch("/api/auth/login");
+    const res = await fetch(`/api/auth/login${redirect ? `?redirect=${redirect}` : ""}`);
     if (!res.ok) {
       setLoading(false);
       alert("Noe gikk galt");
@@ -30,5 +30,3 @@ function LoginButton() {
     </button>
   );
 }
-
-export default LoginButton;
