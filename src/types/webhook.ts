@@ -25,7 +25,7 @@ export type RecurringAgreementEvent =
   | RecurringAgreementExpired
   | RecurringAgreementStopped;
 
-export type RecurringChargeEvent = {
+type ChargeBase = {
   agreementId: string;
   chargeId: string;
   chargeExternalId: string | null;
@@ -33,12 +33,26 @@ export type RecurringChargeEvent = {
   msn: string;
   amount: number;
   chargeType: "INITIAL" | "RECURRING" | "UNSCHEDULED";
-  eventType: "recurring.charge-captured.v1";
   currency: "NOK";
   occurred: string;
   amountCaptured: number;
   amountCanceled: number;
   amountRefunded: number;
 };
+
+export type RecurringChargeCaptured = ChargeBase & { eventType: "recurring.charge-captured.v1" };
+
+export type RecurringChargeFailureReason =
+  | "user_action_required"
+  | "charge_amount_too_high"
+  | "technical_error"
+  | "non_technical_error";
+
+export type RecurringChargeFailed = ChargeBase & {
+  eventType: "recurring.charge-failed.v1";
+  failureReason?: RecurringChargeFailureReason | null;
+};
+
+export type RecurringChargeEvent = RecurringChargeCaptured | RecurringChargeFailed;
 
 export type WebhookPayload = RecurringAgreementEvent | RecurringChargeEvent;
