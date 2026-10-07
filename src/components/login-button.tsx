@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
-export default function LoginButton({ redirect }: { redirect?: string}) {
+export default function LoginButton({ redirect }: { redirect?: string }) {
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
 
@@ -24,9 +25,16 @@ export default function LoginButton({ redirect }: { redirect?: string}) {
     <button
       disabled={loading}
       onClick={login}
-      className="bg-neutral-100 hover:bg-neutral-400 cursor-pointer disabled:cursor-not-allowed disabled:hover:bg-neutral-100 disabled:text-neutral-400 border rounded-md px-2 py-1 w-fit"
+      className="flex flex-row items-center justify-center gap-3 w-full cursor-pointer rounded-lg bg-link-text px-4 py-2 text-white transition-colors hover:bg-link-text/85 disabled:cursor-not-allowed disabled:bg-neutral-100 disabled:text-neutral-400 disabled:hover:bg-neutral-100"
     >
-      Logg inn med WCA
+      <Image
+        src="/wca-logo.svg"
+        alt=""
+        width={32}
+        height={32}
+        className="p-1 rounded-sm h-8 w-8 bg-white"
+      />
+      <div>Logg inn med WCA</div>
     </button>
   );
 }
