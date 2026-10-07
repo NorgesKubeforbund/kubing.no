@@ -12,7 +12,7 @@ import ManageAgreement from "@/components/settings/manage-agreement";
 export default async function SettingsPage() {
   const { isAuthenticated, userId } = await getAuth()
   if (!isAuthenticated) {
-    redirect("/login");
+    redirect("/login?redirect=/min-side/innstillinger");
   }
   if (userId === null) {
     redirect("/min-side");
