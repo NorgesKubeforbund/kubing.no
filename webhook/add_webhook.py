@@ -43,6 +43,7 @@ def add_webhook():
                 "recurring.agreement-stopped.v1",
                 "recurring.agreement-expired.v1",
                 "recurring.charge-captured.v1",
+                "recurring.charge-failed.v1",
             ],
         },
     )

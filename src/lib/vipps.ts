@@ -2,11 +2,11 @@ import { getClient, query } from "@/db";
 import { VippsAccessTokenResponse, VippsAgreementCreateReponse, VippsCancelPayment, VippsPaymentCreateReponse, VippsPaymentStatusReponse } from "@/types/responses";
 import { getCurrentMonth, getCurrentYear, toNorwayDateString } from "@/lib/time";
 import { AgreementCreation, Maybe, Payment, OrderCreated, OrderCreation, User, VippsPaymentStatus, VippsPaymentType } from "@/types";
-import { notifyOfPaymentDue, sendMembershipConfirmation } from "@/lib/mail";
+import { notifyOfAgreementEndedAfterFailedCharge, notifyOfPaymentDue, sendMembershipConfirmation } from "@/lib/mail";
 import { PoolClient } from "pg";
 import { isUserMemberInYearWithClient } from "@/lib/membership";
 import { hasUserActiveAgreementWithClient } from "@/lib/agreement";
-import { RecurringAgreementActivated, RecurringAgreementExpired, RecurringAgreementRejected, RecurringAgreementStopped, RecurringChargeEvent, WebhookPayload } from "@/types/webhook";
+import { RecurringAgreementActivated, RecurringAgreementExpired, RecurringAgreementRejected, RecurringAgreementStopped, RecurringChargeCaptured, RecurringChargeFailed, WebhookPayload } from "@/types/webhook";
 import { randomUUID } from "crypto";
 
 if (!process.env.VIPPS_URL) throw new Error("VIPPS_URL is missing");
@@ -721,6 +721,8 @@ export async function handleWebhook(payload: WebhookPayload): Promise<boolean> {
       return (await handleAgreementStopped(payload));
     case "recurring.charge-captured.v1":
       return (await handleChargeCaptured(payload));
+    case "recurring.charge-failed.v1":
+      return (await handleChargeFailed(payload));
     default:
       console.error("Unhandled webhook event type")
       return false;
@@ -821,7 +823,7 @@ async function handleAgreementStopped(payload: RecurringAgreementStopped): Promi
   }
 }
 
-async function handleChargeCaptured(payload: RecurringChargeEvent): Promise<boolean> {
+async function handleChargeCaptured(payload: RecurringChargeCaptured): Promise<boolean> {
   const client = await getClient();
   try {
     await client.query("BEGIN");
@@ -862,6 +864,98 @@ async function handleChargeCaptured(payload: RecurringChargeEvent): Promise<bool
   }
 }
 
+async function handleChargeFailed(payload: RecurringChargeFailed): Promise<boolean> {
+  if (payload.chargeType !== "RECURRING") {
+    return true;
+  }
+  const client = await getClient();
+  try {
+    await client.query("BEGIN");
+    const user = (await client.query(`
+      SELECT
+        u.*,
+        u.id AS "userId",
+        c.year,
+        c.id AS "chargeId",
+        a.id AS "agreementId",
+        a.status AS "agreementStatus"
+      FROM users u
+      JOIN agreements a ON u.id = a.user_id
+      JOIN charges c ON a.id = c.agreement_id
+      WHERE c.vipps_reference = $1
+      FOR UPDATE OF u
+    `, [payload.chargeId])).rows.at(0) as (User & { userId: number, year: number, chargeId: number, agreementId: number, agreementStatus: string }) | undefined;
+    if (!user) {
+      await client.query("ROLLBACK");
+      return true;
+    }
+    const updateRes = await client.query(`
+      UPDATE charges
+      SET status = 'FAILED'
+      WHERE id = $1 AND status = 'CREATED'
+    `, [user.chargeId]);
+    if (updateRes.rowCount === 0) {
+      await client.query("ROLLBACK");
+      return true;
+    }
+    if (user.agreementStatus === "STOPPED") {
+      await client.query("COMMIT");
+      return true;
+    }
+    if (!payload.failureReason || payload.failureReason === "technical_error") {
+      await client.query("COMMIT");
+      return true;
+    }
+    const accessTokenRes = await getAccessToken();
+    if (!accessTokenRes.success) {
+      await client.query("ROLLBACK");
+      return false;
+    }
+    const accessToken = accessTokenRes.data;
+    const res = await fetch(
+      `${VIPPS_URL}/recurring/v3/agreements/${payload.agreementId}`,
+      {
+        method: "PATCH",
+        signal: AbortSignal.timeout(VIPPS_TIMEOUT),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${accessToken}`,
+          "Ocp-Apim-Subscription-Key": VIPPS_SUBSCRIPTION_KEY,
+          "Merchant-Serial-Number": VIPPS_MSN,
+          "Idempotency-Key": randomUUID(),
+          ...STANDARD_HEADERS,
+        },
+        body: JSON.stringify({
+          "status": "STOPPED",
+        }),
+      }
+    );
+    if (!res.ok) {
+      console.error(await res.text());
+      await client.query("ROLLBACK");
+      return false;
+    }
+    await client.query(`
+      UPDATE agreements
+      SET status = 'STOPPED'
+      WHERE id = $1
+    `, [user.agreementId]);
+    await client.query("COMMIT");
+    try {
+      await notifyOfAgreementEndedAfterFailedCharge(user);
+    } catch (e) {
+      console.error(e);
+    }
+    return true;
+  } catch (e) {
+    await client.query("ROLLBACK").catch(() => { });
+    console.error(e);
+    return false;
+  } finally {
+    client.release();
+  }
+}
+
 export async function stopAgreement(userId: number): Promise<boolean> {
   const client = await getClient();
   try {
@@ -877,9 +971,9 @@ export async function stopAgreement(userId: number): Promise<boolean> {
       return false;
     }
     const agreement = (await client.query(`
-      select *
-      from agreements
-      where user_id = $1 AND status = 'ACTIVE'
+      SELECT *
+      FROM agreements
+      WHERE user_id = $1 AND status = 'ACTIVE'
     `, [userId])).rows.at(0);
     if (!agreement) {
       await client.query("ROLLBACK");

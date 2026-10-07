@@ -122,3 +122,35 @@ export async function notifyOfPaymentDue(user: User, price: string, due: string)
   const html = htmlTemplate(paymentDueHtml);
   await sendMail(email, "Kommende fornyelse av medlemskap i Norges Kubeforbund", html);
 }
+
+export async function notifyOfAgreementEndedAfterFailedCharge(user: User) {
+  const { name, email } = user;
+  const paymentDueHtml = `\
+<tr>
+  <td style="margin: 8px; padding: 16px; padding-bottom: 8px; color:#171717; font-size:14px; line-height:1.5;">
+      <p>Kjære ${name},</p>
+      <p>Vi ønsker å informere om at din betaling for medlemskap hos NKF feilet
+        etter gjentatte forsøk fra Vipps. Vi har derfor avsluttet din faste betaling.
+      </p>
+      <p>Hvis du fortsatt ønsker å være medlem i NKF, må du gå inn
+        på <a href="https://kubing.no/min-side">Min side</a> og sette opp
+        fast betaling på nytt eller betale for medlemskap for i år.
+      </p>
+      <p>Med vennlig hilsen,<br />Norges Kubeforbund</p>
+      <br />
+      <hr />
+      <br />
+      <p>Dear ${name},</p>
+      <p>We want to let you know that your payment for membership with NKF failed
+        after repeated attempts from Vipps. We have therefore ended your automatic payment.
+      </p>
+      <p>If you still wish to be a member of NKF, you have to go
+        to <a href="https://kubing.no/min-side">My page</a> and set up
+        automatic payment again or pay for membership for this year.
+      </p>
+      <p>Best regards,<br />Norges Kubeforbund</p>
+  </td>
+</tr>`;
+  const html = htmlTemplate(paymentDueHtml);
+  await sendMail(email, "Betaling feilet for medlemskap i Norges Kubeforbund", html);
+}
