@@ -18,7 +18,7 @@ export default async function Login({
   return (
     <div className="flex flex-col px-4 sm:px-8 gap-16 items-center">
       <Title>Innlogging</Title>
-      <div className="flex flex-col gap-8 items-center">
+      <div className="flex flex-col gap-8 items-center min-h-56">
         <LoginButton redirect={redirectTo} />
         {hasError &&
           <p className="text-center">
