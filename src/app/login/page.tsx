@@ -7,9 +7,9 @@ import BlueLink from "@/components/ui/blue-link";
 export default async function Login({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string }>
+  searchParams: Promise<{ error?: string, redirect?: string }>
 }) {
-  const { error } = await searchParams;
+  const { error, redirect: redirectTo } = await searchParams;
   const hasError = error !== undefined;
   const { isAuthenticated } = await getAuth();
   if (isAuthenticated) {
@@ -19,7 +19,7 @@ export default async function Login({
     <div className="flex flex-col px-4 sm:px-8 gap-16 items-center">
       <Title>Innlogging</Title>
       <div className="flex flex-col gap-8 items-center">
-        <LoginButton />
+        <LoginButton redirect={redirectTo} />
         {hasError &&
           <p className="text-center">
             Noe gikk galt med innloggingen. Hvis problemet vedvarer,

@@ -10,11 +10,28 @@ function redirectAndClearState(path: string) {
   return res;
 }
 
+function safeRedirectUrl(redirect: string | undefined, baseUrl: URL): URL {
+  const fallback = new URL("/min-side", baseUrl);
+  if (!redirect) {
+    return fallback;
+  }
+  try {
+    const redirectUrl = new URL(redirect, baseUrl);
+    if (redirectUrl.origin !== baseUrl.origin) {
+      return fallback;
+    }
+    return redirectUrl;
+  } catch {
+    return fallback;
+  }
+}
+
 export async function GET(req: NextRequest) {
   const url = getBaseUrl();
   const code = req.nextUrl.searchParams.get("code") || null;
   const state = req.nextUrl.searchParams.get("state") || null;
   const storedState = req.cookies.get("WCA_OAUTH_STATE")?.value || null;
+  const redirectAfterLogin = safeRedirectUrl(req.cookies.get("REDIRECT_AFTER_LOGIN")?.value, new URL(url));
 
   if (!code) {
     return redirectAndClearState("/login?error");
@@ -37,8 +54,9 @@ export async function GET(req: NextRequest) {
   const user = userRes.data;
 
   const tokens = await createSession(wcaTokens, user);
-  const res = NextResponse.redirect(new URL("/min-side", url));
+  const res = NextResponse.redirect(redirectAfterLogin);
   res.cookies.delete("WCA_OAUTH_STATE");
+  res.cookies.delete("REDIRECT_AFTER_LOGIN");
   setAuthCookies(res, tokens);
   return res;
 }
