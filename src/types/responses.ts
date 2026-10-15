@@ -322,3 +322,8 @@ export type VippsPaymentStatusReponse = {
     }[],
   }
 }
+
+export type VippsPayment = { 
+  state: VippsPaymentStatus;
+  capturedAmount: number;
+};
