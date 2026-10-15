@@ -3,11 +3,11 @@ import { UrlObject } from "url";
 export type Url = string | UrlObject;
 
 export type User = {
-  name: string,
-  wcaId: string | null,
-  email: string,
-  dob: string,
-  address: Address | null,
+  name: string;
+  wcaId: string | null;
+  email: string;
+  dob: string;
+  address: Address | null;
 };
 
 export type UserData = User & {
@@ -20,6 +20,14 @@ export type Member = User & {
   id: number | null; // TODO: Change to number when manual_payments is removed
   createdAt: string;
 };
+
+export type UserLock = {
+  userId: number;
+  name: string;
+  email: string;
+};
+
+export type UserLockWithCharge = (UserLock & { year: number, chargeId: number, agreementId: number, agreementStatus: string });
 
 export type VippsPaymentType = "WALLET" | "CARD";
 
@@ -119,6 +127,8 @@ export type WCATokens = {
 };
 
 export type Maybe<T> = { success: true, data: T } | { success: false };
+
+export type MaybeWithStatusCode<T> = { success: true, data: T } | { success: false, status?: number };
 
 export type UserPermission = "membership_list" | "members_comp" | "order_overview";
 
