@@ -1,4 +1,4 @@
-import { OrderCreated, User } from "@/types";
+import { OrderCreated, UserLock } from "@/types";
 import { Resend } from "resend";
 import { formatDate } from "@/lib/time";
 
@@ -54,7 +54,7 @@ function htmlTemplate(content: string) {
 </html>`;
 }
 
-export async function sendMembershipConfirmation(user: User, order: OrderCreated) {
+export async function sendMembershipConfirmation(user: UserLock, order: OrderCreated) {
   const { name, email } = user;
   const { id: orderNumber, year } = order;
   const orderConfirmationHtml = `\
@@ -88,7 +88,7 @@ export async function sendMembershipConfirmation(user: User, order: OrderCreated
   await sendMail(email, `Bekreftelse på medlemskap hos Norges Kubeforbund ${year}`, html);
 }
 
-export async function notifyOfPaymentDue(user: User, price: string, due: string) {
+export async function notifyOfPaymentDue(user: UserLock, price: string, due: string) {
   const { name, email } = user;
   const { norwegian: norwegianDueDate, english: englishDueDate } = formatDate(due);
   const paymentDueHtml = `\
@@ -123,7 +123,7 @@ export async function notifyOfPaymentDue(user: User, price: string, due: string)
   await sendMail(email, "Kommende fornyelse av medlemskap i Norges Kubeforbund", html);
 }
 
-export async function notifyOfAgreementEndedAfterFailedCharge(user: User) {
+export async function notifyOfAgreementEndedAfterFailedCharge(user: UserLock) {
   const { name, email } = user;
   const paymentDueHtml = `\
 <tr>
