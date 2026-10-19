@@ -35,5 +35,7 @@ function PermissionLink({
       return <BlueLink href="/admin/medlemmer-konkurranse">Medlemmer på konkurranse</BlueLink>;
     case "order_overview":
       return <BlueLink href="/admin/ordre">Ordreoversikt</BlueLink>;
+    case "agreement_overview":
+      return <BlueLink href="/admin/avtaler">Betalingsavtaleoversikt</BlueLink>;
   }
 }
