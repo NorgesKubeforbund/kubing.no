@@ -1,5 +1,5 @@
 import { query } from "@/db";
-import { OrderCreated, Payment, UserLock, UserLockWithCharge } from "@/types";
+import { Agreement, OrderCreated, Payment, UserLock, UserLockWithCharge } from "@/types";
 import { PoolClient } from "pg";
 
 export async function getUserLock(userId: number, client: PoolClient): Promise<UserLock | undefined> {
@@ -88,6 +88,22 @@ export async function getAllOrders(): Promise<Payment[]> {
     JOIN agreements a ON a.id = c.agreement_id
     JOIN users u ON u.id = a.user_id
 
+    ORDER BY "createdAt" DESC
+  `, [])).rows;
+}
+
+export async function getAllAgreements(): Promise<Agreement[]> {
+  return (await query(`
+    SELECT
+      a.id,
+      a.vipps_reference AS "vippsReference",
+      a.status,
+      a.created_at AS "createdAt",
+      u.id AS "userId",
+      u.name AS "userName",
+      u.email
+    FROM agreements a
+    JOIN users u ON u.id = a.user_id
     ORDER BY "createdAt" DESC
   `, [])).rows;
 }
