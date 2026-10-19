@@ -547,5 +547,5 @@ export async function deleteExpiredSessions(): Promise<void> {
 
 
 function getAllPermissions(): UserPermission[] {
-  return ["membership_list", "members_comp", "order_overview"];
+  return ["membership_list", "members_comp", "order_overview", "agreement_overview"];
 }

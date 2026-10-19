@@ -6,7 +6,7 @@ import { Fragment, useMemo, useState } from "react";
 
 const PAGE_SIZE = 25;
 
-type OrderStatus = "CREATED" | "CANCELLED" | "COMPLETED";
+type OrderStatus = "CREATED" | "NOT_CREATED" | "CANCELLED" | "CANCELLED_BEFORE_CREATION" | "FAILED" | "COMPLETED";
 
 export default function OrderOverview({ orders }: { orders: Payment[] }) {
   const [page, setPage] = useState<number>(1);
@@ -40,7 +40,7 @@ export default function OrderOverview({ orders }: { orders: Payment[] }) {
     <div className="flex flex-col gap-4">
       <select
         onChange={e => {
-          setOrderFilter(e.target.value as OrderStatus);
+          setOrderFilter(e.target.value as OrderStatus | "ALL");
           setPage(1);
         }}
         className="self-center bg-neutral-100 cursor-pointer disabled:cursor-not-allowed disabled:hover:bg-neutral-100 disabled:text-neutral-400 border rounded-md px-2 py-1 w-fit justify-self-center sm:justify-self-start"
@@ -56,6 +56,15 @@ export default function OrderOverview({ orders }: { orders: Payment[] }) {
         </option>
         <option value="CANCELLED">
           Kansellert
+        </option>
+        <option value="NOT_CREATED">
+          Ikke laget
+        </option>
+        <option value="CANCELLED_BEFORE_CREATION">
+          Kansellert før laging
+        </option>
+        <option value="FAILED">
+          Feilet
         </option>
       </select>
       <div className="overflow-x-auto self-center-safe max-w-full sm:text-xl text-sm">
@@ -167,6 +176,12 @@ function translateStatus(status: string) {
       return "Betalt";
     case "CANCELLED":
       return "Kansellert";
+    case "NOT_CREATED":
+      return "Ikke laget";
+    case "CANCELLED_BEFORE_CREATION":
+      return "Kansellert før laging";
+    case "FAILED":
+      return "Feilet";
     default:
       return status;
   }
