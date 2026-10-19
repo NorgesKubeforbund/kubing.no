@@ -39,9 +39,9 @@ export type OrderCreated = {
   vippsReference: string;
 };
 
-export type OrderCreation = { success: true, status: "created_order", redirectUrl: string } | { success: true, status: "order_paid" } | { success: true, status: "already_member" } | { success: true, status: "already_has_agreement" } |  { success: false };
+export type OrderCreation = { success: true, status: "created_order", redirectUrl: string } | { success: true, status: "order_paid" } | { success: true, status: "already_member" } | { success: true, status: "already_has_agreement" } | { success: false };
 
-export type AgreementCreation = { success: true, status: "created_agreement", redirectUrl: string } | { success: true, status: "already_has_agreement" } |  { success: false };
+export type AgreementCreation = { success: true, status: "created_agreement", redirectUrl: string } | { success: true, status: "already_has_agreement" } | { success: false };
 
 type PaymentBase = {
   id: number;
@@ -66,6 +66,16 @@ export type Charge = PaymentBase & {
 };
 
 export type Payment = Order | Charge;
+
+export type Agreement = {
+  id: number;
+  vippsReference: string;
+  status: string;
+  createdAt: Date;
+  userId: number;
+  userName: string;
+  email: string;
+};
 
 export type Address = {
   address: string,
@@ -130,7 +140,11 @@ export type Maybe<T> = { success: true, data: T } | { success: false };
 
 export type MaybeWithStatusCode<T> = { success: true, data: T } | { success: false, status?: number };
 
-export type UserPermission = "membership_list" | "members_comp" | "order_overview";
+export type UserPermission =
+  | "membership_list"
+  | "members_comp"
+  | "order_overview"
+  | "agreement_overview";
 
 export type CompWCIF = {
   persons: {
