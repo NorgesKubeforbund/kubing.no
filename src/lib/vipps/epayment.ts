@@ -3,11 +3,11 @@ import { getCurrentYear } from "@/lib/time";
 import { addMemberFromOrder, getCreatedOrder, getOpenOrders, getOrderNumber, getUserLock, saveCreatedOrder, setOrderCancelled } from "@/lib/vipps/queries";
 import { isUserMemberInYearWithClient } from "@/lib/membership";
 import { hasUserActiveAgreementWithClient } from "@/lib/agreement";
-import { cancelEpayment, captureEpayment, createEpayment, getEpayment } from "@/lib/vipps/api";
+import { captureEpayment, createEpayment, getEpayment } from "@/lib/vipps/api";
 import { OrderCreation, VippsPaymentType } from "@/types";
 import { sendMembershipConfirmation } from "@/lib/mail";
-import { PoolClient } from "pg";
 import { getMembershipCost, getVippsReference } from "@/lib/vipps/util";
+import { handleOpenOrderForCreation } from "@/lib/vipps/shared";
 
 export async function createVippsPaymentAndGetRedirectUrl(userId: number, paymentType: VippsPaymentType, baseUrl: string): Promise<OrderCreation> {
   const year = getCurrentYear();
@@ -29,40 +29,23 @@ export async function createVippsPaymentAndGetRedirectUrl(userId: number, paymen
       await client.query("ROLLBACK");
       return { success: true, status: "already_has_agreement" };
     }
-    // TODO: Handle possibility of created agreement order 
-    const order = await getCreatedOrder(userId, year, client);
-    if (order) {
-      const paymentRes = await getEpayment(order.vippsReference);
-      if (!paymentRes.success) {
-        await client.query("ROLLBACK");
-        return { success: false };
-      }
-      const payment = paymentRes.data;
-      const alreadyCaptured = payment.capturedAmount >= getMembershipCost();
-      if (alreadyCaptured || payment.state === "AUTHORIZED") {
-        await addMemberFromOrder(userId, order.id, order.year, client);
-        if (!alreadyCaptured) {
-          const captureRes = await captureEpayment(order.vippsReference);
-          if (!captureRes.success) {
-            await client.query("ROLLBACK");
-            return { success: false };
-          }
-        }
-        await client.query("COMMIT");
-        await sendMembershipConfirmation(user, order);
+    const handleOrderRes = await handleOpenOrderForCreation(user, year, client);
+    if (!handleOrderRes.success) {
+      await client.query("ROLLBACK");
+      return { success: false };
+    }
+    const handleOrderStatus = handleOrderRes.data;
+    switch (handleOrderStatus) {
+      case "order_paid":
         return {
           success: true,
           status: "order_paid",
         };
-      } else if (payment.state === "CREATED") {
-        const cancelSuccess = await cancelOrder(order.vippsReference, order.id, client);
-        if (!cancelSuccess) {
-          await client.query("ROLLBACK");
-          return { success: false };
-        }
-      } else {
-        await setOrderCancelled(order.id, client);
-      }
+      case "order_cancelled":
+        break;
+      case "no_order":
+        // TODO: Handle possibility of created agreement order 
+        break;
     }
     const orderId = await getOrderNumber(client);
     const vippsReference = getVippsReference(orderId);
@@ -132,15 +115,6 @@ export async function claimMembership(userId: number): Promise<boolean> {
   } finally {
     client.release();
   }
-}
-
-async function cancelOrder(vippsReference: string, orderId: number, client: PoolClient): Promise<boolean> {
-  const cancelRes = await cancelEpayment(vippsReference);
-  if (!cancelRes.success) {
-    return false;
-  }
-  await setOrderCancelled(orderId, client);
-  return true;
 }
 
 export async function handleOpenOrders(): Promise<boolean> {
