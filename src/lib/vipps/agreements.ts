@@ -22,6 +22,7 @@ import { apiStopAgreement, createCharge, createVippsAgreement, getCharge } from 
 import { AgreementCreation } from "@/types";
 import { notifyOfPaymentDue } from "@/lib/mail";
 import { getMembershipCost, getVippsReference } from "@/lib/vipps/util";
+import { handleOpenOrderForCreation } from "@/lib/vipps/shared";
 
 export async function createVippsAgreementAndGetRedirectUrl(userId: number, baseUrl: string): Promise<AgreementCreation> {
   const year = getCurrentYear();
@@ -40,8 +41,22 @@ export async function createVippsAgreementAndGetRedirectUrl(userId: number, base
         status: "already_has_agreement",
       };
     }
+    const handleOrderRes = await handleOpenOrderForCreation(user, year, client);
+    if (!handleOrderRes.success) {
+      await client.query("ROLLBACK");
+      return { success: false };
+    }
+    const handleOrderStatus = handleOrderRes.data;
+    switch (handleOrderStatus) {
+      case "order_paid":
+        break;
+      case "order_cancelled":
+        break;
+      case "no_order":
+        // TODO: Handle possibility of created agreement order 
+        break;
+    }
     const isMember = await isUserMemberInYearWithClient(userId, year, client);
-    // TODO: Handle case when user has open order for payment or agreement
     if (isMember) {
       const agreementRes = await createVippsAgreement(baseUrl);
       if (!agreementRes.success) {

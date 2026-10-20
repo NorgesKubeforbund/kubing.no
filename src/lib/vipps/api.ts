@@ -308,7 +308,7 @@ export async function cancelEpayment(vippsReference: string): Promise<Maybe<Vipp
         ...STANDARD_HEADERS,
       },
       body: JSON.stringify({
-        "cancelTransactionOnly": false,
+        "cancelTransactionOnly": true,
       }),
     }
   );
