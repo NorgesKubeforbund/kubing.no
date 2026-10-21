@@ -1,3 +1,4 @@
+
 import UpcomingComps from "@/components/comps/upcoming-comps";
 import BlueLink from "@/components/ui/blue-link";
 import Title from "@/components/ui/title";
@@ -36,7 +37,8 @@ async function Home() {
           <p>
             For å bli medlem må du <BlueLink href="/login">logge inn</BlueLink> med WCA, opprette bruker og betale
             medlemskontigent med enten Vipps eller kort. Hvis du ikke allerede har en WCA-bruker, kan du opprette
-            en <BlueLink href="https://www.worldcubeassociation.org/users/sign_up">her</BlueLink>.
+            en <BlueLink href="https://www.worldcubeassociation.org/users/sign_up">her</BlueLink>. Det er også
+            mulig å sette opp fast betaling med Vipps for de som ønsker det.
           </p>
         </div>
       </div>
