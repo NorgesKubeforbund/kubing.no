@@ -43,8 +43,24 @@ export async function handleWebhook(payload: WebhookPayload): Promise<boolean> {
 }
 
 async function handleAgreementActivated(payload: RecurringAgreementActivated): Promise<boolean> {
-  await setAgreementActive(payload.agreementId);
-  return true;
+  const client = await getClient();
+  try {
+    await client.query("BEGIN");
+    const user = await getUserLockByAgreement(payload.agreementId, client);
+    if (!user) {
+      await client.query("ROLLBACK");
+      return false;
+    }
+    await setAgreementActive(payload.agreementId, client);
+    await client.query("COMMIT");
+    return true;
+  } catch (e) {
+    await client.query("ROLLBACK").catch(() => { });
+    console.error(e);
+    return false;
+  } finally {
+    client.release();
+  }
 }
 
 async function handleAgreementCancelled(payload: RecurringAgreementExpired | RecurringAgreementRejected): Promise<boolean> {
