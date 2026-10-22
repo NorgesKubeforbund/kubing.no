@@ -354,8 +354,8 @@ async function addMember(userId: number, year: number, client: PoolClient): Prom
   `, [userId, year]);
 }
 
-export async function setAgreementActive(vippsReference: string): Promise<void> {
-  await query(`
+export async function setAgreementActive(vippsReference: string, client: PoolClient): Promise<void> {
+  await client.query(`
     UPDATE agreements
     SET status = 'ACTIVE'
     WHERE vipps_reference = $1 AND status = 'CREATED'
