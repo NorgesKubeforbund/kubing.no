@@ -190,7 +190,7 @@ export async function setAgreementStoppedByVippsReference(vippsReference: string
   return (await client.query(`
     UPDATE agreements
     SET status = 'STOPPED'
-    WHERE vipps_reference = $1 AND status = 'ACTIVE'
+    WHERE vipps_reference = $1 AND status IN ('ACTIVE', 'CREATED')
     RETURNING id
   `, [vippsReference])).rows.at(0) as undefined | { id: number };
 }
