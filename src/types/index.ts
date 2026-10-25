@@ -39,6 +39,20 @@ export type OrderCreated = {
   vippsReference: string;
 };
 
+export type AgreementCreated = {
+  id: number;
+  vippsReference: string;
+};
+
+export type ChargeCreated = {
+  chargeId: number;
+  agreementId: number;
+  chargeRef: string;
+  agreementRef: string;
+  year: number;
+  due: string;
+};
+
 export type OrderCreation = { success: true, status: "created_order", redirectUrl: string } | { success: true, status: "order_paid" } | { success: true, status: "already_member" } | { success: true, status: "already_has_agreement" } | { success: false };
 
 export type AgreementCreation = { success: true, status: "created_agreement", redirectUrl: string } | { success: true, status: "already_has_agreement" } | { success: false };
