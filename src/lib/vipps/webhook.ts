@@ -18,7 +18,7 @@ import {
   setAgreementCancelled,
   setAgreementStopped,
   setAgreementStoppedByVippsReference,
-  setChargeCancelled,
+  setChargeCancelledByAgreementId,
   setChargeFailed,
 } from "@/lib/vipps/queries";
 
@@ -77,7 +77,7 @@ async function handleAgreementCancelled(payload: RecurringAgreementExpired | Rec
       await client.query("ROLLBACK");
       return true;
     }
-    await setChargeCancelled(agreement.id, client);
+    await setChargeCancelledByAgreementId(agreement.id, client);
     await client.query("COMMIT");
     return true;
   } catch (e) {
@@ -106,7 +106,7 @@ async function handleAgreementStopped(payload: RecurringAgreementStopped): Promi
       await client.query("ROLLBACK");
       return true;
     }
-    await setChargeCancelled(agreement.id, client);
+    // TODO: Check charge status and handle accordingly
     await client.query("COMMIT");
     return true;
   } catch (e) {

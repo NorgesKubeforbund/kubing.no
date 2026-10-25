@@ -1,5 +1,5 @@
 import { query } from "@/db";
-import { Agreement, OrderCreated, Payment, UserLock, UserLockWithCharge } from "@/types";
+import { Agreement, AgreementCreated, ChargeCreated, OrderCreated, Payment, UserLock, UserLockWithCharge } from "@/types";
 import { PoolClient } from "pg";
 
 export async function getUserLock(userId: number, client: PoolClient): Promise<UserLock | undefined> {
@@ -204,7 +204,15 @@ export async function setAgreementCancelled(vippsReference: string, client: Pool
   `, [vippsReference])).rows.at(0) as undefined | { id: number };
 }
 
-export async function setChargeCancelled(agreementId: number, client: PoolClient): Promise<void> {
+export async function setChargeCancelled(chargeId: number, client: PoolClient): Promise<void> {
+  await client.query(`
+    UPDATE charges
+    SET status = 'CANCELLED'
+    WHERE id = $1 AND status IN ('CREATED', 'NOT_CREATED')
+  `, [chargeId]);
+}
+
+export async function setChargeCancelledByAgreementId(agreementId: number, client: PoolClient): Promise<void> {
   await client.query(`
     UPDATE charges
     SET status = 'CANCELLED'
@@ -315,15 +323,41 @@ export async function getChargeToBeCreated(userId: number, client: PoolClient) {
   `, [userId])).rows.at(0) as { agreementRef: string; chargeRef: string; chargeId: number; year: number; due: string; } | undefined;
 }
 
-export async function getCreatedOrder(userId: number, year: number, client: PoolClient): Promise<undefined | OrderCreated> {
+export async function getCreatedOrder(userId: number, client: PoolClient): Promise<undefined | OrderCreated> {
   return (await client.query(`
     SELECT 
       id,
       vipps_reference AS "vippsReference",
       year
     FROM orders
-    WHERE user_id = $1 AND year = $2 AND status = 'CREATED'
-  `, [userId, year])).rows.at(0) as undefined | OrderCreated;
+    WHERE user_id = $1 AND status = 'CREATED'
+  `, [userId])).rows.at(0) as undefined | OrderCreated;
+}
+
+export async function getCreatedAgreement(userId: number, client: PoolClient): Promise<undefined | AgreementCreated> {
+  return (await client.query(`
+    SELECT 
+      id,
+      vipps_reference AS "vippsReference"
+    FROM agreements
+    WHERE user_id = $1 AND status = 'CREATED'
+  `, [userId])).rows.at(0) as undefined | AgreementCreated;
+}
+
+export async function getCreatedCharge(userId: number, client: PoolClient): Promise<undefined | ChargeCreated> {
+  return (await client.query(`
+    SELECT
+      c.id as "chargeId",
+      a.id as "agreementId",
+      c.vipps_reference AS "chargeRef",
+      a.vipps_reference AS "agreementRef",
+      c.year,
+      c.payment_due as due
+    FROM users u
+    JOIN agreements a ON a.user_id = u.id
+    JOIN charges c ON c.agreement_id = a.id
+    WHERE u.id = $1 AND c.status in ('NOT_CREATED', 'CREATED')
+  `, [userId])).rows.at(0) as undefined | ChargeCreated;
 }
 
 export async function addMemberFromCharge(userId: number, vippsReference: string, year: number, client: PoolClient): Promise<void> {
