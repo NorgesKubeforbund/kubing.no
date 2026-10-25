@@ -2,12 +2,11 @@ import { getClient } from "@/db";
 import { getCurrentYear } from "@/lib/time";
 import { addMemberFromOrder, getCreatedOrder, getOpenOrders, getOrderNumber, getUserLock, saveCreatedOrder, setOrderCancelled } from "@/lib/vipps/queries";
 import { isUserMemberInYearWithClient } from "@/lib/membership";
-import { hasUserActiveAgreementWithClient } from "@/lib/agreement";
 import { captureEpayment, createEpayment, getEpayment } from "@/lib/vipps/api";
 import { OrderCreation, VippsPaymentType } from "@/types";
 import { sendMembershipConfirmation } from "@/lib/mail";
 import { getMembershipCost, getVippsReference } from "@/lib/vipps/util";
-import { handleOpenOrderForCreation } from "@/lib/vipps/shared";
+import { handleOpenTransactionForCreation } from "@/lib/vipps/shared";
 
 export async function createVippsPaymentAndGetRedirectUrl(userId: number, paymentType: VippsPaymentType, baseUrl: string): Promise<OrderCreation> {
   const year = getCurrentYear();
@@ -24,28 +23,19 @@ export async function createVippsPaymentAndGetRedirectUrl(userId: number, paymen
       await client.query("ROLLBACK");
       return { success: true, status: "already_member" };
     }
-    const hasActiveAgreement = await hasUserActiveAgreementWithClient(userId, client);
-    if (hasActiveAgreement) {
-      await client.query("ROLLBACK");
-      return { success: true, status: "already_has_agreement" };
-    }
-    const handleOrderRes = await handleOpenOrderForCreation(user, year, client);
-    if (!handleOrderRes.success) {
+    const handleTransactionRes = await handleOpenTransactionForCreation(user, client);
+    if (!handleTransactionRes.success) {
       await client.query("ROLLBACK");
       return { success: false };
     }
-    const handleOrderStatus = handleOrderRes.data;
-    switch (handleOrderStatus) {
-      case "order_paid":
-        return {
-          success: true,
-          status: "order_paid",
-        };
-      case "order_cancelled":
-        break;
-      case "no_order":
-        // TODO: Handle possibility of created agreement order 
-        break;
+    if (handleTransactionRes.activeAgreement) {
+      await client.query("ROLLBACK");
+      return { success: true, status: "already_has_agreement" };
+    }
+    if (handleTransactionRes.activatedMembership) {
+      await client.query("COMMIT");
+      await handleTransactionRes.sendEmail();
+      return { success: true, status: "already_member" };
     }
     const orderId = await getOrderNumber(client);
     const vippsReference = getVippsReference(orderId);
@@ -73,7 +63,6 @@ export async function createVippsPaymentAndGetRedirectUrl(userId: number, paymen
 
 export async function claimMembership(userId: number): Promise<boolean> {
   const client = await getClient();
-  const year = getCurrentYear();
   try {
     await client.query("BEGIN");
     const user = await getUserLock(userId, client);
@@ -81,7 +70,7 @@ export async function claimMembership(userId: number): Promise<boolean> {
       await client.query("ROLLBACK");
       return false;
     }
-    const order = await getCreatedOrder(userId, year, client);
+    const order = await getCreatedOrder(userId, client);
     if (!order) {
       await client.query("ROLLBACK");
       return false;

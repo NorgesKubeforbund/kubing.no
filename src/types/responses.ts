@@ -2,73 +2,73 @@ import { VippsPaymentStatus, VippsPaymentType } from "@/types";
 import { UUID } from "crypto";
 
 export type CompResponse = {
-  id: string,
-  name: string,
-  start_date: string,
-  end_date: string,
-  registration_open: string,
-  registration_close: string,
-  competitor_limit: number,
-  cancelled_at: null,
-  url: string,
-  website: string,
-  short_name: string,
-  city: string,
-  venue_address: string,
-  venue_details: string,
-  latitude_degrees: number,
-  longitude_degrees: number,
-  country_iso2: string,
-  event_ids: Array<string | number>,
+  id: string;
+  name: string;
+  start_date: string;
+  end_date: string;
+  registration_open: string;
+  registration_close: string;
+  competitor_limit: number;
+  cancelled_at: null;
+  url: string;
+  website: string;
+  short_name: string;
+  city: string;
+  venue_address: string;
+  venue_details: string;
+  latitude_degrees: number;
+  longitude_degrees: number;
+  country_iso2: string;
+  event_ids: Array<string | number>;
   delegates: [{
-    id: number,
-    name: string,
-    delegate_status: string,
-    wca_id: string,
-    gender: string,
-    country_iso2: string,
-    url: string,
+    id: number;
+    name: string;
+    delegate_status: string;
+    wca_id: string;
+    gender: string;
+    country_iso2: string;
+    url: string;
     country: {
-      id: string,
-      name: string,
-      continentId: string,
+      id: string;
+      name: string;
+      continentId: string;
       iso2: string
-    },
-    email: string,
-    region: string,
-    senior_delegate_id: number,
-    class: string,
-    teams: [],
+    };
+    email: string;
+    region: string;
+    senior_delegate_id: number;
+    class: string;
+    teams: [];
     avatar: {
-      url: string,
-      pending_url: string,
-      thumb_url: string,
+      url: string;
+      pending_url: string;
+      thumb_url: string;
       is_default: boolean
     }
-  }],
+  }];
   organizers: [{
-    id: number,
-    name: string,
-    delegate_status: null,
-    wca_id: null,
-    gender: string,
-    country_iso2: string,
-    url: string,
+    id: number;
+    name: string;
+    delegate_status: null;
+    wca_id: null;
+    gender: string;
+    country_iso2: string;
+    url: string;
     country: {
-      id: string,
-      name: string,
-      continentId: string,
+      id: string;
+      name: string;
+      continentId: string;
       iso2: string
-    },
-    class: string,
-    teams: [],
+    };
+    class: string;
+    teams: [];
     avatar: {
-      url: string,
-      pending_url: string,
-      thumb_url: string,
+      url: string;
+      pending_url: string;
+      thumb_url: string;
       is_default: true
     }
-  }],
+  }];
   class: string
 };
 
@@ -77,49 +77,49 @@ export type BrregResponse = {
     _links: {
       self: {
         href: string
-      },
-    },
-    beskrivelse: string,
-    kode: string,
-  },
+      };
+    };
+    beskrivelse: string;
+    kode: string;
+  };
   person: {
     navn: {
-      fornavn: string,
-      mellomnavn: string,
-      etternavn: string,
-    },
-    erDoed: boolean,
+      fornavn: string;
+      mellomnavn: string;
+      etternavn: string;
+    };
+    erDoed: boolean;
     fodselsdato: string
-  },
-  fratraadt: boolean,
-  rekkefolge: number,
+  };
+  fratraadt: boolean;
+  rekkefolge: number;
 };
 
 export type WCAResponse<T> = {
   pagination: {
-    page: number,
+    page: number;
     size: number
-  },
-  total: 10,
-  items: T[],
+  };
+  total: 10;
+  items: T[];
 };
 
 export type WCAEvent = {
-  id: string,
-  name: string,
-  format: string,
+  id: string;
+  name: string;
+  format: string;
 };
 
 export type WCARecord = {
-  rankType: string,
-  personId: string,
-  eventId: string,
-  best: number,
+  rankType: string;
+  personId: string;
+  eventId: string;
+  best: number;
   rank: {
-    world: number,
-    continent: number,
-    country: number,
-  },
+    world: number;
+    continent: number;
+    country: number;
+  };
 };
 
 export type GoogleSheetsRecords = {
@@ -127,203 +127,289 @@ export type GoogleSheetsRecords = {
 };
 
 export type WCAOAuthTokenResponse = {
-  access_token: string,
-  refresh_token: string,
-  token_type: string,
-  expires_in: number,
-  scope: string,
-  created_at: number
+  access_token: string;
+  refresh_token: string;
+  token_type: string;
+  expires_in: number;
+  scope: string;
+  created_at: number;
 };
 
 export type WCAProfileResponse = {
   me: {
-    id: number,
-    wca_id: string | null,
-    name: string,
-    gender: string,
-    country_iso2: string,
-    created_at: string,
-    updated_at: string,
-    url: string,
+    id: number;
+    wca_id: string | null;
+    name: string;
+    gender: string;
+    country_iso2: string;
+    created_at: string;
+    updated_at: string;
+    url: string;
     country: {
-      id: string,
-      name: string,
-      continent_id: string,
-      iso2: string,
-    },
-    delegate_status: string | null,
-    class: string,
-    teams: string[],
+      id: string;
+      name: string;
+      continent_id: string;
+      iso2: string;
+    };
+    delegate_status: string | null;
+    class: string;
+    teams: string[];
     avatar: {
-      id: number,
-      status: string,
-      thumbnail_crop_x: string | null,
-      thumbnail_crop_y: string | null,
-      thumbnail_crop_w: string | null,
-      thumbnail_crop_h: string | null,
-      url: string | null,
-      thumb_url: string | null,
-      is_default: boolean,
-      can_edit_thumbnail: boolean,
-    },
-    dob: string,
-    email: string,
+      id: number;
+      status: string;
+      thumbnail_crop_x: string | null;
+      thumbnail_crop_y: string | null;
+      thumbnail_crop_w: string | null;
+      thumbnail_crop_h: string | null;
+      url: string | null;
+      thumb_url: string | null;
+      is_default: boolean;
+      can_edit_thumbnail: boolean;
+    };
+    dob: string;
+    email: string;
   }
 };
 
 export type KartverketAddressResponse = {
   metadata: {
-    side: number,
-    viserFra: number,
-    treffPerSide: number,
-    totaltAntallTreff: number,
-    asciiKompatibel: boolean,
-    sokeStreng: string,
-    viserTil: number,
-  },
+    side: number;
+    viserFra: number;
+    treffPerSide: number;
+    totaltAntallTreff: number;
+    asciiKompatibel: boolean;
+    sokeStreng: string;
+    viserTil: number;
+  };
   adresser: {
-    adressenavn: string,
-    adressetekst: string,
-    adressetilleggsnavn: string,
-    adressekode: number,
-    nummer: number,
-    bokstav: string,
-    kommunenummer: string,
-    kommunenavn: string,
-    gardsnummer: number,
-    bruksnummer: number,
-    festenummer: number,
-    undernummer: number,
-    bruksenhetsnummer: string[],
-    objtype: "Vegadresse",
-    poststed: string,
-    postnummer: string,
-    adressetekstutenadressetilleggsnavn: string,
-    stedfestingverifisert: true,
+    adressenavn: string;
+    adressetekst: string;
+    adressetilleggsnavn: string;
+    adressekode: number;
+    nummer: number;
+    bokstav: string;
+    kommunenummer: string;
+    kommunenavn: string;
+    gardsnummer: number;
+    bruksnummer: number;
+    festenummer: number;
+    undernummer: number;
+    bruksenhetsnummer: string[];
+    objtype: "Vegadresse";
+    poststed: string;
+    postnummer: string;
+    adressetekstutenadressetilleggsnavn: string;
+    stedfestingverifisert: true;
     representasjonspunkt: {
-      epsg: string,
-      lat: number,
+      epsg: string;
+      lat: number;
       lon: number
-    },
-    oppdateringsdato: string,
-  }[],
+    };
+    oppdateringsdato: string;
+  }[];
 };
 
 export type VippsAccessTokenResponse = {
-  token_type: string,
-  expires_in: number,
-  ext_expires_in: number,
-  expires_on: number,
-  not_before: number,
-  resource: string,
-  access_token: string,
+  token_type: string;
+  expires_in: number;
+  ext_expires_in: number;
+  expires_on: number;
+  not_before: number;
+  resource: string;
+  access_token: string;
 }
 
 export type VippsPaymentCreateReponse = {
-  redirectUrl: string,
-  reference: string,
+  redirectUrl: string;
+  reference: string;
 }
 
 export type VippsAgreementCreateReponse = {
-  agreementId: string,
-  uuid: UUID,
-  vippsConfirmationUrl: string,
-  chargeId: string | null,
+  agreementId: string;
+  uuid: UUID;
+  vippsConfirmationUrl: string;
+  chargeId: string | null;
 }
 
 export type VippsCancelPayment = {
   amount: {
-    currency: "NOK",
+    currency: "NOK";
     value: number
-  },
-  state: VippsPaymentStatus,
+  };
+  state: VippsPaymentStatus;
   aggregate: {
     authorizedAmount: {
-      currency: "NOK",
+      currency: "NOK";
       value: number
-    },
+    };
     cancelledAmount: {
-      currency: "NOK",
+      currency: "NOK";
       value: number
-    },
+    };
     capturedAmount: {
-      currency: "NOK",
+      currency: "NOK";
       value: number
-    },
+    };
     refundedAmount: {
-      currency: "NOK",
+      currency: "NOK";
       value: number
     }
-  },
-  pspReference: string,
-  reference: string,
+  };
+  pspReference: string;
+  reference: string;
 };
 
 export type VippsPaymentStatusReponse = {
   aggregate: {
     authorizedAmount: {
-      currency: "NOK",
+      currency: "NOK";
       value: number
-    },
+    };
     cancelledAmount: {
-      currency: "NOK",
+      currency: "NOK";
       value: number
-    },
+    };
     capturedAmount: {
-      currency: "NOK",
+      currency: "NOK";
       value: number
-    },
+    };
     refundedAmount: {
-      currency: "NOK",
+      currency: "NOK";
       value: number
     }
-  },
+  };
   amount: {
-    currency: "NOK",
+    currency: "NOK";
     value: number
-  },
-  state: VippsPaymentStatus,
+  };
+  state: VippsPaymentStatus;
   paymentMethod: {
-    type: VippsPaymentType,
-    cardBin: string,
-  },
+    type: VippsPaymentType;
+    cardBin: string;
+  };
   profile: {
-    sub: string,
-  },
-  pspReference: string,
-  redirectUrl: string,
-  reference: string,
-  metadata: Record<string, string>,
+    sub: string;
+  };
+  pspReference: string;
+  redirectUrl: string;
+  reference: string;
+  metadata: Record<string, string>;
   shippingDetails: {
     address: {
-      addressLine1: string,
-      addressLine2: string,
-      city: string,
-      country: string,
-      postCode: string,
-    },
-    shippingCost: number,
-    shippingOptionId: string,
-    shippingOptionName: string,
-  },
+      addressLine1: string;
+      addressLine2: string;
+      city: string;
+      country: string;
+      postCode: string;
+    };
+    shippingCost: number;
+    shippingOptionId: string;
+    shippingOptionName: string;
+  };
   userDetails: {
-    email: string,
-    firstName: string,
-    lastName: string,
-    mobileNumber: string,
-    dateOfBirth: string,
+    email: string;
+    firstName: string;
+    lastName: string;
+    mobileNumber: string;
+    dateOfBirth: string;
     addresses:
     {
-      addressLine1: string,
-      addressLine2: string,
-      city: string,
-      country: string,
-      postCode: string,
-    }[],
+      addressLine1: string;
+      addressLine2: string;
+      city: string;
+      country: string;
+      postCode: string;
+    }[];
   }
 }
 
-export type VippsPayment = { 
+export type VippsPayment = {
   state: VippsPaymentStatus;
   capturedAmount: number;
+};
+
+export type VippsAgreementResponse = {
+  pricing: {
+    type: "LEGACY";
+    currency: "NOK";
+    amount: number;
+  };
+  id: string;
+  interval: {
+    unit: "YEAR" | "MONTH" | "WEEK" | "DAY";
+    count: number;
+    text: string;
+  };
+  productName: string;
+  productDescription: string;
+  created: string;
+  start: string | null;
+  stop: string | null;
+  status: "PENDING" | "ACTIVE" | "STOPPED" | "EXPIRED";
+  merchantAgreementUrl: string;
+  merchantRedirectUrl: string;
+  sub: string | null;
+  userinfoUrl: string | null;
+  externalId: string;
+  countryCode: "NO";
+  uuid: UUID;
+  vippsConfirmationUrl: string;
+  history: {
+    occurred: string;
+    event: "CREATE" | "ACTIVATE" | "REJECT" | "EXPIRE" | "STOP";
+    actor: "MERCHANT" | "USER" | "ADMIN" | "SYSTEM";
+  }[];
+};
+
+export type VippsChargeResponse = {
+  amount: number;
+  currency: "NOK";
+  description: string;
+  due: string;
+  id: string;
+  agreementId: string;
+  externalId: string;
+  externalAgreementId: string;
+  retryDays: number;
+  processingMode: "MULTIPLE_ATTEMPTS";
+  status:
+  | "PENDING"
+  | "DUE"
+  | "RESERVED"
+  | "CHARGED"
+  | "PARTIALLY_CAPTURED"
+  | "FAILED"
+  | "CANCELLED"
+  | "PARTIALLY_REFUNDED"
+  | "REFUNDED"
+  | "PROCESSING";
+  transactionId: string | null;
+  type: "INITIAL" | "RECURRING";
+  transactionType: "DIRECT_CAPTURE" | "RESERVE_CAPTURE";
+  failureReason:
+  | "user_action_required"
+  | "charge_amount_too_high"
+  | "non_technical_error"
+  | "technical_error";
+  failureDescription: string;
+  summary: {
+    captured: 19900;
+    refunded: 0;
+    cancelled: 19900;
+  };
+  history: {
+    occurred: string;
+    event:
+    | "CREATE"
+    | "RESERVE"
+    | "CAPTURE"
+    | "REFUND"
+    | "CANCEL"
+    | "FAIL";
+    amount: 19900;
+    idempotencyKey: string;
+    success: boolean;
+    transactionId: string;
+    externalId: string;
+  }[];
 };
