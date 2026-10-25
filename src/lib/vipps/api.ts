@@ -1,7 +1,9 @@
 import {
   VippsAccessTokenResponse,
   VippsAgreementCreateReponse,
+  VippsAgreementResponse,
   VippsCancelPayment,
+  VippsChargeResponse,
   VippsPayment,
   VippsPaymentCreateReponse,
   VippsPaymentStatusReponse,
@@ -145,7 +147,37 @@ export async function apiStopAgreement(vippsReference: string): Promise<boolean>
   return true;
 }
 
-export async function getCharge(agreementRef: string, chargeRef: string): Promise<MaybeWithStatusCode<undefined>> {
+export async function getAgreement(agreementRef: string): Promise<Maybe<VippsAgreementResponse>> {
+  const accessTokenRes = await getAccessToken();
+  if (!accessTokenRes.success) {
+    return { success: false };
+  }
+  const accessToken = accessTokenRes.data;
+  const res = await fetch(
+    `${VIPPS_URL}/recurring/v3/agreements/${agreementRef}`,
+    {
+      signal: AbortSignal.timeout(VIPPS_TIMEOUT),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`,
+        "Ocp-Apim-Subscription-Key": VIPPS_SUBSCRIPTION_KEY,
+        "Merchant-Serial-Number": VIPPS_MSN,
+        ...STANDARD_HEADERS,
+      },
+    }
+  );
+  if (!res.ok) {
+    console.error(await res.text());
+    return { success: false };
+  }
+  const agreement = await res.json() as VippsAgreementResponse;
+  return {
+    success: true,
+    data: agreement,
+  };
+}
+
+export async function getCharge(agreementRef: string, chargeRef: string): Promise<MaybeWithStatusCode<VippsChargeResponse>> {
   const accessTokenRes = await getAccessToken();
   if (!accessTokenRes.success) {
     return { success: false };
@@ -168,8 +200,7 @@ export async function getCharge(agreementRef: string, chargeRef: string): Promis
     console.error(await res.text());
     return { success: false, status: res.status };
   }
-  // TODO: Give charge a type
-  const charge = await res.json();
+  const charge = await res.json() as VippsChargeResponse;
   return {
     success: true,
     data: charge,
@@ -246,10 +277,6 @@ export async function createEpayment(baseUrl: string, vippsReference: string, pa
     return { success: false };
   }
   const payment = await res.json() as VippsPaymentCreateReponse;
-  if (!res.ok) {
-    console.error(await res.text());
-    return { success: false };
-  }
   return {
     success: true,
     data: payment,
