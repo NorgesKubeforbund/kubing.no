@@ -23,7 +23,7 @@ export async function createVippsPaymentAndGetRedirectUrl(userId: number, paymen
       await client.query("ROLLBACK");
       return { success: true, status: "already_member" };
     }
-    const handleTransactionRes = await handleOpenTransactionForCreation(user, client);
+    const handleTransactionRes = await handleOpenTransactionForCreation(user, true, client);
     if (!handleTransactionRes.success) {
       await client.query("ROLLBACK");
       return { success: false };
