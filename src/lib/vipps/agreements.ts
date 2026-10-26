@@ -32,7 +32,7 @@ export async function createVippsAgreementAndGetRedirectUrl(userId: number, base
       await client.query("ROLLBACK");
       return { success: false };
     }
-    const handleTransactionRes = await handleOpenTransactionForCreation(user, client);
+    const handleTransactionRes = await handleOpenTransactionForCreation(user, false, client);
     if (!handleTransactionRes.success) {
       await client.query("ROLLBACK");
       return { success: false };
@@ -42,6 +42,13 @@ export async function createVippsAgreementAndGetRedirectUrl(userId: number, base
       return {
         success: true,
         status: "already_has_agreement",
+      };
+    }
+    if (handleTransactionRes.vippsConfirmationUrl) {
+      return {
+        success: true,
+        status: "created_agreement",
+        redirectUrl: handleTransactionRes.vippsConfirmationUrl,
       };
     }
     const isMember = handleTransactionRes.activatedMembership || await isUserMemberInYearWithClient(userId, year, client);

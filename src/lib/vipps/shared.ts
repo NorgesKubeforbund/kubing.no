@@ -1,7 +1,7 @@
-import { addMemberFromCharge, addMemberFromOrder, getCreatedAgreement, getCreatedCharge, getCreatedOrder, setAgreementCancelled, setAgreementStopped, setChargeCancelled, setChargeCancelledBeforeCreation, setChargeCancelledByAgreementId, setChargeFailed, setOrderCancelled } from "@/lib/vipps/queries";
+import { addMemberFromCharge, addMemberFromOrder, getCreatedAgreement, getCreatedCharge, getCreatedOrder, setAgreementActive, setAgreementCancelled, setAgreementStopped, setChargeCancelled, setChargeCancelledBeforeCreation, setChargeCancelledByAgreementId, setChargeFailed, setOrderCancelled } from "@/lib/vipps/queries";
 import { UserLock } from "@/types";
 import { PoolClient } from "pg";
-import { apiStopAgreement, cancelEpayment, captureEpayment, getAgreement, getCharge, getEpayment } from "@/lib/vipps/api";
+import { cancelEpayment, captureEpayment, getAgreement, getCharge, getEpayment } from "@/lib/vipps/api";
 import { getMembershipCost } from "@/lib/vipps/util";
 import { sendMembershipConfirmation } from "@/lib/mail";
 import { hasUserActiveAgreementWithClient } from "@/lib/agreement";
@@ -9,8 +9,8 @@ import { hasUserActiveAgreementWithClient } from "@/lib/agreement";
 type TransactionResult =
   | { success: false }
   | { success: true; activeAgreement: true }
-  | { success: true; activeAgreement: false; activatedMembership: false }
-  | { success: true; activeAgreement: false; activatedMembership: true; sendEmail: () => Promise<void> };
+  | { success: true; activeAgreement: false; activatedMembership: false, vippsConfirmationUrl: string | null }
+  | { success: true; activeAgreement: false; activatedMembership: true; sendEmail: () => Promise<void>, vippsConfirmationUrl: string | null };
 
 type OrderResult =
   | { success: false }
@@ -19,14 +19,15 @@ type OrderResult =
 
 type AgreementResult =
   | { success: false }
-  | { success: true; status: "no_agreement" | "agreement_started" | "agreement_cancelled" };
+  | { success: true; status: "no_agreement" | "agreement_started" | "agreement_cancelled" }
+  | { success: true; status: "agreement_pending", vippsConfirmationUrl: string };
 
 type ChargeResult =
   | { success: false }
   | { success: true, status: "no_charge" | "charge_cancelled" }
   | { success: true; status: "charge_paid"; sendEmail: () => Promise<void> };;
 
-export async function handleOpenTransactionForCreation(user: UserLock, client: PoolClient): Promise<TransactionResult> {
+export async function handleOpenTransactionForCreation(user: UserLock, isCreatingEpayment: boolean, client: PoolClient): Promise<TransactionResult> {
   const { userId } = user;
   const hasActiveAgreement = await hasUserActiveAgreementWithClient(userId, client);
   if (hasActiveAgreement) {
@@ -39,18 +40,17 @@ export async function handleOpenTransactionForCreation(user: UserLock, client: P
   }
   switch (orderRes.status) {
     case "order_paid":
-      return {
-        success: true,
-        activeAgreement: false,
-        activatedMembership: true,
-        sendEmail: orderRes.sendEmail,
-      };
+      if (isCreatingEpayment) {
+        return {
+          success: true,
+          activeAgreement: false,
+          activatedMembership: true,
+          sendEmail: orderRes.sendEmail,
+          vippsConfirmationUrl: null,
+        };
+      }
     case "order_cancelled":
-      return {
-        success: true,
-        activeAgreement: false,
-        activatedMembership: false,
-      };
+      break;
     case "no_order":
       break;
   }
@@ -65,12 +65,16 @@ export async function handleOpenTransactionForCreation(user: UserLock, client: P
         success: true,
         activeAgreement: true,
       };
-    case "agreement_cancelled":
-      break;
+    case "agreement_pending":
+      return {
+        success: true,
+        activeAgreement: false,
+        activatedMembership: false,
+        vippsConfirmationUrl : agreementRes.vippsConfirmationUrl,
+      };
     case "no_agreement":
       break;
   }
-
   const chargeRes = await handleOpenChargeForCreation(user, client);
   if (!chargeRes.success) {
     return { success: false };
@@ -82,6 +86,7 @@ export async function handleOpenTransactionForCreation(user: UserLock, client: P
         activeAgreement: false,
         activatedMembership: true,
         sendEmail: chargeRes.sendEmail,
+        vippsConfirmationUrl: null,
       };
     case "charge_cancelled":
       break;
@@ -92,6 +97,7 @@ export async function handleOpenTransactionForCreation(user: UserLock, client: P
     success: true,
     activeAgreement: false,
     activatedMembership: false,
+    vippsConfirmationUrl: null,
   };
 }
 
@@ -154,15 +160,14 @@ async function handleOpenAgreementForCreation(user: UserLock, client: PoolClient
   const status = agreementData.status;
   switch (status) {
     case "ACTIVE":
+      await setAgreementActive(agreement.vippsReference, client);
       return { success: true, status: "agreement_started" };
     case "EXPIRED":
       await setAgreementCancelled(agreement.vippsReference, client);
       await setChargeCancelledByAgreementId(agreement.id, client);
       return { success: true, status: "agreement_cancelled" };
     case "PENDING":
-      await apiStopAgreement(agreement.vippsReference);
-      await setAgreementCancelled(agreement.vippsReference, client);
-      return { success: true, status: "agreement_cancelled" };
+      return { success: true, status: "agreement_pending", vippsConfirmationUrl: agreementRes.data.vippsConfirmationUrl };
     case "STOPPED":
       await setAgreementStopped(agreement.id, client);
       return { success: true, status: "agreement_cancelled" };
