@@ -243,6 +243,38 @@ export async function createCharge(agreementRef: string, chargeRef: string, due:
   return true;
 }
 
+export async function refundCharge(agreementRef: string, chargeRef: string): Promise<boolean> {
+  const accessTokenRes = await getAccessToken();
+  if (!accessTokenRes.success) {
+    return false;
+  }
+  const accessToken = accessTokenRes.data;
+  const res = await fetch(
+    `${VIPPS_URL}/recurring/v3/agreements/${agreementRef}/charges/${chargeRef}/refund`,
+    {
+      method: "POST",
+      signal: AbortSignal.timeout(VIPPS_TIMEOUT),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`,
+        "Ocp-Apim-Subscription-Key": VIPPS_SUBSCRIPTION_KEY,
+        "Merchant-Serial-Number": VIPPS_MSN,
+        "Idempotency-Key": `refund-${chargeRef}`,
+        ...STANDARD_HEADERS,
+      },
+      body: JSON.stringify({
+        "amount": getMembershipCost(),
+        "description": `Duplikat betaling`,
+      }),
+    }
+  );
+  if (!res.ok) {
+    console.error(await res.text());
+    return false;
+  }
+  return true;
+}
+
 export async function createEpayment(baseUrl: string, vippsReference: string, paymentType: VippsPaymentType, year: number): Promise<Maybe<VippsPaymentCreateReponse>> {
   const accessTokenRes = await getAccessToken();
   if (!accessTokenRes.success) {
@@ -316,7 +348,7 @@ export async function getEpayment(reference: string): Promise<Maybe<VippsPayment
   };
 }
 
-export async function cancelEpayment(vippsReference: string): Promise<Maybe<VippsCancelPayment>> {
+export async function cancelEpayment(vippsReference: string, cancelTransactionOnly: boolean): Promise<Maybe<VippsCancelPayment>> {
   const accessTokenRes = await getAccessToken();
   if (!accessTokenRes.success) {
     return { success: false };
@@ -335,7 +367,41 @@ export async function cancelEpayment(vippsReference: string): Promise<Maybe<Vipp
         ...STANDARD_HEADERS,
       },
       body: JSON.stringify({
-        "cancelTransactionOnly": true,
+        "cancelTransactionOnly": cancelTransactionOnly,
+      }),
+    }
+  );
+  if (!res.ok) {
+    console.error(await res.text());
+    return { success: false };
+  }
+  const status = await res.json() as VippsCancelPayment;
+  return {
+    success: true,
+    data: status,
+  };
+}
+
+export async function refundEpayment(vippsReference: string): Promise<Maybe<VippsCancelPayment>> {
+  const accessTokenRes = await getAccessToken();
+  if (!accessTokenRes.success) {
+    return { success: false };
+  }
+  const accessToken = accessTokenRes.data;
+  const res = await fetch(
+    `${VIPPS_URL}/epayment/v1/payments/${vippsReference}/refund`,
+    {
+      method: "POST",
+      signal: AbortSignal.timeout(VIPPS_TIMEOUT),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`,
+        "Ocp-Apim-Subscription-Key": VIPPS_SUBSCRIPTION_KEY,
+        "Merchant-Serial-Number": VIPPS_MSN,
+        ...STANDARD_HEADERS,
+      },
+      body: JSON.stringify({
+        "modificationAmount": { "currency": "NOK", "value": getMembershipCost() },
       }),
     }
   );
