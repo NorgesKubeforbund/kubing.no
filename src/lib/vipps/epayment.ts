@@ -1,8 +1,16 @@
 import { getClient } from "@/db";
 import { getCurrentYear } from "@/lib/time";
-import { addMemberFromOrder, getCreatedOrder, getOpenOrders, getOrderNumber, getUserLock, saveCreatedOrder, setOrderCancelled } from "@/lib/vipps/queries";
+import {
+  addMemberFromOrder,
+  getCreatedOrder, getOpenOrders,
+  getOrderNumber,
+  getUserLock,
+  saveCreatedOrder,
+  setOrderCancelled,
+  setOrderRefunded,
+} from "@/lib/vipps/queries";
 import { isUserMemberInYearWithClient } from "@/lib/membership";
-import { captureEpayment, createEpayment, getEpayment } from "@/lib/vipps/api";
+import { cancelEpayment, captureEpayment, createEpayment, getEpayment, refundEpayment } from "@/lib/vipps/api";
 import { OrderCreation, VippsPaymentType } from "@/types";
 import { sendMembershipConfirmation } from "@/lib/mail";
 import { getMembershipCost, getVippsReference } from "@/lib/vipps/util";
@@ -86,7 +94,31 @@ export async function claimMembership(userId: number): Promise<boolean> {
       await client.query("ROLLBACK");
       return false;
     }
-    await addMemberFromOrder(userId, order.id, order.year, client);
+    const addMemberRes = await addMemberFromOrder(userId, order.id, order.year, order.vippsReference, client);
+    switch (addMemberRes) {
+      case "already_processed":
+        await client.query("ROLLBACK");
+        return true;
+      case "added_membership":
+        break;
+      case "duplicate_payment":
+        if (alreadyCaptured) {
+          const cancelRes = await cancelEpayment(order.vippsReference, false);
+          if (!cancelRes.success) {
+            await client.query("ROLLBACK");
+            return false;
+          }
+        } else {
+          const refundRes = await refundEpayment(order.vippsReference);
+          if (!refundRes.success) {
+            await client.query("ROLLBACK");
+            return false;
+          }
+        }
+        await setOrderRefunded(order.id, client);
+        await client.query("COMMIT");
+        return false;
+    }
     if (!alreadyCaptured) {
       const captureRes = await captureEpayment(order.vippsReference);
       if (!captureRes.success) {
@@ -131,7 +163,31 @@ async function handleOpenOrder(order: { id: number, userId: number, vippsReferen
     const payment = paymentRes.data;
     const alreadyCaptured = payment.capturedAmount >= getMembershipCost();
     if (alreadyCaptured || payment.state === "AUTHORIZED") {
-      await addMemberFromOrder(order.userId, order.id, order.year, client);
+      const addMemberRes = await addMemberFromOrder(order.userId, order.id, order.year, order.vippsReference, client);
+      switch (addMemberRes) {
+        case "already_processed":
+          await client.query("ROLLBACK");
+          return;
+        case "added_membership":
+          break;
+        case "duplicate_payment":
+          if (alreadyCaptured) {
+            const cancelRes = await cancelEpayment(order.vippsReference, false);
+            if (!cancelRes.success) {
+              await client.query("ROLLBACK");
+              return;
+            }
+          } else {
+            const refundRes = await refundEpayment(order.vippsReference);
+            if (!refundRes.success) {
+              await client.query("ROLLBACK");
+              return;
+            }
+          }
+          await setOrderRefunded(order.id, client);
+          await client.query("COMMIT");
+          return;
+      }
       if (!alreadyCaptured) {
         const captureRes = await captureEpayment(order.vippsReference);
         if (!captureRes.success) {

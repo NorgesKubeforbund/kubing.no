@@ -66,6 +66,9 @@ export default function OrderOverview({ orders }: { orders: Payment[] }) {
         <option value="FAILED">
           Feilet
         </option>
+        <option value="REFUNDED">
+          Tilbakebetalt
+        </option>
       </select>
       <div className="overflow-x-auto self-center-safe max-w-full sm:text-xl text-sm">
         <table>
@@ -182,6 +185,8 @@ function translateStatus(status: string) {
       return "Kansellert før laging";
     case "FAILED":
       return "Feilet";
+    case "REFUNDED":
+      return "Tilbakebetalt";
     default:
       return status;
   }
