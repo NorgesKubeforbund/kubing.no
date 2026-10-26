@@ -1,5 +1,14 @@
 import { query } from "@/db";
-import { Agreement, AgreementCreated, ChargeCreated, OrderCreated, Payment, UserLock, UserLockWithCharge } from "@/types";
+import {
+  AddMemberResult,
+  Agreement,
+  AgreementCreated,
+  ChargeCreated,
+  OrderCreated,
+  Payment,
+  UserLock,
+  UserLockWithCharge,
+} from "@/types";
 import { PoolClient } from "pg";
 
 export async function getUserLock(userId: number, client: PoolClient): Promise<UserLock | undefined> {
@@ -240,9 +249,17 @@ export async function setChargeFailed(chargeId: number, client: PoolClient): Pro
   const res = await client.query(`
     UPDATE charges
     SET status = 'FAILED'
-    WHERE id = $1 AND status = 'CREATED'
+    WHERE id = $1 AND status IN ('CREATED', 'NOT_CREATED')
   `, [chargeId])
   return res.rowCount !== null && res.rowCount > 0;
+}
+
+export async function setChargeRefunded(chargeId: number, client: PoolClient): Promise<void> {
+  await client.query(`
+    UPDATE charges
+    SET status = 'REFUNDED'
+    WHERE id = $1 AND status IN ('CREATED', 'NOT_CREATED')
+  `, [chargeId]);
 }
 
 export async function setOrderCancelled(orderId: number, client: PoolClient) {
@@ -250,6 +267,14 @@ export async function setOrderCancelled(orderId: number, client: PoolClient) {
     UPDATE orders
     SET status = 'CANCELLED'
     WHERE id = $1
+  `, [orderId]);
+}
+
+export async function setOrderRefunded(orderId: number, client: PoolClient) {
+  await client.query(`
+    UPDATE orders
+    SET status = 'REFUNDED'
+    WHERE id = $1 AND status = 'CREATED'
   `, [orderId]);
 }
 
@@ -360,32 +385,54 @@ export async function getCreatedCharge(userId: number, client: PoolClient): Prom
   `, [userId])).rows.at(0) as undefined | ChargeCreated;
 }
 
-export async function addMemberFromCharge(userId: number, vippsReference: string, year: number, client: PoolClient): Promise<void> {
-  await client.query(`
-    UPDATE charges
-    SET status = 'COMPLETED'
-    WHERE vipps_reference = $1 AND status IN ('CREATED', 'NOT_CREATED');
-  `, [vippsReference]);
-  await addMember(userId, year, client);
+export async function addMemberFromCharge(userId: number, vippsReference: string, year: number, client: PoolClient): Promise<AddMemberResult> {
+  const membershipVippsRef = await getMembershipVippsReference(userId, year, client);
+  if (membershipVippsRef === null) {
+    await client.query(`
+      UPDATE charges
+      SET status = 'COMPLETED'
+      WHERE vipps_reference = $1 AND status IN ('CREATED', 'NOT_CREATED')
+    `, [vippsReference]);
+    await addMember(userId, year, vippsReference, client);
+    return "added_membership";
+  }
+  return membershipVippsRef !== vippsReference ? "duplicate_payment" : "already_processed";
 }
 
-export async function addMemberFromOrder(userId: number, orderNumber: number, year: number, client: PoolClient): Promise<void> {
-  await client.query(`
-    UPDATE orders
-    SET status = 'COMPLETED'
-    WHERE id = $1 AND status = 'CREATED';
-  `, [orderNumber]);
-  await addMember(userId, year, client);
+export async function addMemberFromOrder(userId: number, orderNumber: number, year: number, vippsReference: string, client: PoolClient): Promise<AddMemberResult> {
+  const membershipVippsRef = await getMembershipVippsReference(userId, year, client);
+  if (membershipVippsRef === null) {
+    await client.query(`
+      UPDATE orders
+      SET status = 'COMPLETED'
+      WHERE id = $1 AND status = 'CREATED'
+    `, [orderNumber]);
+    await addMember(userId, year, vippsReference, client);
+    return "added_membership";
+  }
+  return membershipVippsRef !== vippsReference ? "duplicate_payment" : "already_processed";
 }
 
-async function addMember(userId: number, year: number, client: PoolClient): Promise<void> {
+async function getMembershipVippsReference(userId: number, year: number, client: PoolClient): Promise<string | null> {
+  const res = await client.query(`
+    SELECT vipps_reference AS "vippsReference"
+    FROM memberships
+    WHERE user_id = $1 AND year = $2
+  `, [userId, year]);
+  if (res.rowCount === null || res.rowCount === 0) {
+    return null;
+  }
+  return res.rows.at(0).vippsReference;
+}
+
+async function addMember(userId: number, year: number, vippsReference: string, client: PoolClient): Promise<void> {
   await client.query(`
     INSERT INTO memberships
-    (user_id, year)
+    (user_id, year, vipps_reference)
     VALUES
-    ($1, $2)
-    ON CONFLICT (user_id, year) DO NOTHING;
-  `, [userId, year]);
+    ($1, $2, $3)
+    ON CONFLICT (user_id, year) DO NOTHING
+  `, [userId, year, vippsReference]);
 }
 
 export async function setAgreementActive(vippsReference: string, client: PoolClient): Promise<void> {

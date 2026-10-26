@@ -1,3 +1,5 @@
+ALTER TABLE memberships ADD COLUMN vipps_reference VARCHAR(100) UNIQUE;
+
 ALTER TABLE orders ALTER COLUMN id DROP DEFAULT;
 
 DROP SEQUENCE IF EXISTS orders_id_seq;

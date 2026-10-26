@@ -171,3 +171,5 @@ export type UserWithWcaId = {
   name: string;
   wcaId: string;
 };
+
+export type AddMemberResult = "added_membership" | "duplicate_payment" | "already_processed";

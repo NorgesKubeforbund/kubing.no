@@ -9,7 +9,7 @@ import {
   WebhookPayload,
 } from "@/types/webhook";
 import { notifyOfAgreementEndedAfterFailedCharge, sendMembershipConfirmation } from "@/lib/mail";
-import { apiStopAgreement } from "@/lib/vipps/api";
+import { apiStopAgreement, refundCharge } from "@/lib/vipps/api";
 import {
   addMemberFromCharge,
   getUserLockByAgreement,
@@ -20,6 +20,7 @@ import {
   setAgreementStoppedByVippsReference,
   setChargeCancelledByAgreementId,
   setChargeFailed,
+  setChargeRefunded,
 } from "@/lib/vipps/queries";
 
 export async function handleWebhook(payload: WebhookPayload): Promise<boolean> {
@@ -127,7 +128,23 @@ async function handleChargeCaptured(payload: RecurringChargeCaptured): Promise<b
       await client.query("ROLLBACK");
       return false;
     }
-    await addMemberFromCharge(res.userId, payload.chargeId, res.year, client);
+    const addMemberRes = await addMemberFromCharge(res.userId, payload.chargeId, res.year, client);
+    switch (addMemberRes) {
+      case "added_membership":
+        break;
+      case "already_processed":
+        await client.query("ROLLBACK");
+        return true;
+      case "duplicate_payment":
+        const refundSuccess = await refundCharge(payload.agreementId, payload.chargeId)
+        if (!refundSuccess) {
+          await client.query("ROLLBACK");
+          return true;
+        }
+        await setChargeRefunded(res.chargeId, client);
+        await client.query("COMMIT");
+        return true;
+    }
     await client.query("COMMIT");
     try {
       await sendMembershipConfirmation(res, { id: res.chargeId, vippsReference: payload.agreementId, year: res.year });
