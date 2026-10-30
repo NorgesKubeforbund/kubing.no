@@ -187,6 +187,16 @@ export async function getActiveAgreementByUserId(userId: number, client: PoolCli
   `, [userId])).rows.at(0) as undefined | { id: number, vippsReference: string };
 }
 
+export async function getActiveAgreementsNotInList(vippsReferences: string[]): Promise<{ id: number, vippsReference: string }[]> {
+  return (await query(`
+    SELECT
+      id,
+      vipps_reference AS "vippsReference"
+    FROM agreements
+    WHERE status = 'ACTIVE' AND vipps_reference NOT IN (SELECT unnest($1::text[]))
+  `, [vippsReferences])).rows;
+}
+
 export async function setAgreementStopped(agreementId: number, client: PoolClient): Promise<void> {
   await client.query(`
     UPDATE agreements

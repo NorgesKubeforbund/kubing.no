@@ -147,6 +147,46 @@ export async function apiStopAgreement(vippsReference: string): Promise<boolean>
   return true;
 }
 
+export async function getActiveAgreements(): Promise<Maybe<VippsAgreementResponse[]>> {
+  const accessTokenRes = await getAccessToken();
+  if (!accessTokenRes.success) {
+    return { success: false };
+  }
+  const accessToken = accessTokenRes.data;
+
+  const pageNumber = 1;
+  const pageSize = 2000;
+
+  const res = await fetch(
+    `${VIPPS_URL}/recurring/v3/agreements?pageNumber=${pageNumber}&pageSize=${pageSize}`,
+    {
+      signal: AbortSignal.timeout(VIPPS_TIMEOUT),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`,
+        "Ocp-Apim-Subscription-Key": VIPPS_SUBSCRIPTION_KEY,
+        "Merchant-Serial-Number": VIPPS_MSN,
+        ...STANDARD_HEADERS,
+      },
+    }
+  );
+  if (!res.ok) {
+    console.error(await res.text());
+    return { success: false };
+  }
+  const agreements = await res.json() as VippsAgreementResponse[];
+
+  // If we ever hit more than 2000+ agreements, deal with pagination
+  if (agreements.length === 2000) {
+    return { success: false };
+  }
+
+  return {
+    success: true,
+    data: agreements,
+  };
+}
+
 export async function getAgreement(agreementRef: string): Promise<Maybe<VippsAgreementResponse>> {
   const accessTokenRes = await getAccessToken();
   if (!accessTokenRes.success) {
