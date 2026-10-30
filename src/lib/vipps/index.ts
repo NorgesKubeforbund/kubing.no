@@ -6,6 +6,7 @@ export {
   handleOpenOrders,
 } from "@/lib/vipps/epayment";
 export {
+  checkActiveAgreements,
   createCharges,
   createVippsAgreementAndGetRedirectUrl,
   stopAgreement,

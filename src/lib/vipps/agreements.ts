@@ -3,20 +3,23 @@ import { getCurrentMonth, getCurrentYear, toNorwayDateString } from "@/lib/time"
 import {
   addCharge,
   getActiveAgreementByUserId,
+  getActiveAgreementsNotInList,
   getActiveAgreementWithNoCreatedChargeByUserId,
   getChargeToBeCreated,
   getOrderNumber,
   getUserLock,
+  getUserLockByAgreement,
   getUsersForChargeCreation,
   getUsersWithNotCreatedCharges,
   saveCreatedAgreement,
   saveCreatedCharge,
   setAgreementStopped,
+  setAgreementStoppedByVippsReference,
   setChargeCancelledBeforeCreation,
   setChargeCreated,
 } from "@/lib/vipps/queries";
 import { isUserMemberInYearWithClient } from "@/lib/membership";
-import { apiStopAgreement, createCharge, createVippsAgreement, getCharge } from "@/lib/vipps/api";
+import { apiStopAgreement, createCharge, createVippsAgreement, getActiveAgreements, getAgreement, getCharge } from "@/lib/vipps/api";
 import { AgreementCreation } from "@/types";
 import { notifyOfPaymentDue } from "@/lib/mail";
 import { getMembershipCost, getVippsReference } from "@/lib/vipps/util";
@@ -236,6 +239,57 @@ async function createChargeVipps(userId: number): Promise<void> {
   } catch (e) {
     console.error(e);
     await client.query("ROLLBACK");
+  } finally {
+    client.release();
+  }
+}
+
+export async function checkActiveAgreements(): Promise<boolean> {
+  const agreementsRes = await getActiveAgreements();
+  if (!agreementsRes.success) {
+    return false;
+  }
+
+  const agreements = agreementsRes.data;
+  const vippsReferences = agreements.map(agreement => agreement.id);
+  const stoppedAgreements = await getActiveAgreementsNotInList(vippsReferences);
+
+  for (const stoppedAgreement of stoppedAgreements) {
+    await stopAgreementIfStopped(stoppedAgreement.vippsReference);
+  }
+
+  return true;
+}
+
+async function stopAgreementIfStopped(vippsReference: string): Promise<void> {
+  const client = await getClient();
+  try {
+    await client.query("BEGIN");
+    const user = await getUserLockByAgreement(vippsReference, client);
+    if (!user) {
+      await client.query("ROLLBACK");
+      return;
+    }
+    const agreementRes = await getAgreement(vippsReference);
+    if (!agreementRes.success) {
+      return;
+    }
+    const status = agreementRes.data.status;
+    if (status !== "STOPPED") {
+      await client.query("ROLLBACK");
+      return;
+    }
+    const agreement = await setAgreementStoppedByVippsReference(vippsReference, client);
+    if (!agreement) {
+      await client.query("ROLLBACK");
+      return;
+    }
+    // TODO: Check charge status and handle accordingly
+    await client.query("COMMIT");
+  } catch (e) {
+    await client.query("ROLLBACK").catch(() => { });
+    console.error(e);
+    return;
   } finally {
     client.release();
   }
