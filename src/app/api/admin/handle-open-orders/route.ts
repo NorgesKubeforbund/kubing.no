@@ -1,4 +1,4 @@
-import { handleOpenOrders } from "@/lib/vipps";
+import { handleOpenAgreements, handleOpenInitialCharges, handleOpenOrders } from "@/lib/vipps";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -7,7 +7,10 @@ export async function POST(req: NextRequest) {
   if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
     return NextResponse.json({ error: "Ugyldig nøkkel." }, { status: 401 });
   }
-  const success = await handleOpenOrders();
+  const success =
+    await handleOpenOrders()
+    && await handleOpenInitialCharges()
+    && await handleOpenAgreements();
   if (!success) {
     return NextResponse.json({ error: "Noe gikk galt." }, { status: 500 });
   }
