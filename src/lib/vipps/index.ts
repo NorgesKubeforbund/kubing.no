@@ -9,5 +9,7 @@ export {
   checkActiveAgreements,
   createCharges,
   createVippsAgreementAndGetRedirectUrl,
+  handleOpenAgreements,
+  handleOpenInitialCharges,
   stopAgreement,
 } from "@/lib/vipps/agreements";

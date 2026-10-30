@@ -129,6 +129,34 @@ export async function getOpenOrders(): Promise<{ id: number, userId: number, vip
   `, [])).rows as { id: number, userId: number, vippsReference: string, year: number }[];
 }
 
+export async function getOpenInitialCharges(): Promise<{ id: number, userId: number, chargeRef: string, agreementRef: string, year: number }[]> {
+  return (await query(`
+    SELECT
+      c.id,
+      a.user_id AS "userId",
+      c.vipps_reference AS "chargeRef",
+      a.vipps_reference AS "agreementRef",
+      c.year
+    FROM charges c
+    JOIN agreements a ON a.id = c.agreement_id
+    WHERE
+      c.status = 'CREATED'
+      AND c.created_at < NOW() - INTERVAL '3 minutes'
+      AND c.type = 'INITIAL'
+  `, [])).rows as { id: number, userId: number, chargeRef: string, agreementRef: string, year: number }[];
+}
+
+export async function getOpenAgreements(): Promise<{ id: number, userId: number, vippsReference: string }[]> {
+  return (await query(`
+    SELECT
+      id,
+      user_id AS "userId",
+      vipps_reference AS "vippsReference"
+    FROM agreements
+    WHERE status = 'CREATED' AND created_at < NOW() - INTERVAL '3 minutes'
+  `, [])).rows as { id: number, userId: number, vippsReference: string }[];
+}
+
 export async function saveCreatedAgreement(userId: number, vippsReference: string, client: PoolClient): Promise<number> {
   const res = await client.query(`
     INSERT INTO agreements
@@ -187,11 +215,12 @@ export async function getActiveAgreementByUserId(userId: number, client: PoolCli
   `, [userId])).rows.at(0) as undefined | { id: number, vippsReference: string };
 }
 
-export async function getActiveAgreementsNotInList(vippsReferences: string[]): Promise<{ id: number, vippsReference: string }[]> {
+export async function getActiveAgreementsNotInList(vippsReferences: string[]): Promise<{ id: number, vippsReference: string, userId: number }[]> {
   return (await query(`
     SELECT
       id,
-      vipps_reference AS "vippsReference"
+      vipps_reference AS "vippsReference",
+      user_id AS "userId"
     FROM agreements
     WHERE status = 'ACTIVE' AND vipps_reference NOT IN (SELECT unnest($1::text[]))
   `, [vippsReferences])).rows;
