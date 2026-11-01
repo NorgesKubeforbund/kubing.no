@@ -153,12 +153,11 @@ export async function stopAgreement(userId: number): Promise<boolean> {
 
 export async function createCharges(): Promise<boolean> {
   const chargeDate = getNextChargeDate();
-  if (!chargeDate) {
-    return true;
-  }
-  const eligbleUsers = await getUsersForChargeCreation(chargeDate.year);
-  for (const user of eligbleUsers) {
-    await createChargeDatabase(user.userId, chargeDate);
+  if (chargeDate) {
+    const eligbleUsers = await getUsersForChargeCreation(chargeDate.year);
+    for (const user of eligbleUsers) {
+      await createChargeDatabase(user.userId, chargeDate);
+    }
   }
 
   const usersWithNotCreatedCharges = await getUsersWithNotCreatedCharges();
