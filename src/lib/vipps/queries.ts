@@ -174,6 +174,22 @@ export async function getChargesDue(): Promise<{ id: number, userId: number, cha
   `, [])).rows as { id: number, userId: number, chargeRef: string, agreementRef: string, year: number }[];
 }
 
+export async function getOrphanedCharges(): Promise<{ id: number, userId: number, chargeRef: string, agreementRef: string, year: number }[]> {
+  return (await query(`
+    SELECT
+      c.id,
+      a.user_id AS "userId",
+      c.vipps_reference AS "chargeRef",
+      a.vipps_reference AS "agreementRef",
+      c.year
+    FROM charges c
+    JOIN agreements a ON a.id = c.agreement_id
+    WHERE
+      a.status IN ('CANCELLED', 'STOPPED')
+      AND c.status IN ('CREATED', 'NOT_CREATED')
+  `, [])).rows as { id: number, userId: number, chargeRef: string, agreementRef: string, year: number }[];
+}
+
 export async function saveCreatedAgreement(userId: number, vippsReference: string, client: PoolClient): Promise<number> {
   const res = await client.query(`
     INSERT INTO agreements
