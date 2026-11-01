@@ -11,6 +11,7 @@ import {
   getOpenAgreements,
   getOpenInitialCharges,
   getOrderNumber,
+  getOrphanedCharges,
   getUserLock,
   getUsersForChargeCreation,
   getUsersWithNotCreatedCharges,
@@ -303,70 +304,6 @@ async function stopAgreementIfStopped(stoppedAgreement: { userId: number, vippsR
   }
 }
 
-export async function handleOpenInitialCharges(): Promise<boolean> {
-  const openCharges = await getOpenInitialCharges();
-  for (const charge of openCharges) {
-    await handleOpenInitialCharge(charge);
-  }
-  return true;
-}
-
-async function handleOpenInitialCharge(charge: { id: number, userId: number, chargeRef: string, agreementRef: string, year: number }): Promise<void> {
-  const { id, userId, chargeRef, agreementRef, year } = charge;
-  const client = await getClient();
-  try {
-    await client.query("BEGIN");
-    const user = await getUserLock(userId, client);
-    if (!user) {
-      await client.query("ROLLBACK");
-      return;
-    }
-    const chargeRes = await getCharge(agreementRef, chargeRef);
-    if (!chargeRes.success) {
-      await client.query("ROLLBACK");
-      return;
-    }
-    const status = chargeRes.data.status;
-    if (status === "CANCELLED") {
-      await setChargeCancelled(id, client);
-      await client.query("COMMIT");
-      return;
-    }
-    if (status !== "CHARGED") {
-      await client.query("ROLLBACK");
-      return;
-    }
-    const addMemberRes = await addMemberFromCharge(userId, chargeRef, year, client);
-    switch (addMemberRes) {
-      case "added_membership":
-        break;
-      case "already_processed":
-        await client.query("ROLLBACK");
-        return;
-      case "duplicate_payment":
-        const refundSuccess = await refundCharge(agreementRef, chargeRef)
-        if (!refundSuccess) {
-          await client.query("ROLLBACK");
-          return;
-        }
-        await setChargeRefunded(id, client);
-        await client.query("COMMIT");
-        return;
-    }
-    await client.query("COMMIT");
-    try {
-      await sendMembershipConfirmation(user, { id: id, vippsReference: agreementRef, year });
-    } catch (e) {
-      console.error(e);
-    }
-  } catch (e) {
-    await client.query("ROLLBACK").catch(() => { });
-    console.error(e);
-  } finally {
-    client.release();
-  }
-}
-
 export async function handleOpenAgreements(): Promise<boolean> {
   const openAgreements = await getOpenAgreements();
   for (const agreement of openAgreements) {
@@ -416,15 +353,31 @@ async function handleOpenAgreement(agreement: { userId: number, vippsReference: 
   }
 }
 
-export async function handleChargesDue(): Promise<boolean> {
-  const chargesDue = await getChargesDue();
-  for (const charge of chargesDue) {
-    await handleChargeDue(charge);
+export async function handleOpenInitialCharges(): Promise<boolean> {
+  const openCharges = await getOpenInitialCharges();
+  for (const charge of openCharges) {
+    await handleOpenCharge(charge);
   }
   return true;
 }
 
-async function handleChargeDue(charge: { id: number, userId: number, chargeRef: string, agreementRef: string, year: number }): Promise<void> {
+export async function handleChargesDue(): Promise<boolean> {
+  const chargesDue = await getChargesDue();
+  for (const charge of chargesDue) {
+    await handleOpenCharge(charge);
+  }
+  return true;
+}
+
+export async function handleOrphanedCharges(): Promise<boolean> {
+  const orphanedCharges = await getOrphanedCharges();
+  for (const charge of orphanedCharges) {
+    await handleOpenCharge(charge);
+  }
+  return true;
+}
+
+async function handleOpenCharge(charge: { id: number, userId: number, chargeRef: string, agreementRef: string, year: number }): Promise<void> {
   const { id, userId, chargeRef, agreementRef, year } = charge;
   const client = await getClient();
   try {
