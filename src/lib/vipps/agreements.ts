@@ -389,6 +389,11 @@ async function handleOpenCharge(charge: { id: number, userId: number, chargeRef:
     }
     const chargeRes = await getCharge(agreementRef, chargeRef);
     if (!chargeRes.success) {
+      if (chargeRes.status === 404) {
+        await setChargeCancelled(id, client);
+        await client.query("COMMIT");
+        return;
+      }
       await client.query("ROLLBACK");
       return;
     }
