@@ -8,6 +8,7 @@ import {
   getActiveAgreementWithNoCreatedChargeByUserId,
   getChargesDue,
   getChargeToBeCreated,
+  getCreatedCharge,
   getOpenAgreements,
   getOpenInitialCharges,
   getOrderNumber,
@@ -127,8 +128,15 @@ export async function stopAgreement(userId: number): Promise<boolean> {
       return false;
     }
     await setAgreementStopped(agreement.id, client);
-    // TODO: Check charge status and handle accordingly
     await client.query("COMMIT");
+    const charge = await getCreatedCharge(userId, client);
+    if (charge) {
+      await handleOpenCharge({
+        ...charge,
+        id: charge.chargeId,
+        userId,
+      });
+    }
     return true;
   } catch (e) {
     await client.query("ROLLBACK").catch(() => { });
@@ -294,8 +302,15 @@ async function stopAgreementIfStopped(stoppedAgreement: { userId: number, vippsR
       await client.query("ROLLBACK");
       return;
     }
-    // TODO: Check charge status and handle accordingly
     await client.query("COMMIT");
+    const charge = await getCreatedCharge(userId, client);
+    if (charge) {
+      await handleOpenCharge({
+        ...charge,
+        id: charge.chargeId,
+        userId,
+      });
+    }
   } catch (e) {
     await client.query("ROLLBACK").catch(() => { });
     console.error(e);
@@ -377,7 +392,7 @@ export async function handleOrphanedCharges(): Promise<boolean> {
   return true;
 }
 
-async function handleOpenCharge(charge: { id: number, userId: number, chargeRef: string, agreementRef: string, year: number }): Promise<void> {
+export async function handleOpenCharge(charge: { id: number, userId: number, chargeRef: string, agreementRef: string, year: number }): Promise<void> {
   const { id, userId, chargeRef, agreementRef, year } = charge;
   const client = await getClient();
   try {
