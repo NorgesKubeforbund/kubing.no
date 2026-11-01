@@ -231,7 +231,7 @@ async function createChargeDatabase(userId: number, chargeDate: { year: number, 
     await client.query("COMMIT");
   } catch (e) {
     console.error(e);
-    await client.query("ROLLBACK");
+    await client.query("ROLLBACK").catch(() => { });
   } finally {
     client.release();
   }
@@ -290,7 +290,7 @@ async function createChargeVipps(userId: number): Promise<void> {
     }
   } catch (e) {
     console.error(e);
-    await client.query("ROLLBACK");
+    await client.query("ROLLBACK").catch(() => { });
   } finally {
     client.release();
   }
