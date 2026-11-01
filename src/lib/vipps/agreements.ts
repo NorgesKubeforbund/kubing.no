@@ -152,7 +152,7 @@ export async function createCharges(): Promise<boolean> {
   if (!chargeDate) {
     return true;
   }
-  const eligbleUsers = await getUsersForChargeCreation();
+  const eligbleUsers = await getUsersForChargeCreation(chargeDate.year);
   for (const user of eligbleUsers) {
     await createChargeDatabase(user.userId, chargeDate);
   }
@@ -189,6 +189,7 @@ function getNextChargeDate(): { year: number, due: string } | null {
 async function createChargeDatabase(userId: number, chargeDate: { year: number, due: string }) {
   const client = await getClient();
   try {
+    await client.query("BEGIN");
     const user = await getUserLock(userId, client);
     if (!user) {
       await client.query("ROLLBACK");
@@ -201,6 +202,11 @@ async function createChargeDatabase(userId: number, chargeDate: { year: number, 
     }
     const { agreementId } = agreement;
     const { year, due } = chargeDate;
+    const isMember = await isUserMemberInYearWithClient(userId, year, client);
+    if (isMember) {
+      await client.query("ROLLBACK");
+      return;
+    }
     const chargeId = await getOrderNumber(client);
     const vippsReference = getVippsReference(chargeId);
     await addCharge(chargeId, agreementId, year, vippsReference, due, client);
@@ -216,6 +222,7 @@ async function createChargeDatabase(userId: number, chargeDate: { year: number, 
 async function createChargeVipps(userId: number): Promise<void> {
   const client = await getClient();
   try {
+    await client.query("BEGIN");
     const user = await getUserLock(userId, client);
     if (!user) {
       await client.query("ROLLBACK");
@@ -245,14 +252,24 @@ async function createChargeVipps(userId: number): Promise<void> {
       await client.query("ROLLBACK")
       return;
     }
+    const isMember = await isUserMemberInYearWithClient(userId, year, client);
+    if (isMember) {
+      await setChargeCancelledBeforeCreation(chargeId, client);
+      await client.query("COMMIT");
+      return;
+    }
     const createChargeSuccess = await createCharge(agreementRef, chargeRef, due, year);
     if (!createChargeSuccess) {
       await client.query("ROLLBACK");
       return;
     }
     await setChargeCreated(chargeId, client);
-    await notifyOfPaymentDue(user, Math.floor(getMembershipCost() / 100).toString(), due);
     await client.query("COMMIT");
+    try {
+      await notifyOfPaymentDue(user, Math.floor(getMembershipCost() / 100).toString(), due);
+    } catch (e) {
+      console.error(e);
+    }
   } catch (e) {
     console.error(e);
     await client.query("ROLLBACK");
