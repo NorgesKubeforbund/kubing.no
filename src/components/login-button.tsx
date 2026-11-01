@@ -10,7 +10,7 @@ export default function LoginButton({ redirect }: { redirect?: string }) {
 
   async function login() {
     setLoading(true);
-    const res = await fetch(`/api/auth/login${redirect ? `?redirect=${redirect}` : ""}`);
+    const res = await fetch(`/api/auth/login${redirect ? `?redirect=${encodeURIComponent(redirect)}` : ""}`);
     if (!res.ok) {
       setLoading(false);
       alert("Noe gikk galt");
