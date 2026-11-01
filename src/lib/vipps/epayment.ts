@@ -103,14 +103,14 @@ export async function claimMembership(userId: number): Promise<boolean> {
         break;
       case "duplicate_payment":
         if (alreadyCaptured) {
-          const cancelRes = await cancelEpayment(order.vippsReference, false);
-          if (!cancelRes.success) {
+          const refundRes = await refundEpayment(order.vippsReference);
+          if (!refundRes.success) {
             await client.query("ROLLBACK");
             return false;
           }
         } else {
-          const refundRes = await refundEpayment(order.vippsReference);
-          if (!refundRes.success) {
+          const cancelRes = await cancelEpayment(order.vippsReference, false);
+          if (!cancelRes.success) {
             await client.query("ROLLBACK");
             return false;
           }
@@ -172,14 +172,14 @@ async function handleOpenOrder(order: { id: number, userId: number, vippsReferen
           break;
         case "duplicate_payment":
           if (alreadyCaptured) {
-            const cancelRes = await cancelEpayment(order.vippsReference, false);
-            if (!cancelRes.success) {
+            const refundRes = await refundEpayment(order.vippsReference);
+            if (!refundRes.success) {
               await client.query("ROLLBACK");
               return;
             }
           } else {
-            const refundRes = await refundEpayment(order.vippsReference);
-            if (!refundRes.success) {
+            const cancelRes = await cancelEpayment(order.vippsReference, false);
+            if (!cancelRes.success) {
               await client.query("ROLLBACK");
               return;
             }
