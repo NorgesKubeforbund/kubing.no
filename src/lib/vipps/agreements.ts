@@ -6,6 +6,7 @@ import {
   getActiveAgreementByUserId,
   getActiveAgreementsNotInList,
   getActiveAgreementWithNoCreatedChargeByUserId,
+  getChargesDue,
   getChargeToBeCreated,
   getOpenAgreements,
   getOpenInitialCharges,
@@ -22,6 +23,7 @@ import {
   setChargeCancelled,
   setChargeCancelledBeforeCreation,
   setChargeCreated,
+  setChargeFailed,
   setChargeRefunded,
 } from "@/lib/vipps/queries";
 import { isUserMemberInYearWithClient } from "@/lib/membership";
@@ -405,6 +407,84 @@ async function handleOpenAgreement(agreement: { userId: number, vippsReference: 
         await setAgreementStoppedByVippsReference(vippsReference, client);
         await client.query("COMMIT");
         return;
+    }
+  } catch (e) {
+    await client.query("ROLLBACK").catch(() => { });
+    console.error(e);
+  } finally {
+    client.release();
+  }
+}
+
+export async function handleChargesDue(): Promise<boolean> {
+  const chargesDue = await getChargesDue();
+  for (const charge of chargesDue) {
+    await handleChargeDue(charge);
+  }
+  return true;
+}
+
+async function handleChargeDue(charge: { id: number, userId: number, chargeRef: string, agreementRef: string, year: number }): Promise<void> {
+  const { id, userId, chargeRef, agreementRef, year } = charge;
+  const client = await getClient();
+  try {
+    await client.query("BEGIN");
+    const user = await getUserLock(userId, client);
+    if (!user) {
+      await client.query("ROLLBACK");
+      return;
+    }
+    const chargeRes = await getCharge(agreementRef, chargeRef);
+    if (!chargeRes.success) {
+      await client.query("ROLLBACK");
+      return;
+    }
+    const status = chargeRes.data.status;
+    if (status === "PENDING" || status === "DUE" || status === "PROCESSING") {
+      await client.query("ROLLBACK");
+      return;
+    }
+    if (status === "CANCELLED") {
+      await setChargeCancelled(id, client);
+      await client.query("COMMIT");
+      return;
+    }
+    if (status === "FAILED") {
+      await setChargeFailed(id, client);
+      await client.query("COMMIT");
+      return;
+    }
+    if (status === "REFUNDED") {
+      await setChargeRefunded(id, client);
+      await client.query("COMMIT");
+      return;
+    }
+    if (status !== "CHARGED") {
+      await client.query("ROLLBACK");
+      return;
+    }
+    const addMemberRes = await addMemberFromCharge(userId, chargeRef, year, client);
+    switch (addMemberRes) {
+      case "added_membership":
+        break;
+      case "already_processed":
+        await client.query("ROLLBACK");
+        return;
+      case "duplicate_payment":
+        const refundSuccess = await refundCharge(agreementRef, chargeRef)
+        if (!refundSuccess) {
+          await client.query("ROLLBACK");
+          return;
+        }
+        await setChargeRefunded(id, client);
+        await client.query("COMMIT");
+        return;
+    }
+    await client.query("COMMIT");
+    try {
+      await sendMembershipConfirmation(user, { id: id, vippsReference: agreementRef, year });
+    } catch (e) {
+      console.error(e);
     }
   } catch (e) {
     await client.query("ROLLBACK").catch(() => { });

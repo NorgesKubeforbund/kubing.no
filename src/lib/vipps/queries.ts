@@ -157,6 +157,23 @@ export async function getOpenAgreements(): Promise<{ id: number, userId: number,
   `, [])).rows as { id: number, userId: number, vippsReference: string }[];
 }
 
+export async function getChargesDue(): Promise<{ id: number, userId: number, chargeRef: string, agreementRef: string, year: number }[]> {
+  return (await query(`
+    SELECT
+      c.id,
+      a.user_id AS "userId",
+      c.vipps_reference AS "chargeRef",
+      a.vipps_reference AS "agreementRef",
+      c.year
+    FROM charges c
+    JOIN agreements a ON a.id = c.agreement_id
+    WHERE
+      c.status = 'CREATED'
+      AND c.due < (NOW() AT TIME ZONE 'Europe/Oslo')::date
+      AND c.type = 'RECURRING'
+  `, [])).rows as { id: number, userId: number, chargeRef: string, agreementRef: string, year: number }[];
+}
+
 export async function saveCreatedAgreement(userId: number, vippsReference: string, client: PoolClient): Promise<number> {
   const res = await client.query(`
     INSERT INTO agreements
