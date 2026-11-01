@@ -18,6 +18,15 @@ async function sendMail(email: string, subject: string, html: string) {
   }
 }
 
+function escapeHtml(text: string) {
+  return text
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll("\"", "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
 function htmlTemplate(content: string) {
   return `\
 <!DOCTYPE html>
@@ -55,7 +64,8 @@ function htmlTemplate(content: string) {
 }
 
 export async function sendMembershipConfirmation(user: UserLock, order: OrderCreated) {
-  const { name, email } = user;
+  const { email } = user;
+  const name = escapeHtml(user.name);
   const { id: orderNumber, year } = order;
   const orderConfirmationHtml = `\
 <tr>
@@ -89,7 +99,8 @@ export async function sendMembershipConfirmation(user: UserLock, order: OrderCre
 }
 
 export async function notifyOfPaymentDue(user: UserLock, price: string, due: string) {
-  const { name, email } = user;
+  const { email } = user;
+  const name = escapeHtml(user.name);
   const { norwegian: norwegianDueDate, english: englishDueDate } = formatDate(due);
   const paymentDueHtml = `\
 <tr>
@@ -124,7 +135,8 @@ export async function notifyOfPaymentDue(user: UserLock, price: string, due: str
 }
 
 export async function notifyOfAgreementEndedAfterFailedCharge(user: UserLock) {
-  const { name, email } = user;
+  const { email } = user;
+  const name = escapeHtml(user.name);
   const paymentDueHtml = `\
 <tr>
   <td style="margin: 8px; padding: 16px; padding-bottom: 8px; color:#171717; font-size:14px; line-height:1.5;">
