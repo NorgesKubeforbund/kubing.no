@@ -164,13 +164,13 @@ async function handleOpenOrderForCreation(user: UserLock, client: PoolClient): P
         break;
       case "duplicate_payment":
         if (alreadyCaptured) {
-          const cancelRes = await cancelEpayment(order.vippsReference, false);
-          if (!cancelRes.success) {
+          const refundRes = await refundEpayment(order.vippsReference);
+          if (!refundRes.success) {
             return { success: false };
           }
         } else {
-          const refundRes = await refundEpayment(order.vippsReference);
-          if (!refundRes.success) {
+          const cancelRes = await cancelEpayment(order.vippsReference, false);
+          if (!cancelRes.success) {
             return { success: false };
           }
         }
