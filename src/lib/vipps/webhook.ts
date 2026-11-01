@@ -148,7 +148,7 @@ async function handleChargeCaptured(payload: RecurringChargeCaptured): Promise<b
         const refundSuccess = await refundCharge(payload.agreementId, payload.chargeId)
         if (!refundSuccess) {
           await client.query("ROLLBACK");
-          return true;
+          return false;
         }
         await setChargeRefunded(res.chargeId, client);
         await client.query("COMMIT");
