@@ -12,5 +12,6 @@ export {
   handleChargesDue,
   handleOpenAgreements,
   handleOpenInitialCharges,
+  handleOrphanedCharges,
   stopAgreement,
 } from "@/lib/vipps/agreements";
