@@ -37,12 +37,23 @@ export async function createVippsPaymentAndGetRedirectUrl(userId: number, paymen
       return { success: false };
     }
     if (handleTransactionRes.activeAgreement) {
-      await client.query("ROLLBACK");
+      await client.query("COMMIT");
+      if (handleTransactionRes.sendEmail) {
+        try {
+          await handleTransactionRes.sendEmail();
+        } catch (e) {
+          console.error(e);
+        }
+      }
       return { success: true, status: "already_has_agreement" };
     }
     if (handleTransactionRes.activatedMembership) {
       await client.query("COMMIT");
-      await handleTransactionRes.sendEmail();
+      try {
+        await handleTransactionRes.sendEmail();
+      } catch (e) {
+        console.error(e);
+      }
       return { success: true, status: "already_member" };
     }
     const orderId = await getOrderNumber(client);

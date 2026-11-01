@@ -32,7 +32,7 @@ import { hasUserActiveAgreementWithClient } from "@/lib/agreement";
 
 type TransactionResult =
   | { success: false }
-  | { success: true; activeAgreement: true }
+  | { success: true; activeAgreement: true; sendEmail: (() => Promise<void>) | null }
   | { success: true; activeAgreement: false; activatedMembership: false, vippsConfirmationUrl: string | null }
   | { success: true; activeAgreement: false; activatedMembership: true; sendEmail: () => Promise<void>, vippsConfirmationUrl: string | null };
 
@@ -55,7 +55,7 @@ export async function handleOpenTransactionForCreation(user: UserLock, isCreatin
   const { userId } = user;
   const hasActiveAgreement = await hasUserActiveAgreementWithClient(userId, client);
   if (hasActiveAgreement) {
-    return { success: true, activeAgreement: true };
+    return { success: true, activeAgreement: true, sendEmail: null };
   }
 
   const orderRes = await handleOpenOrderForCreation(user, client);
@@ -101,6 +101,7 @@ export async function handleOpenTransactionForCreation(user: UserLock, isCreatin
       return {
         success: true,
         activeAgreement: true,
+        sendEmail: sendOrderEmail,
       };
     case "agreement_pending":
       return getNoActiveAgreementResult(sendOrderEmail, agreementRes.vippsConfirmationUrl);
