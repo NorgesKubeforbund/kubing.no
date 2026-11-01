@@ -12,6 +12,7 @@ import { notifyOfAgreementEndedAfterFailedCharge, sendMembershipConfirmation } f
 import { apiStopAgreement, refundCharge } from "@/lib/vipps/api";
 import {
   addMemberFromCharge,
+  getCreatedCharge,
   getUserLockByAgreement,
   getUserLockByCharge,
   setAgreementActive,
@@ -22,6 +23,7 @@ import {
   setChargeFailed,
   setChargeRefunded,
 } from "@/lib/vipps/queries";
+import { handleOpenCharge } from "./agreements";
 
 export async function handleWebhook(payload: WebhookPayload): Promise<boolean> {
   switch (payload.eventType) {
@@ -107,8 +109,15 @@ async function handleAgreementStopped(payload: RecurringAgreementStopped): Promi
       await client.query("ROLLBACK");
       return true;
     }
-    // TODO: Check charge status and handle accordingly
     await client.query("COMMIT");
+    const charge = await getCreatedCharge(user.userId, client);
+    if (charge) {
+      await handleOpenCharge({
+        ...charge,
+        id: charge.chargeId,
+        userId: user.userId,
+      });
+    }
     return true;
   } catch (e) {
     await client.query("ROLLBACK").catch(() => { });
