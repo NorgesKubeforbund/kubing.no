@@ -58,6 +58,10 @@ export async function createVippsAgreementAndGetRedirectUrl(userId: number, base
       };
     }
     if (handleTransactionRes.vippsConfirmationUrl) {
+      await client.query("COMMIT");
+      if (handleTransactionRes.activatedMembership) {
+        await handleTransactionRes.sendEmail();
+      }
       return {
         success: true,
         status: "created_agreement",
@@ -307,6 +311,7 @@ async function stopAgreementIfStopped(stoppedAgreement: { userId: number, vippsR
     }
     const agreementRes = await getAgreement(vippsReference);
     if (!agreementRes.success) {
+      await client.query("ROLLBACK");
       return;
     }
     const status = agreementRes.data.status;
