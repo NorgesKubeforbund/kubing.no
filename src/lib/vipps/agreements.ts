@@ -51,7 +51,14 @@ export async function createVippsAgreementAndGetRedirectUrl(userId: number, base
       return { success: false };
     }
     if (handleTransactionRes.activeAgreement) {
-      await client.query("ROLLBACK");
+      await client.query("COMMIT");
+      if (handleTransactionRes.sendEmail) {
+        try {
+          await handleTransactionRes.sendEmail();
+        } catch (e) {
+          console.error(e);
+        }
+      }
       return {
         success: true,
         status: "already_has_agreement",
@@ -60,7 +67,11 @@ export async function createVippsAgreementAndGetRedirectUrl(userId: number, base
     if (handleTransactionRes.vippsConfirmationUrl) {
       await client.query("COMMIT");
       if (handleTransactionRes.activatedMembership) {
-        await handleTransactionRes.sendEmail();
+        try {
+          await handleTransactionRes.sendEmail();
+        } catch (e) {
+          console.error(e);
+        }
       }
       return {
         success: true,
@@ -79,7 +90,11 @@ export async function createVippsAgreementAndGetRedirectUrl(userId: number, base
       await saveCreatedAgreement(userId, agreement.agreementId, client);
       await client.query("COMMIT");
       if (handleTransactionRes.activatedMembership) {
-        await handleTransactionRes.sendEmail();
+        try {
+          await handleTransactionRes.sendEmail();
+        } catch (e) {
+          console.error(e);
+        }
       }
       return {
         success: true,
