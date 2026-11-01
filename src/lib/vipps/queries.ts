@@ -305,7 +305,7 @@ export async function setChargeCreated(chargeId: number, client: PoolClient): Pr
   await client.query(`
     UPDATE charges
     SET status = 'CREATED'
-    WHERE id = $1
+    WHERE id = $1 AND status = 'NOT_CREATED'
   `, [chargeId]);
 }
 
@@ -350,7 +350,7 @@ export async function setOrderRefunded(orderId: number, client: PoolClient) {
   `, [orderId]);
 }
 
-export async function getUsersForChargeCreation(): Promise<{ userId: number }[]> {
+export async function getUsersForChargeCreation(year: number): Promise<{ userId: number }[]> {
   return (await query(`
     SELECT
       id AS "userId"
@@ -363,8 +363,12 @@ export async function getUsersForChargeCreation(): Promise<{ userId: number }[]>
         FROM CHARGES
         WHERE status = 'NOT_CREATED' OR STATUS = 'CREATED'
       )
+    ) AND id NOT IN (
+      SELECT user_id
+      FROM memberships
+      WHERE year = $1
     )
-  `, [])).rows as { userId: number }[];
+  `, [year])).rows as { userId: number }[];
 }
 
 export async function getUsersWithNotCreatedCharges(): Promise<{ userId: number }[]> {
