@@ -169,7 +169,7 @@ export async function getChargesDue(): Promise<{ id: number, userId: number, cha
     JOIN agreements a ON a.id = c.agreement_id
     WHERE
       c.status = 'CREATED'
-      AND c.due < (NOW() AT TIME ZONE 'Europe/Oslo')::date
+      AND c.payment_due < (NOW() AT TIME ZONE 'Europe/Oslo')::date
       AND c.type = 'RECURRING'
   `, [])).rows as { id: number, userId: number, chargeRef: string, agreementRef: string, year: number }[];
 }
