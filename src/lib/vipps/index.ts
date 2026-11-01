@@ -9,6 +9,7 @@ export {
   checkActiveAgreements,
   createCharges,
   createVippsAgreementAndGetRedirectUrl,
+  handleChargesDue,
   handleOpenAgreements,
   handleOpenInitialCharges,
   stopAgreement,

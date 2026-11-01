@@ -11,5 +11,5 @@ export async function POST(req: NextRequest) {
   if (!success) {
     return NextResponse.json({ error: "Noe gikk galt." }, { status: 500 });
   }
-  return NextResponse.json({ message: "Håndtert åpne ordre." });
+  return NextResponse.json({ message: "Stoppet inaktive avtaler." });
 }
