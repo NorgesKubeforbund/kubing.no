@@ -62,8 +62,12 @@ export default function BecomeMemberButtons({
       setLoading(false);
       return;
     }
-    const agreementCreation = (await res.json()) as { url: string };
-    router.push(agreementCreation.url);
+    const agreementCreation = (await res.json()) as { url?: string };
+    if (agreementCreation.url) {
+      router.push(agreementCreation.url);
+    } else {
+      router.refresh();
+    }
   }
 
   if (hasActiveAgreement) {
