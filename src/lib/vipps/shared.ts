@@ -62,6 +62,7 @@ export async function handleOpenTransactionForCreation(user: UserLock, isCreatin
   if (!orderRes.success) {
     return { success: false };
   }
+  let sendOrderEmail: (() => Promise<void>) | null = null;
   switch (orderRes.status) {
     case "order_paid":
       if (isCreatingEpayment) {
@@ -73,6 +74,8 @@ export async function handleOpenTransactionForCreation(user: UserLock, isCreatin
           vippsConfirmationUrl: null,
         };
       }
+      sendOrderEmail = orderRes.sendEmail;
+      break;
     case "order_cancelled":
       break;
     case "no_order":
@@ -100,12 +103,7 @@ export async function handleOpenTransactionForCreation(user: UserLock, isCreatin
         activeAgreement: true,
       };
     case "agreement_pending":
-      return {
-        success: true,
-        activeAgreement: false,
-        activatedMembership: false,
-        vippsConfirmationUrl: agreementRes.vippsConfirmationUrl,
-      };
+      return getNoActiveAgreementResult(sendOrderEmail, agreementRes.vippsConfirmationUrl);
     case "no_agreement":
       break;
   }
@@ -129,11 +127,24 @@ export async function handleOpenTransactionForCreation(user: UserLock, isCreatin
     case "charge_already_processed":
       break;
   }
+  return getNoActiveAgreementResult(sendOrderEmail, null);
+}
+
+function getNoActiveAgreementResult(sendEmail: (() => Promise<void>) | null, vippsConfirmationUrl: string | null): TransactionResult {
+  if (sendEmail) {
+    return {
+      success: true,
+      activeAgreement: false,
+      activatedMembership: true,
+      sendEmail,
+      vippsConfirmationUrl,
+    };
+  }
   return {
     success: true,
     activeAgreement: false,
     activatedMembership: false,
-    vippsConfirmationUrl: null,
+    vippsConfirmationUrl,
   };
 }
 
