@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { WebhookPayload } from "@/types/webhook";
 import { handleWebhook } from "@/lib/vipps";
+import { safeEqual } from "@/lib/security";
 
 export async function POST(request: NextRequest) {
   const VIPPS_WEBHOOK_SECRET = process.env.VIPPS_WEBHOOK_SECRET;
@@ -40,7 +41,7 @@ export async function POST(request: NextRequest) {
     .update(expectedSignedString)
     .digest("base64")
   const expectedAuth = `HMAC-SHA256 SignedHeaders=x-ms-date;host;x-ms-content-sha256&Signature=${expectedSignature}`;
-  if (givenAuth !== expectedAuth) {
+  if (!safeEqual(givenAuth, expectedAuth)) {
     return NextResponse.json({ error: "Autorisering feilet." }, { status: 401 });
   }
 
