@@ -8,6 +8,7 @@ import {
   Payment,
   UserLock,
   UserLockWithCharge,
+  UserLockWithOrder,
 } from "@/types";
 import { PoolClient } from "pg";
 
@@ -53,6 +54,22 @@ export async function getUserLockByCharge(vippsReference: string, client: PoolCl
     WHERE c.vipps_reference = $1
     FOR UPDATE OF u
   `, [vippsReference])).rows.at(0) as UserLockWithCharge | undefined;
+}
+
+export async function getUserLockByEpayment(vippsReference: string, client: PoolClient): Promise<UserLockWithOrder | undefined> {
+  return (await client.query(`
+    SELECT
+      u.id AS "userId",
+      u.name,
+      u.email,
+      o.id AS "orderId",
+      vipps_reference AS "vippsReference",
+      year
+    FROM users u
+    JOIN orders o ON u.id = o.user_id
+    WHERE o.vipps_reference = $1
+    FOR UPDATE OF u
+  `, [vippsReference])).rows.at(0) as UserLockWithOrder | undefined;
 }
 
 export async function getOrderNumber(client: PoolClient): Promise<number> {
@@ -338,7 +355,7 @@ export async function setOrderCancelled(orderId: number, client: PoolClient) {
   await client.query(`
     UPDATE orders
     SET status = 'CANCELLED'
-    WHERE id = $1
+    WHERE id = $1 AND status = 'CREATED'
   `, [orderId]);
 }
 
