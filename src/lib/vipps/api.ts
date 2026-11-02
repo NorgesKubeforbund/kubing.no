@@ -35,6 +35,10 @@ const STANDARD_HEADERS = {
   "Vipps-System-Plugin-Version": "1.0.0",
 };
 
+function getProductDescription(name: string) {
+  return `Medlemskap for ${name.split(" ")[0]}`.substring(0, 100);
+}
+
 async function getAccessToken(): Promise<Maybe<string>> {
   if (!vippsAccessToken || vippsAccessToken.expiresAt < new Date()) {
     const res = await fetch(
@@ -65,7 +69,7 @@ async function getAccessToken(): Promise<Maybe<string>> {
   };
 }
 
-export async function createVippsAgreement(baseUrl: string, charge?: { year: number, vippsReference: string }): Promise<Maybe<VippsAgreementCreateReponse>> {
+export async function createVippsAgreement(baseUrl: string, name: string, charge?: { year: number, vippsReference: string }): Promise<Maybe<VippsAgreementCreateReponse>> {
   const accessTokenRes = await getAccessToken();
   if (!accessTokenRes.success) {
     return { success: false };
@@ -96,7 +100,8 @@ export async function createVippsAgreement(baseUrl: string, charge?: { year: num
         },
         "merchantRedirectUrl": `${baseUrl}/min-side?vipps=avtale`,
         "merchantAgreementUrl": `${baseUrl}/min-side`,
-        "productName": `Medlemskap i NKF`,
+        "productName": "Medlemskap i NKF",
+        "productDescription": getProductDescription(name),
         "initialCharge": charge && {
           "amount": getMembershipCost(),
           "description": `Medlemskap i NKF ${charge.year}`,
@@ -116,6 +121,7 @@ export async function createVippsAgreement(baseUrl: string, charge?: { year: num
     data: agreement,
   };
 }
+
 export async function apiStopAgreement(vippsReference: string): Promise<boolean> {
   const accessTokenRes = await getAccessToken();
   if (!accessTokenRes.success) {
@@ -137,6 +143,37 @@ export async function apiStopAgreement(vippsReference: string): Promise<boolean>
       },
       body: JSON.stringify({
         "status": "STOPPED",
+      }),
+    }
+  );
+  if (!res.ok) {
+    console.error(await res.text());
+    return false;
+  }
+  return true;
+}
+
+export async function updateNameForAgreement(vippsReference: string, name: string): Promise<boolean> {
+  const accessTokenRes = await getAccessToken();
+  if (!accessTokenRes.success) {
+    return false;
+  }
+  const accessToken = accessTokenRes.data;
+  const res = await fetch(
+    `${VIPPS_URL}/recurring/v3/agreements/${vippsReference}`,
+    {
+      method: "PATCH",
+      signal: AbortSignal.timeout(VIPPS_TIMEOUT),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`,
+        "Ocp-Apim-Subscription-Key": VIPPS_SUBSCRIPTION_KEY,
+        "Merchant-Serial-Number": VIPPS_MSN,
+        "Idempotency-Key": randomUUID(),
+        ...STANDARD_HEADERS,
+      },
+      body: JSON.stringify({
+        "productDescription": getProductDescription(name),
       }),
     }
   );
