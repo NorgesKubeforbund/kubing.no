@@ -81,7 +81,7 @@ export async function createVippsAgreementAndGetRedirectUrl(userId: number, base
     }
     const isMember = handleTransactionRes.activatedMembership || await isUserMemberInYearWithClient(userId, year, client);
     if (isMember) {
-      const agreementRes = await createVippsAgreement(baseUrl);
+      const agreementRes = await createVippsAgreement(baseUrl, user.name);
       if (!agreementRes.success) {
         await client.query("ROLLBACK");
         return { success: false };
@@ -104,7 +104,7 @@ export async function createVippsAgreementAndGetRedirectUrl(userId: number, base
     }
     const chargeId = await getOrderNumber(client);
     const vippsReference = getVippsReference(chargeId);
-    const agreementRes = await createVippsAgreement(baseUrl, { year, vippsReference });
+    const agreementRes = await createVippsAgreement(baseUrl, user.name, { year, vippsReference });
     if (!agreementRes.success) {
       await client.query("ROLLBACK");
       return { success: false };
