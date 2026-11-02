@@ -7,8 +7,13 @@ import { redirect } from "next/navigation";
 import RegisterUser from "@/components/forms/register-user";
 import { getUser } from "@/lib/user";
 import { hasUserActiveAgreement } from "@/lib/agreement";
+import WaitForOpenOrder from "@/components/settings/wait-for-open-order";
 
-export default async function MyPage() {
+export default async function MyPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ vipps?: string, ref?: string }>
+}) {
   const { isAuthenticated, userId, permissions } = await getAuth();
   if (!isAuthenticated) {
     redirect("/login");
@@ -16,6 +21,12 @@ export default async function MyPage() {
   if (userId === null) {
     return <RegisterUser />;
   }
+
+  const { vipps } = await searchParams;
+  if (vipps === "avtale" || vipps === "betaling") {
+    return <WaitForOpenOrder type={vipps} />
+  }
+  
   const user = await getUser(userId);
   const isMember = await isUserMember(userId);
   const hasActiveAgreement = await hasUserActiveAgreement(userId);

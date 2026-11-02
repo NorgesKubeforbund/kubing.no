@@ -50,6 +50,7 @@ export default function BecomeMemberButtons({
     } else {
       router.push(orderCreation.url);
     }
+    setLoading(false);
   }
 
   async function redirectToAutomaticVipps() {
@@ -68,6 +69,7 @@ export default function BecomeMemberButtons({
     } else {
       router.refresh();
     }
+    setLoading(false);
   }
 
   if (hasActiveAgreement) {
