@@ -142,7 +142,7 @@ export async function getOpenOrders(): Promise<{ id: number, userId: number, vip
       vipps_reference AS "vippsReference",
       year
     FROM orders
-    WHERE status = 'CREATED' AND created_at < NOW() - INTERVAL '3 minutes'
+    WHERE status = 'CREATED' AND created_at < NOW() - INTERVAL '10 seconds'
   `, [])).rows as { id: number, userId: number, vippsReference: string, year: number }[];
 }
 
@@ -158,7 +158,7 @@ export async function getOpenInitialCharges(): Promise<{ id: number, userId: num
     JOIN agreements a ON a.id = c.agreement_id
     WHERE
       c.status = 'CREATED'
-      AND c.created_at < NOW() - INTERVAL '3 minutes'
+      AND c.created_at < NOW() - INTERVAL '10 seconds'
       AND c.type = 'INITIAL'
   `, [])).rows as { id: number, userId: number, chargeRef: string, agreementRef: string, year: number }[];
 }
@@ -170,7 +170,7 @@ export async function getOpenAgreements(): Promise<{ id: number, userId: number,
       user_id AS "userId",
       vipps_reference AS "vippsReference"
     FROM agreements
-    WHERE status = 'CREATED' AND created_at < NOW() - INTERVAL '3 minutes'
+    WHERE status = 'CREATED' AND created_at < NOW() - INTERVAL '10 seconds'
   `, [])).rows as { id: number, userId: number, vippsReference: string }[];
 }
 
