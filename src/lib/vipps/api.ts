@@ -94,7 +94,7 @@ export async function createVippsAgreement(baseUrl: string, charge?: { year: num
           "unit": "YEAR",
           "count": 1,
         },
-        "merchantRedirectUrl": `${baseUrl}/min-side`,
+        "merchantRedirectUrl": `${baseUrl}/min-side?vipps=avtale`,
         "merchantAgreementUrl": `${baseUrl}/min-side`,
         "productName": `Medlemskap i NKF`,
         "initialCharge": charge && {
@@ -338,7 +338,7 @@ export async function createEpayment(baseUrl: string, vippsReference: string, pa
         "amount": { "currency": "NOK", "value": getMembershipCost() },
         "paymentMethod": { "type": paymentType },
         "reference": vippsReference,
-        "returnUrl": `${baseUrl}/min-side`,
+        "returnUrl": `${baseUrl}/min-side?vipps=betaling`,
         "userFlow": "WEB_REDIRECT",
         "paymentDescription": `Medlemskap i NKF ${year}`,
       }),
