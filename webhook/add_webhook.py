@@ -44,6 +44,9 @@ def add_webhook():
                 "recurring.agreement-expired.v1",
                 "recurring.charge-captured.v1",
                 "recurring.charge-failed.v1",
+                "epayments.payment.aborted.v1",
+                "epayments.payment.expired.v1",
+                "epayments.payment.authorized.v1",
             ],
         },
     )

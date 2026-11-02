@@ -29,6 +29,8 @@ export type UserLock = {
 
 export type UserLockWithCharge = (UserLock & { year: number, chargeId: number, agreementId: number, agreementStatus: string });
 
+export type UserLockWithOrder = (UserLock & { year: number, orderId: number, vippsReference: string });
+
 export type VippsPaymentType = "WALLET" | "CARD";
 
 export type VippsPaymentStatus = "CREATED" | "ABORTED" | "EXPIRED" | "AUTHORIZED" | "TERMINATED";

@@ -325,7 +325,10 @@ export type VippsPaymentStatusReponse = {
 
 export type VippsPayment = {
   state: VippsPaymentStatus;
+  authorizedAmount: number;
+  cancelledAmount: number;
   capturedAmount: number;
+  refundedAmount: number;
 };
 
 export type VippsAgreementResponse = {

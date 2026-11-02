@@ -355,7 +355,7 @@ export async function createEpayment(baseUrl: string, vippsReference: string, pa
   };
 }
 
-export async function getEpayment(reference: string): Promise<Maybe<VippsPayment>> {
+export async function getEpayment(reference: string): Promise<MaybeWithStatusCode<VippsPayment>> {
   const accessTokenRes = await getAccessToken();
   if (!accessTokenRes.success) {
     return { success: false };
@@ -376,14 +376,17 @@ export async function getEpayment(reference: string): Promise<Maybe<VippsPayment
   )
   if (!res.ok) {
     console.error(await res.text());
-    return { success: false };
+    return { success: false, status: res.status };
   }
   const payment = await res.json() as VippsPaymentStatusReponse;
   return {
     success: true,
     data: {
       state: payment.state,
-      capturedAmount: payment.aggregate?.capturedAmount?.value ?? 0,
+      authorizedAmount: payment.aggregate.authorizedAmount.value,
+      cancelledAmount: payment.aggregate.cancelledAmount.value,
+      capturedAmount: payment.aggregate.capturedAmount.value,
+      refundedAmount: payment.aggregate.refundedAmount.value,
     },
   };
 }
@@ -438,6 +441,7 @@ export async function refundEpayment(vippsReference: string): Promise<Maybe<Vipp
         "Authorization": `Bearer ${accessToken}`,
         "Ocp-Apim-Subscription-Key": VIPPS_SUBSCRIPTION_KEY,
         "Merchant-Serial-Number": VIPPS_MSN,
+        "Idempotency-Key": `refund-${vippsReference}`,
         ...STANDARD_HEADERS,
       },
       body: JSON.stringify({
