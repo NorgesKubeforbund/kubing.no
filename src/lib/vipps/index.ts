@@ -1,5 +1,10 @@
 export { handleWebhook } from "@/lib/vipps/webhook";
-export { getAllOrders, getAllAgreements } from "@/lib/vipps/queries";
+export {
+  getAgreementStatus,
+  getAllOrders,
+  getAllAgreements,
+  getOrderStatus,
+} from "@/lib/vipps/queries";
 export {
   createVippsPaymentAndGetRedirectUrl,
   handleOpenOrders,

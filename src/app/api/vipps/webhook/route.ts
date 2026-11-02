@@ -4,16 +4,16 @@ import { WebhookPayload } from "@/types/webhook";
 import { handleWebhook } from "@/lib/vipps";
 import { safeEqual } from "@/lib/security";
 
-export async function POST(request: NextRequest) {
+export async function POST(req: NextRequest) {
   const VIPPS_WEBHOOK_SECRET = process.env.VIPPS_WEBHOOK_SECRET;
   if (!VIPPS_WEBHOOK_SECRET) {
     return NextResponse.json({ error: "Feilkonfigurering." }, { status: 500 });
   }
 
-  const givenContentHash = request.headers.get("x-ms-content-sha256");
-  const givenDate = request.headers.get("x-ms-date");
-  const givenHost = request.headers.get("Host");
-  const givenAuth = request.headers.get("Authorization");
+  const givenContentHash = req.headers.get("x-ms-content-sha256");
+  const givenDate = req.headers.get("x-ms-date");
+  const givenHost = req.headers.get("Host");
+  const givenAuth = req.headers.get("Authorization");
   if (!givenContentHash || !givenDate || !givenHost || !givenAuth) {
     return NextResponse.json({ error: "Mangler nødvendige parametre." }, { status: 400 });
   }
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Ugyldig tidsstempel." }, { status: 401 });
   }
 
-  const body = await request.text();
+  const body = await req.text();
 
   const expectedContentHash = crypto
     .createHash("sha256")
@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Ugyldig hash." }, { status: 401 });
   }
 
-  const url = new URL(request.url);
+  const url = new URL(req.url);
   const pathAndQuery = url.pathname + url.search;
   const expectedSignedString = `POST\n${pathAndQuery}\n${givenDate};${givenHost};${givenContentHash}`;
   const expectedSignature = crypto

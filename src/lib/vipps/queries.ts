@@ -535,3 +535,35 @@ export async function setAgreementActive(vippsReference: string, client: PoolCli
     WHERE vipps_reference = $1 AND status = 'CREATED'
   `, [vippsReference]);
 }
+
+export async function getAgreementStatus(userId: number): Promise<"pending" | "done"> {
+  const res = await query(`
+    SELECT EXISTS (
+      SELECT 1
+      FROM agreements a
+      WHERE a.user_id = $1
+        AND (
+          a.status = 'CREATED'
+          OR EXISTS (
+            SELECT 1
+            FROM charges c
+            WHERE c.agreement_id = a.id
+              AND c.status = 'CREATED'
+              AND c.type = 'INITIAL'
+          )
+        )
+    )
+  `, [userId]);
+  return (res.rows[0].exists as boolean) ? "pending" : "done";
+}
+
+export async function getOrderStatus(userId: number): Promise<"pending" | "done"> {
+  const res = await query(`
+    SELECT EXISTS (
+      SELECT 1
+      FROM orders
+      WHERE user_id = $1 AND status = 'CREATED'
+    )
+  `, [userId]);
+  return (res.rows[0].exists as boolean) ? "pending" : "done";
+}
