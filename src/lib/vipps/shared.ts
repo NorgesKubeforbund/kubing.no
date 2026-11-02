@@ -163,8 +163,17 @@ async function handleOpenOrderForCreation(user: UserLock, client: PoolClient): P
     return { success: false };
   }
   const payment = paymentRes.data;
-  const alreadyCaptured = payment.capturedAmount >= getMembershipCost();
-  if (alreadyCaptured || payment.state === "AUTHORIZED") {
+  const cost = getMembershipCost();
+  if (payment.cancelledAmount >= cost || payment.refundedAmount >= cost) {
+    await setOrderRefunded(order.id, client);
+    await client.query("COMMIT");
+    return {
+      success: true,
+      status: "order_cancelled",
+    };
+  }
+  if (payment.state === "AUTHORIZED") {
+    const alreadyCaptured = payment.capturedAmount >= cost;
     const addMemberRes = await addMemberFromOrder(userId, order.id, order.year, order.vippsReference, client);
     switch (addMemberRes) {
       case "already_processed":
@@ -175,16 +184,12 @@ async function handleOpenOrderForCreation(user: UserLock, client: PoolClient): P
       case "added_membership":
         break;
       case "duplicate_payment":
-        if (alreadyCaptured) {
-          const refundRes = await refundEpayment(order.vippsReference);
-          if (!refundRes.success) {
-            return { success: false };
-          }
-        } else {
-          const cancelRes = await cancelEpayment(order.vippsReference, false);
-          if (!cancelRes.success) {
-            return { success: false };
-          }
+        const res = alreadyCaptured
+          ? await refundEpayment(order.vippsReference)
+          : await cancelEpayment(order.vippsReference, false);
+        if (!res.success) {
+          await client.query("ROLLBACK");
+          return { success: false };
         }
         await setOrderRefunded(order.id, client);
         return {

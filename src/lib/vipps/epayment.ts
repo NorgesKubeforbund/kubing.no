@@ -2,7 +2,7 @@ import { getClient } from "@/db";
 import { getCurrentYear } from "@/lib/time";
 import {
   addMemberFromOrder,
-  getCreatedOrder, getOpenOrders,
+  getOpenOrders,
   getOrderNumber,
   getUserLock,
   saveCreatedOrder,
@@ -80,75 +80,6 @@ export async function createVippsPaymentAndGetRedirectUrl(userId: number, paymen
   }
 }
 
-export async function claimMembership(userId: number): Promise<boolean> {
-  const client = await getClient();
-  try {
-    await client.query("BEGIN");
-    const user = await getUserLock(userId, client);
-    if (!user) {
-      await client.query("ROLLBACK");
-      return false;
-    }
-    const order = await getCreatedOrder(userId, client);
-    if (!order) {
-      await client.query("ROLLBACK");
-      return false;
-    }
-    const paymentRes = await getEpayment(order.vippsReference);
-    if (!paymentRes.success) {
-      await client.query("ROLLBACK");
-      return false;
-    }
-    const payment = paymentRes.data;
-    const alreadyCaptured = payment.capturedAmount >= getMembershipCost();
-    if (!alreadyCaptured && payment.state !== "AUTHORIZED") {
-      await client.query("ROLLBACK");
-      return false;
-    }
-    const addMemberRes = await addMemberFromOrder(userId, order.id, order.year, order.vippsReference, client);
-    switch (addMemberRes) {
-      case "already_processed":
-        await client.query("ROLLBACK");
-        return true;
-      case "added_membership":
-        break;
-      case "duplicate_payment":
-        if (alreadyCaptured) {
-          const refundRes = await refundEpayment(order.vippsReference);
-          if (!refundRes.success) {
-            await client.query("ROLLBACK");
-            return false;
-          }
-        } else {
-          const cancelRes = await cancelEpayment(order.vippsReference, false);
-          if (!cancelRes.success) {
-            await client.query("ROLLBACK");
-            return false;
-          }
-        }
-        await setOrderRefunded(order.id, client);
-        await client.query("COMMIT");
-        return false;
-    }
-    if (!alreadyCaptured) {
-      const captureRes = await captureEpayment(order.vippsReference);
-      if (!captureRes.success) {
-        await client.query("ROLLBACK");
-        return false;
-      }
-    }
-    await client.query("COMMIT");
-    await sendMembershipConfirmation(user, order);
-    return true;
-  } catch (e) {
-    await client.query("ROLLBACK").catch(() => { });
-    console.error(e);
-    return false;
-  } finally {
-    client.release();
-  }
-}
-
 export async function handleOpenOrders(): Promise<boolean> {
   const openOrders = await getOpenOrders();
   for (const order of openOrders) {
@@ -172,47 +103,55 @@ async function handleOpenOrder(order: { id: number, userId: number, vippsReferen
       return;
     }
     const payment = paymentRes.data;
-    const alreadyCaptured = payment.capturedAmount >= getMembershipCost();
-    if (alreadyCaptured || payment.state === "AUTHORIZED") {
-      const addMemberRes = await addMemberFromOrder(order.userId, order.id, order.year, order.vippsReference, client);
-      switch (addMemberRes) {
-        case "already_processed":
-          await client.query("ROLLBACK");
-          return;
-        case "added_membership":
-          break;
-        case "duplicate_payment":
-          if (alreadyCaptured) {
-            const refundRes = await refundEpayment(order.vippsReference);
-            if (!refundRes.success) {
-              await client.query("ROLLBACK");
-              return;
-            }
-          } else {
-            const cancelRes = await cancelEpayment(order.vippsReference, false);
-            if (!cancelRes.success) {
-              await client.query("ROLLBACK");
-              return;
-            }
-          }
-          await setOrderRefunded(order.id, client);
-          await client.query("COMMIT");
-          return;
-      }
-      if (!alreadyCaptured) {
-        const captureRes = await captureEpayment(order.vippsReference);
-        if (!captureRes.success) {
+    const terminalStates = ["ABORTED", "EXPIRED", "TERMINATED"];
+    if (terminalStates.includes(payment.state)) {
+      await setOrderCancelled(order.id, client);
+      await client.query("COMMIT");
+      return;
+    }
+    const cost = getMembershipCost();
+    if (payment.cancelledAmount >= cost || payment.refundedAmount >= cost) {
+      await setOrderRefunded(order.id, client);
+      await client.query("COMMIT");
+      return;
+    }
+    if (payment.state !== "AUTHORIZED") {
+      await client.query("ROLLBACK");
+      return;
+    }
+    const alreadyCaptured = payment.capturedAmount >= cost;
+    const addMemberRes = await addMemberFromOrder(user.userId, order.id, order.year, order.vippsReference, client);
+    switch (addMemberRes) {
+      case "already_processed":
+        await client.query("ROLLBACK");
+        return;
+      case "added_membership":
+        break;
+      case "duplicate_payment": {
+        const res = alreadyCaptured
+          ? await refundEpayment(order.vippsReference)
+          : await cancelEpayment(order.vippsReference, false);
+        if (!res.success) {
           await client.query("ROLLBACK");
           return;
         }
+        await setOrderRefunded(order.id, client);
+        await client.query("COMMIT");
+        return;
       }
-      await client.query("COMMIT");
-      await sendMembershipConfirmation(user, { id: order.id, vippsReference: order.vippsReference, year: order.year });
-    } else if (payment.state === "CREATED") {
-      await client.query("ROLLBACK");
-    } else {
-      await setOrderCancelled(order.id, client);
-      await client.query("COMMIT");
+    }
+    if (!alreadyCaptured) {
+      const captureRes = await captureEpayment(order.vippsReference);
+      if (!captureRes.success) {
+        await client.query("ROLLBACK");
+        return;
+      }
+    }
+    await client.query("COMMIT");
+    try {
+      await sendMembershipConfirmation(user, order);
+    } catch (e) {
+      console.error(e);
     }
   } catch (e) {
     await client.query("ROLLBACK").catch(() => { });

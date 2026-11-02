@@ -55,4 +55,18 @@ export type RecurringChargeFailed = ChargeBase & {
 
 export type RecurringChargeEvent = RecurringChargeCaptured | RecurringChargeFailed;
 
-export type WebhookPayload = RecurringAgreementEvent | RecurringChargeEvent;
+export type EpaymentEvent = {
+  msn: string;
+  reference: string;
+  pspReference: string;
+  name: "ABORTED" | "EXPIRED" | "AUTHORIZED";
+  amount: {
+    currency: "NOK";
+    value: number;
+  };
+  timestamp: string;
+  idempotencyKey: string | null;
+  success: boolean;
+};
+
+export type WebhookPayload = RecurringAgreementEvent | RecurringChargeEvent | EpaymentEvent;

@@ -3,7 +3,6 @@ import { getAuth } from "@/lib/auth";
 import BlueLink from "@/components/ui/blue-link";
 import BecomeMemberButtons from "@/components/become-member-buttons";
 import { isUserMember } from "@/lib/membership";
-import { claimMembership } from "@/lib/vipps";
 import { redirect } from "next/navigation";
 import RegisterUser from "@/components/forms/register-user";
 import { getUser } from "@/lib/user";
@@ -18,7 +17,7 @@ export default async function MyPage() {
     return <RegisterUser />;
   }
   const user = await getUser(userId);
-  const isMember = (await isUserMember(userId)) || (await claimMembership(userId));
+  const isMember = await isUserMember(userId);
   const hasActiveAgreement = await hasUserActiveAgreement(userId);
   const hasPermissions = (permissions?.length ?? 0) > 0;
 
