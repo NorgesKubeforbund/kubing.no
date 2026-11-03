@@ -47,10 +47,10 @@ export default function BecomeMemberButtons({
     const orderCreation = (await res.json() as { hasPaid: false; url: string } | { hasPaid: true });
     if (orderCreation.hasPaid) {
       router.refresh();
+      setLoading(false);
     } else {
       router.push(orderCreation.url);
     }
-    setLoading(false);
   }
 
   async function redirectToAutomaticVipps() {
@@ -68,8 +68,8 @@ export default function BecomeMemberButtons({
       router.push(agreementCreation.url);
     } else {
       router.refresh();
+      setLoading(false);
     }
-    setLoading(false);
   }
 
   if (hasActiveAgreement) {

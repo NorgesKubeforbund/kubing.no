@@ -166,7 +166,6 @@ async function handleOpenOrderForCreation(user: UserLock, client: PoolClient): P
   const cost = getMembershipCost();
   if (payment.cancelledAmount >= cost || payment.refundedAmount >= cost) {
     await setOrderRefunded(order.id, client);
-    await client.query("COMMIT");
     return {
       success: true,
       status: "order_cancelled",
@@ -188,7 +187,6 @@ async function handleOpenOrderForCreation(user: UserLock, client: PoolClient): P
           ? await refundEpayment(order.vippsReference)
           : await cancelEpayment(order.vippsReference, false);
         if (!res.success) {
-          await client.query("ROLLBACK");
           return { success: false };
         }
         await setOrderRefunded(order.id, client);
