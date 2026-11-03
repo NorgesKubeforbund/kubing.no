@@ -199,7 +199,8 @@ function getNextChargeDate(): { year: number, due: string } | null {
     };
   }
   const year = getCurrentYear() + 1;
-  const due = `${year}-01-01`;
+  // Year-transition test: charge on the actual date of the simulated new year, which is tomorrow
+  const due = toNorwayDateString(new Date(Date.now() + 1000 * 60 * 60 * 24));
   return {
     year,
     due,

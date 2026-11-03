@@ -1,5 +1,11 @@
+const SIMULATED_TIME_OFFSET_MS = Date.parse("2027-01-01T00:00:00Z") - Date.parse("2026-11-04T00:00:00Z");
+
+function getSimulatedNow(): Date {
+  return new Date(Date.now() + SIMULATED_TIME_OFFSET_MS);
+}
+
 export function getCurrentYear(): number {
-  const now = new Date();
+  const now = getSimulatedNow();
   const year = Number(new Intl.DateTimeFormat("en-US", {
     timeZone: "Europe/Oslo",
     year: "numeric"
@@ -8,7 +14,7 @@ export function getCurrentYear(): number {
 }
 
 export function getCurrentMonth(): number {
-  const now = new Date();
+  const now = getSimulatedNow();
   const month = Number(new Intl.DateTimeFormat("en-US", {
     timeZone: "Europe/Oslo",
     month: "numeric"
