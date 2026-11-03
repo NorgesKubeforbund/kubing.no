@@ -27,10 +27,13 @@ export async function POST() {
     return NextResponse.json({ error: "Noe gikk galt." }, { status: 500 });
   }
   const client = await getClient();
-  const agreement = await getActiveAgreementByUserId(userId, client);
-  client.release();
+  const agreement = await getActiveAgreementByUserId(userId, client).finally(() => client.release());
   if (agreement && preUser.data.name !== postUser.data.name) {
-    await updateNameForAgreement(agreement.vippsReference, postUser.data.name);
+    try {
+      await updateNameForAgreement(agreement.vippsReference, postUser.data.name);
+    } catch (e) {
+      console.error(e);
+    }
   }
   return NextResponse.json({ message: "Informasjon oppdatert." });
 }
