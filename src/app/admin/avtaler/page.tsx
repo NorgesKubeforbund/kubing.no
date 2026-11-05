@@ -16,7 +16,7 @@ export default async function OrderOverviewPage() {
     <div className="flex flex-col px-4 sm:px-8 gap-8 text-center w-full max-w-5xl">
       <div className="flex flex-col gap-2">
         <BackArrow href="/admin" />
-        <Title>Betalingsavtaleoversikt</Title>
+        <Title>Avtaleoversikt</Title>
       </div>
       <AgreementOverview
         agreements={agreements}
