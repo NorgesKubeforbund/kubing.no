@@ -109,7 +109,7 @@ export async function notifyOfPaymentDue(user: UserLock, price: string, due: str
       <p>Vi ønsker å informere om at ditt medlemskap hos NKF vil fornyes
         for ${price} kroner den ${norwegianDueDate}.
       </p>
-      <p>Hvis du ikke lenger ønsker å være medlem, kan du avslutte fast betaling
+      <p>Hvis du ikke lenger ønsker å være medlem, kan du avslutte automatisk fornyelse
         på <a href="https://kubing.no/min-side/innstillinger">Min side</a> eller
         direkte i Vipps-appen.
       </p>
@@ -122,7 +122,7 @@ export async function notifyOfPaymentDue(user: UserLock, price: string, due: str
       <p>We want to let you know that your membership with NKF will be renewed
         for ${price} kroner on ${englishDueDate}.
       </p>
-      <p>If you no longer wish to be a member, you can end the recurring payment
+      <p>If you no longer wish to be a member, you can end the automatic renewal
         at <a href="https://kubing.no/min-side/innstillinger">My page</a> or
         directly in the Vipps app.
       </p>
@@ -142,11 +142,11 @@ export async function notifyOfAgreementEndedAfterFailedCharge(user: UserLock) {
   <td style="margin: 8px; padding: 16px; padding-bottom: 8px; color:#171717; font-size:14px; line-height:1.5;">
       <p>Kjære ${name},</p>
       <p>Vi ønsker å informere om at din betaling for medlemskap hos NKF feilet
-        etter gjentatte forsøk fra Vipps. Vi har derfor avsluttet din faste betaling.
+        etter gjentatte forsøk fra Vipps. Vi har derfor avsluttet din automatisk fornyelse.
       </p>
       <p>Hvis du fortsatt ønsker å være medlem i NKF, må du gå inn
         på <a href="https://kubing.no/min-side">Min side</a> og sette opp
-        fast betaling på nytt eller betale for medlemskap for i år.
+        automatisk fornyelse på nytt eller betale for medlemskap for i år.
       </p>
       <p>Med vennlig hilsen,<br />Norges Kubeforbund</p>
       <br />
@@ -158,7 +158,7 @@ export async function notifyOfAgreementEndedAfterFailedCharge(user: UserLock) {
       </p>
       <p>If you still wish to be a member of NKF, you have to go
         to <a href="https://kubing.no/min-side">My page</a> and set up
-        automatic payment again or pay for membership for this year.
+        automatic renewal again or pay for membership for this year.
       </p>
       <p>Best regards,<br />Norges Kubeforbund</p>
   </td>

@@ -80,7 +80,7 @@ export default function BecomeMemberButtons({
 
   return (
     <div className="flex max-w-xl flex-col gap-4">
-      <Title small>{!isMember ? "Bli medlem" : "Start fast betaling"}</Title>
+      <Title small>{!isMember ? "Bli medlem" : "Start automatisk fornyelse"}</Title>
       {!isMember && year === 2026 && (
         <p className="text-lg">
           Hvis du betalte medlemskontigent før den nye betalingsløsningen,
@@ -107,7 +107,7 @@ export default function BecomeMemberButtons({
                 recurring ? "bg-white" : "not-hover:text-neutral-600 hover:bg-neutral-300",
               )}
             >
-              Fast betaling
+              Automatisk fornyelse
             </button>
           </div>
         )}
@@ -162,7 +162,7 @@ export default function BecomeMemberButtons({
           </div>
           {recurring && (
             <p className="text-sm text-neutral-500">
-              Fast betaling er kun tilgjengelig med Vipps.
+              Automatisk fornyelse er kun tilgjengelig med Vipps.
             </p>
           )}
         </div>
@@ -187,7 +187,7 @@ export default function BecomeMemberButtons({
               </div>
               {recurring && (
                 <p className="text-left text-sm text-neutral-500">
-                  Fornyes hvert år med fast betaling
+                  Fornyes automatisk hvert år
                 </p>
               )}
             </div>
@@ -216,7 +216,7 @@ export default function BecomeMemberButtons({
             {loading
               ? "Venter..."
               : recurring
-                ? "Start fast betaling med Vipps"
+                ? "Start automatisk fornyelse med Vipps"
                 : `Betal med ${paymentType === "WALLET" ? "Vipps" : "kort"}`}
           </button>
         </div>
