@@ -29,7 +29,7 @@ export default async function SettingsPage() {
         <Title>Innstillinger</Title>
       </div>
       <div className="flex flex-col gap-4">
-        <Title small>Fast betaling</Title>
+        <Title small>Automatisk fornyelse</Title>
         <ManageAgreement hasActiveAgreement={userData.hasActiveAgreement} />
       </div>
       <div className="flex flex-col gap-4">
