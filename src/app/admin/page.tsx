@@ -36,6 +36,6 @@ function PermissionLink({
     case "order_overview":
       return <BlueLink href="/admin/ordre">Ordreoversikt</BlueLink>;
     case "agreement_overview":
-      return <BlueLink href="/admin/avtaler">Betalingsavtaleoversikt</BlueLink>;
+      return <BlueLink href="/admin/avtaler">Avtaleoversikt</BlueLink>;
   }
 }
