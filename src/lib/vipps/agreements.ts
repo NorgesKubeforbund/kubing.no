@@ -468,7 +468,7 @@ export async function handleOpenCharge(charge: ChargeWithAgreement): Promise<voi
         return;
       }
       const agreement = await getAgreementById(agreementId, client);
-      if (!agreement || agreement.status === "STOPPED") {
+      if (chargeRes.data.type !== "RECURRING" || !agreement || agreement.status === "STOPPED") {
         await client.query("COMMIT");
         return;
       }
