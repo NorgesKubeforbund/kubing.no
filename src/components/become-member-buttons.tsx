@@ -13,9 +13,11 @@ import { cn } from "@/lib/utils";
 export default function BecomeMemberButtons({
   isMember,
   hasActiveAgreement,
+  membershipCost,
 }: {
   isMember: boolean;
   hasActiveAgreement: boolean;
+  membershipCost: string;
 }) {
   const router = useRouter();
   const year = getCurrentYear();
@@ -183,7 +185,7 @@ export default function BecomeMemberButtons({
             <div className="flex flex-col gap-1 text-left">
               <div className="flex items-baseline justify-between gap-4">
                 <p>Medlemskap {year}</p>
-                <p>100 kr</p>
+                <p>{membershipCost} kr</p>
               </div>
               {recurring && (
                 <p className="text-left text-sm text-neutral-500">

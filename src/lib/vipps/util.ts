@@ -9,3 +9,7 @@ export function getVippsReference(id: number) {
 export function getMembershipCost(): number {
   return MEMBERSHIP_COST;
 }
+
+export function getMembershipCostRoundedString(): string {
+  return Math.floor(getMembershipCost() / 100).toString();
+}
