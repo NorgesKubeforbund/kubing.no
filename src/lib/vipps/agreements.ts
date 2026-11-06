@@ -33,7 +33,7 @@ import { isUserMemberInYearWithClient } from "@/lib/membership";
 import { apiStopAgreement, createCharge, createVippsAgreement, getActiveAgreements, getAgreement, getCharge, refundCharge } from "@/lib/vipps/api";
 import { AgreementCreation, ChargeWithAgreement } from "@/types";
 import { notifyOfAgreementEndedAfterFailedCharge, notifyOfPaymentDue, sendMembershipConfirmation } from "@/lib/mail";
-import { getMembershipCost, getVippsReference } from "@/lib/vipps/util";
+import { getMembershipCostRoundedString, getVippsReference } from "@/lib/vipps/util";
 import { handleOpenTransactionForCreation } from "@/lib/vipps/shared";
 
 export async function createVippsAgreementAndGetRedirectUrl(userId: number, baseUrl: string): Promise<AgreementCreation> {
@@ -286,7 +286,7 @@ async function createChargeVipps(userId: number): Promise<void> {
     await setChargeCreated(chargeId, client);
     await client.query("COMMIT");
     try {
-      await notifyOfPaymentDue(user, Math.floor(getMembershipCost() / 100).toString(), due);
+      await notifyOfPaymentDue(user, getMembershipCostRoundedString(), due);
     } catch (e) {
       console.error(e);
     }

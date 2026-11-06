@@ -8,6 +8,7 @@ import RegisterUser from "@/components/forms/register-user";
 import { getUser } from "@/lib/user";
 import { hasUserActiveAgreement } from "@/lib/agreement";
 import WaitForOpenOrder from "@/components/settings/wait-for-open-order";
+import { getMembershipCostRoundedString } from "@/lib/vipps/util";
 
 export default async function MyPage({
   searchParams,
@@ -39,7 +40,7 @@ export default async function MyPage({
         {user.success && <div className="text-base">Hei {user.data.name.split(" ")[0]}!</div>}
       </div>
       <MembershipBadge isMember={isMember} hasActiveAgreement={hasActiveAgreement} />
-      <BecomeMemberButtons isMember={isMember} hasActiveAgreement={hasActiveAgreement} />
+      <BecomeMemberButtons isMember={isMember} hasActiveAgreement={hasActiveAgreement} membershipCost={getMembershipCostRoundedString()}/>
       <div className="flex flex-col gap-4 mt-auto">
         <BlueLink href="/min-side/innstillinger">Innstillinger</BlueLink>
         {hasPermissions && <BlueLink href="/admin">Admin-side</BlueLink>}
