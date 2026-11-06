@@ -3,7 +3,9 @@ import {
   AddMemberResult,
   Agreement,
   AgreementCreated,
+  AgreementWithUser,
   ChargeCreated,
+  ChargeWithAgreement,
   OrderCreated,
   Payment,
   UserLock,
@@ -118,7 +120,7 @@ export async function getAllOrders(): Promise<Payment[]> {
   `, [])).rows;
 }
 
-export async function getAllAgreements(): Promise<Agreement[]> {
+export async function getAllAgreements(): Promise<AgreementWithUser[]> {
   return (await query(`
     SELECT
       a.id,
@@ -146,21 +148,22 @@ export async function getOpenOrders(): Promise<{ id: number, userId: number, vip
   `, [])).rows as { id: number, userId: number, vippsReference: string, year: number }[];
 }
 
-export async function getOpenInitialCharges(): Promise<{ id: number, userId: number, chargeRef: string, agreementRef: string, year: number }[]> {
+export async function getOpenInitialCharges(): Promise<ChargeWithAgreement[]> {
   return (await query(`
     SELECT
       c.id,
       a.user_id AS "userId",
       c.vipps_reference AS "chargeRef",
       a.vipps_reference AS "agreementRef",
-      c.year
+      c.year,
+      a.id AS "agreementId"
     FROM charges c
     JOIN agreements a ON a.id = c.agreement_id
     WHERE
       c.status = 'CREATED'
       AND c.created_at < NOW() - INTERVAL '10 seconds'
       AND c.type = 'INITIAL'
-  `, [])).rows as { id: number, userId: number, chargeRef: string, agreementRef: string, year: number }[];
+  `, [])).rows as ChargeWithAgreement[];
 }
 
 export async function getOpenAgreements(): Promise<{ id: number, userId: number, vippsReference: string }[]> {
@@ -174,37 +177,39 @@ export async function getOpenAgreements(): Promise<{ id: number, userId: number,
   `, [])).rows as { id: number, userId: number, vippsReference: string }[];
 }
 
-export async function getChargesDue(): Promise<{ id: number, userId: number, chargeRef: string, agreementRef: string, year: number }[]> {
+export async function getChargesDue(): Promise<ChargeWithAgreement[]> {
   return (await query(`
     SELECT
       c.id,
       a.user_id AS "userId",
       c.vipps_reference AS "chargeRef",
       a.vipps_reference AS "agreementRef",
-      c.year
+      c.year,
+      a.id AS "agreementId"
     FROM charges c
     JOIN agreements a ON a.id = c.agreement_id
     WHERE
       c.status = 'CREATED'
       AND c.payment_due <= (NOW() AT TIME ZONE 'Europe/Oslo')::date
       AND c.type = 'RECURRING'
-  `, [])).rows as { id: number, userId: number, chargeRef: string, agreementRef: string, year: number }[];
+  `, [])).rows as ChargeWithAgreement[];
 }
 
-export async function getOrphanedCharges(): Promise<{ id: number, userId: number, chargeRef: string, agreementRef: string, year: number }[]> {
+export async function getOrphanedCharges(): Promise<ChargeWithAgreement[]> {
   return (await query(`
     SELECT
       c.id,
       a.user_id AS "userId",
       c.vipps_reference AS "chargeRef",
       a.vipps_reference AS "agreementRef",
-      c.year
+      c.year,
+      a.id AS "agreementId"
     FROM charges c
     JOIN agreements a ON a.id = c.agreement_id
     WHERE
       a.status IN ('CANCELLED', 'STOPPED')
       AND c.status IN ('CREATED', 'NOT_CREATED')
-  `, [])).rows as { id: number, userId: number, chargeRef: string, agreementRef: string, year: number }[];
+  `, [])).rows as ChargeWithAgreement[];
 }
 
 export async function saveCreatedAgreement(userId: number, vippsReference: string, client: PoolClient): Promise<number> {
@@ -253,6 +258,19 @@ export async function saveCreatedOrder(orderId: number, userId: number, year: nu
       vippsReference,
     ]
   )
+}
+
+export async function getAgreementById(agreementId: number, client: PoolClient): Promise<undefined | Agreement> {
+  return (await client.query(`
+    SELECT
+      id,
+      vipps_reference AS "vippsReference",
+      status,
+      created_at AS "createdAt",
+      user_id AS "userId"
+    FROM agreements
+    WHERE id = $1
+  `, [agreementId])).rows.at(0) as undefined | Agreement;
 }
 
 export async function getActiveAgreementByUserId(userId: number, client: PoolClient): Promise<undefined | { id: number, vippsReference: string }> {
