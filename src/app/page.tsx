@@ -2,6 +2,7 @@
 import UpcomingComps from "@/components/comps/upcoming-comps";
 import BlueLink from "@/components/ui/blue-link";
 import Title from "@/components/ui/title";
+import { getMembershipCostRoundedString } from "@/lib/vipps/util";
 
 async function Home() {
   return (
@@ -30,7 +31,7 @@ async function Home() {
         <div className="flex flex-col gap-4">
           <Title>Bli medlem</Title>
           <p>
-            Medlemskap i Norges Kubeforbund koster 100 kroner i året. Ved å bli medlem støtter
+            Medlemskap i Norges Kubeforbund koster {getMembershipCostRoundedString()} kroner i året. Ved å bli medlem støtter
             du arbeidet vårt slik at vi blant annet kan arrangere flere og større konkurranser.
             Medlem får ofte rabatt på norske konkurranser.
           </p>
