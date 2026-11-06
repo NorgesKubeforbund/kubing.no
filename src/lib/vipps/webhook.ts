@@ -144,6 +144,7 @@ async function handleAgreementStopped(payload: RecurringAgreementStopped): Promi
         ...charge,
         id: charge.chargeId,
         userId: user.userId,
+        agreementId: agreement.id,
       });
     }
     return true;

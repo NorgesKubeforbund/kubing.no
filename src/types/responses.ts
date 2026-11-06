@@ -393,7 +393,8 @@ export type VippsChargeResponse = {
   | "user_action_required"
   | "charge_amount_too_high"
   | "non_technical_error"
-  | "technical_error";
+  | "technical_error"
+  | null;
   failureDescription: string;
   summary: {
     captured: 19900;
