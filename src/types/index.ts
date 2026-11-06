@@ -55,6 +55,15 @@ export type ChargeCreated = {
   due: string;
 };
 
+export type ChargeWithAgreement = {
+  id: number;
+  userId: number;
+  chargeRef: string;
+  agreementRef: string;
+  year: number;
+  agreementId: number;
+};
+
 export type OrderCreation = { success: true, status: "created_order", redirectUrl: string } | { success: true, status: "order_paid" } | { success: true, status: "already_member" } | { success: true, status: "already_has_agreement" } | { success: false };
 
 export type AgreementCreation = { success: true, status: "created_agreement", redirectUrl: string } | { success: true, status: "already_has_agreement" } | { success: false };
@@ -89,6 +98,9 @@ export type Agreement = {
   status: string;
   createdAt: Date;
   userId: number;
+};
+
+export type AgreementWithUser = Agreement & {
   userName: string;
   email: string;
 };

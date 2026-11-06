@@ -6,6 +6,7 @@ import {
   getActiveAgreementByUserId,
   getActiveAgreementsNotInList,
   getActiveAgreementWithNoCreatedChargeByUserId,
+  getAgreementById,
   getChargesDue,
   getChargeToBeCreated,
   getCreatedCharge,
@@ -30,8 +31,8 @@ import {
 } from "@/lib/vipps/queries";
 import { isUserMemberInYearWithClient } from "@/lib/membership";
 import { apiStopAgreement, createCharge, createVippsAgreement, getActiveAgreements, getAgreement, getCharge, refundCharge } from "@/lib/vipps/api";
-import { AgreementCreation } from "@/types";
-import { notifyOfPaymentDue, sendMembershipConfirmation } from "@/lib/mail";
+import { AgreementCreation, ChargeWithAgreement } from "@/types";
+import { notifyOfAgreementEndedAfterFailedCharge, notifyOfPaymentDue, sendMembershipConfirmation } from "@/lib/mail";
 import { getMembershipCost, getVippsReference } from "@/lib/vipps/util";
 import { handleOpenTransactionForCreation } from "@/lib/vipps/shared";
 
@@ -154,6 +155,7 @@ export async function stopAgreement(userId: number): Promise<boolean> {
         ...charge,
         id: charge.chargeId,
         userId,
+        agreementId: agreement.id,
       });
     }
     return true;
@@ -345,6 +347,7 @@ async function stopAgreementIfStopped(stoppedAgreement: { userId: number, vippsR
         ...charge,
         id: charge.chargeId,
         userId,
+        agreementId: agreement.id,
       });
     }
   } catch (e) {
@@ -428,8 +431,8 @@ export async function handleOrphanedCharges(): Promise<boolean> {
   return true;
 }
 
-export async function handleOpenCharge(charge: { id: number, userId: number, chargeRef: string, agreementRef: string, year: number }): Promise<void> {
-  const { id, userId, chargeRef, agreementRef, year } = charge;
+export async function handleOpenCharge(charge: ChargeWithAgreement): Promise<void> {
+  const { id, userId, chargeRef, agreementRef, year, agreementId } = charge;
   const client = await getClient();
   try {
     await client.query("BEGIN");
@@ -459,8 +462,33 @@ export async function handleOpenCharge(charge: { id: number, userId: number, cha
       return;
     }
     if (status === "FAILED") {
-      await setChargeFailed(id, client);
+      const updateSuccess = await setChargeFailed(id, client);
+      if (!updateSuccess) {
+        await client.query("ROLLBACK");
+        return;
+      }
+      const agreement = await getAgreementById(agreementId, client);
+      if (!agreement || agreement.status === "STOPPED") {
+        await client.query("COMMIT");
+        return;
+      }
+      const failureReason = chargeRes.data.failureReason;
+      if (!failureReason || failureReason === "technical_error") {
+        await client.query("COMMIT");
+        return;
+      }
+      const stopAgreementSuccess = await apiStopAgreement(agreementRef);
+      if (!stopAgreementSuccess) {
+        await client.query("ROLLBACK");
+        return;
+      }
+      await setAgreementStopped(agreementId, client);
       await client.query("COMMIT");
+      try {
+        await notifyOfAgreementEndedAfterFailedCharge(user);
+      } catch (e) {
+        console.error(e);
+      }
       return;
     }
     if (status === "REFUNDED") {

@@ -1,6 +1,6 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { Agreement } from "@/types";
+import { AgreementWithUser } from "@/types";
 import { ChevronDownIcon } from "lucide-react";
 import { Fragment, useMemo, useState } from "react";
 
@@ -8,7 +8,7 @@ const PAGE_SIZE = 25;
 
 type AgreementStatus = "CREATED" | "CANCELLED" | "ACTIVE" | "STOPPED";
 
-export default function AgreementOverview({ agreements }: { agreements: Agreement[] }) {
+export default function AgreementOverview({ agreements }: { agreements: AgreementWithUser[] }) {
   const [page, setPage] = useState<number>(1);
   const [agreementFilter, setAgreementFilter] = useState<AgreementStatus | "ALL">("ALL");
   const [expandedIds, setExpandedIds] = useState<Set<number>>(new Set());
