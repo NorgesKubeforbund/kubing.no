@@ -99,7 +99,7 @@ export async function createVippsAgreement(baseUrl: string, name: string, charge
           "count": 1,
         },
         "merchantRedirectUrl": `${baseUrl}/min-side?vipps=avtale`,
-        "merchantAgreementUrl": `${baseUrl}/min-side`,
+        "merchantAgreementUrl": `${baseUrl}/min-side/innstillinger`,
         "productName": "Medlemskap i NKF",
         "productDescription": getProductDescription(name),
         "initialCharge": charge && {
