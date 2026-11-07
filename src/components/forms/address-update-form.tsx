@@ -34,9 +34,17 @@ export default function AddressUpdateForm() {
     window.location.reload()
   }
   return (
-    <form className="flex flex-col gap-4 items-center" onSubmit={updateAddress}>
+    <form
+      className="flex w-full max-w-xl flex-col gap-5 self-center rounded-lg border border-neutral-300 bg-white p-4 sm:p-5"
+      onSubmit={updateAddress}
+    >
       <AddressForm setFieldsFilled={setFieldsFilled} />
-      <input disabled={!fieldsFilled} type="submit" value="Oppdater adresse" className="self-center bg-neutral-100 hover:bg-neutral-400 cursor-pointer disabled:cursor-not-allowed disabled:hover:bg-neutral-100 disabled:text-neutral-400 border rounded-md px-2 py-1 w-fit" />
+      <input
+        disabled={!fieldsFilled}
+        type="submit"
+        value="Oppdater adresse"
+        className="w-full cursor-pointer rounded-lg bg-link-text px-4 py-2.5 text-white transition-colors hover:bg-link-text/85 disabled:cursor-not-allowed disabled:bg-neutral-100 disabled:text-neutral-400 disabled:hover:bg-neutral-100"
+      />
     </form>
   )
 }
