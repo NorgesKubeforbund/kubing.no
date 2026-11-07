@@ -14,6 +14,7 @@ export type UserData = User & {
   isMember: boolean;
   hasActiveAgreement: boolean;
   userId: number;
+  yearsAsMember: number[]
 };
 
 export type Member = User & {
