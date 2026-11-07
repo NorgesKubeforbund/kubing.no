@@ -13,7 +13,7 @@ import { getMembershipCostRoundedString } from "@/lib/vipps/util";
 export default async function MyPage({
   searchParams,
 }: {
-  searchParams: Promise<{ vipps?: string, ref?: string }>
+  searchParams: Promise<{ vipps?: string }>
 }) {
   const { isAuthenticated, userId, permissions } = await getAuth();
   if (!isAuthenticated) {
