@@ -1,4 +1,3 @@
-
 import UpcomingComps from "@/components/comps/upcoming-comps";
 import BlueLink from "@/components/ui/blue-link";
 import Title from "@/components/ui/title";
