@@ -116,8 +116,8 @@ export async function getMembersByWcaIds(wcaIds: string[], year: number): Promis
     SELECT u.name, u.wca_id AS "wcaId"
     FROM users u
     JOIN memberships m ON m.user_id = u.id AND year = $2
-    WHERE u.wca_id = ANY($1)`
-    , [wcaIds, year]);
+    WHERE u.wca_id = ANY($1)
+  `, [wcaIds, year]);
   return res.rows;
 }
 
@@ -125,19 +125,30 @@ export async function getManualMembersByWcaIds(wcaIds: string[]): Promise<UserWi
   const res = await query(`
     SELECT name, wca_id AS "wcaId"
     FROM manual_payments
-    WHERE wca_id = ANY($1)`
-  , [wcaIds]);
+    WHERE wca_id = ANY($1)
+  `, [wcaIds]);
   return res.rows;
 }
 
 export async function getAllYearsWithMembers(): Promise<number[]> {
   const res = await query(`
     SELECT DISTINCT year
-    FROM memberships  
+    FROM memberships
+    ORDER BY year DESC
   `, []);
-  return res.rows.map(row => row.year).sort().reverse();
+  return res.rows.map(row => row.year);
 }
 
 function sortMembers(a: Member, b: Member): number {
   return a.name.localeCompare(b.name, "no", { sensitivity: "base" });
+}
+
+export async function getYearsAsMember(userId: number): Promise<number[]> {
+  const res = await query(`
+    SELECT year
+    FROM memberships
+    WHERE user_id = $1
+    ORDER BY year
+  `, [userId]);
+  return res.rows.map(row => row.year);
 }

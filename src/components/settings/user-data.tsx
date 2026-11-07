@@ -31,12 +31,16 @@ async function UserDataTable({ userData }: { userData: UserData }) {
           </td>
         </tr>
         <tr>
-          <td>Adresse</td>
+          <td>Adresse:</td>
           <td>{userData.address ? `${userData.address.address}, ${userData.address.postCode} ${userData.address.postArea.toLocaleUpperCase("nb-NO")}` : "Ingen adresse registrert"}</td>
         </tr>
         <tr>
           <td>Er medlem i år:</td>
           <td>{userData.isMember ? "Ja" : "Nei"}</td>
+        </tr>
+        <tr>
+          <td>År som medlem:</td>
+          <td>{userData.yearsAsMember.join(", ")}</td>
         </tr>
       </tbody>
     </table>
