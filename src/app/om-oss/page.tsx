@@ -13,7 +13,7 @@ function Introduction() {
         arrangere konkurranser og bidra til å skape et sosialt miljø. Om du
         synes dette høres spennende ut, kan du bli medlem eller finne et
         lokalt miljø å bli kjent med. Du kan medlem deg inn{" "}
-        <BlueLink href="/bli-medlem">her</BlueLink> og finne en oversikt over lokale
+        <BlueLink href="/login">her</BlueLink> og finne en oversikt over lokale
         kubemiljø <BlueLink href="/ressurser/lokale-arrangement">her</BlueLink>.
       </p>
     </div>
