@@ -1,12 +1,14 @@
 "use client";
-import { Order } from "@/types";
+import { cn } from "@/lib/utils";
+import { Payment } from "@/types";
+import { ChevronDownIcon } from "lucide-react";
 import { Fragment, useMemo, useState } from "react";
 
 const PAGE_SIZE = 25;
 
-type OrderStatus = "CREATED" | "CANCELLED" | "COMPLETED";
+type OrderStatus = "CREATED" | "NOT_CREATED" | "CANCELLED" | "CANCELLED_BEFORE_CREATION" | "FAILED" | "COMPLETED";
 
-export default function OrderOverview({ orders }: { orders: Order[] }) {
+export default function OrderOverview({ orders }: { orders: Payment[] }) {
   const [page, setPage] = useState<number>(1);
   const [orderFilter, setOrderFilter] = useState<OrderStatus | "ALL">("ALL");
   const [expandedIds, setExpandedIds] = useState<Set<number>>(new Set());
@@ -38,7 +40,7 @@ export default function OrderOverview({ orders }: { orders: Order[] }) {
     <div className="flex flex-col gap-4">
       <select
         onChange={e => {
-          setOrderFilter(e.target.value as OrderStatus);
+          setOrderFilter(e.target.value as OrderStatus | "ALL");
           setPage(1);
         }}
         className="self-center bg-neutral-100 cursor-pointer disabled:cursor-not-allowed disabled:hover:bg-neutral-100 disabled:text-neutral-400 border rounded-md px-2 py-1 w-fit justify-self-center sm:justify-self-start"
@@ -55,12 +57,25 @@ export default function OrderOverview({ orders }: { orders: Order[] }) {
         <option value="CANCELLED">
           Kansellert
         </option>
+        <option value="NOT_CREATED">
+          Ikke laget
+        </option>
+        <option value="CANCELLED_BEFORE_CREATION">
+          Kansellert før laging
+        </option>
+        <option value="FAILED">
+          Feilet
+        </option>
+        <option value="REFUNDED">
+          Tilbakebetalt
+        </option>
       </select>
       <div className="overflow-x-auto self-center-safe max-w-full sm:text-xl text-sm">
         <table>
           <thead>
             <tr>
-              <th>Ordrenummer</th>
+              <th></th>
+              <th>Ordrenr.</th>
               <th>Navn</th>
               <th>Status</th>
             </tr>
@@ -74,13 +89,14 @@ export default function OrderOverview({ orders }: { orders: Order[] }) {
                     onClick={() => toggleExpanded(order.id)}
                     className={`cursor-pointer hover:bg-neutral-400 ${index % 2 === 0 ? "bg-neutral-300" : "bg-neutral-200"}`}
                   >
+                    <td><ChevronDownIcon className={cn(`transition-transform duration-200`, isExpanded && "-rotate-180")}/> </td>
                     <td>{order.id}</td>
                     <td>{order.userName}</td>
                     <td>{translateStatus(order.status)}</td>
                   </tr>
                   {isExpanded && (
                     <tr className="bg-neutral-100">
-                      <td colSpan={3} className="p-0">
+                      <td colSpan={4} className="p-0">
                         <table className="w-full text-left text-sm">
                           <tbody>
                             <tr>
@@ -103,6 +119,22 @@ export default function OrderOverview({ orders }: { orders: Order[] }) {
                               <td>Opprettet</td>
                               <td>{new Date(order.createdAt).toLocaleString("nb-NO", { dateStyle: "full", timeStyle: "medium" })}</td>
                             </tr>
+                            <tr className="border-t border-neutral-300">
+                              <td>Ordretype</td>
+                              <td>{order.kind === "order" ? "Engangsbetaling" : (order.type === "INITIAL" ? "Startbetaling" : "Automatisk")}</td>
+                            </tr>
+                            {order.kind === "charge" && order.paymentDue &&
+                              <tr className="border-t border-neutral-300">
+                                <td>Forfall</td>
+                                <td>
+                                  {new Date(order.paymentDue).toLocaleDateString("nb-NO", {
+                                    month: "long",
+                                    day: "numeric",
+                                    year: "numeric",
+                                  })}
+                                </td>
+                              </tr>
+                            }
                           </tbody>
                         </table>
                       </td>
@@ -147,6 +179,14 @@ function translateStatus(status: string) {
       return "Betalt";
     case "CANCELLED":
       return "Kansellert";
+    case "NOT_CREATED":
+      return "Ikke laget";
+    case "CANCELLED_BEFORE_CREATION":
+      return "Kansellert før laging";
+    case "FAILED":
+      return "Feilet";
+    case "REFUNDED":
+      return "Tilbakebetalt";
     default:
       return status;
   }

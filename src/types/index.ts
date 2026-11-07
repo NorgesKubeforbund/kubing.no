@@ -3,15 +3,16 @@ import { UrlObject } from "url";
 export type Url = string | UrlObject;
 
 export type User = {
-  name: string,
-  wcaId: string | null,
-  email: string,
-  dob: string,
-  address: Address | null,
+  name: string;
+  wcaId: string | null;
+  email: string;
+  dob: string;
+  address: Address | null;
 };
 
 export type UserData = User & {
   isMember: boolean;
+  hasActiveAgreement: boolean;
   userId: number;
 };
 
@@ -19,6 +20,16 @@ export type Member = User & {
   id: number | null; // TODO: Change to number when manual_payments is removed
   createdAt: string;
 };
+
+export type UserLock = {
+  userId: number;
+  name: string;
+  email: string;
+};
+
+export type UserLockWithCharge = (UserLock & { year: number, chargeId: number, agreementId: number, agreementStatus: string });
+
+export type UserLockWithOrder = (UserLock & { year: number, orderId: number, vippsReference: string });
 
 export type VippsPaymentType = "WALLET" | "CARD";
 
@@ -30,12 +41,66 @@ export type OrderCreated = {
   vippsReference: string;
 };
 
-export type OrderCreation = { success: true, status: "created_order", redirectUrl: string } | { success: true, status: "order_paid" } | { success: true, status: "already_member" } |  { success: false };
+export type AgreementCreated = {
+  id: number;
+  vippsReference: string;
+};
 
-export type Order = OrderCreated & {
+export type ChargeCreated = {
+  chargeId: number;
+  agreementId: number;
+  chargeRef: string;
+  agreementRef: string;
+  year: number;
+  due: string;
+};
+
+export type ChargeWithAgreement = {
+  id: number;
+  userId: number;
+  chargeRef: string;
+  agreementRef: string;
+  year: number;
+  agreementId: number;
+};
+
+export type OrderCreation = { success: true, status: "created_order", redirectUrl: string } | { success: true, status: "order_paid" } | { success: true, status: "already_member" } | { success: true, status: "already_has_agreement" } | { success: false };
+
+export type AgreementCreation = { success: true, status: "created_agreement", redirectUrl: string } | { success: true, status: "already_has_agreement" } | { success: false };
+
+type PaymentBase = {
+  id: number;
+  year: number;
+  vippsReference: string;
   status: string;
   createdAt: Date;
   userId: number;
+  userName: string;
+  email: string;
+};
+
+export type Order = PaymentBase & {
+  kind: "order";
+};
+
+export type Charge = PaymentBase & {
+  kind: "charge";
+  type: "INITIAL" | "RECURRING";
+  paymentDue: Date | null;
+  agreementId: number;
+};
+
+export type Payment = Order | Charge;
+
+export type Agreement = {
+  id: number;
+  vippsReference: string;
+  status: string;
+  createdAt: Date;
+  userId: number;
+};
+
+export type AgreementWithUser = Agreement & {
   userName: string;
   email: string;
 };
@@ -101,7 +166,13 @@ export type WCATokens = {
 
 export type Maybe<T> = { success: true, data: T } | { success: false };
 
-export type UserPermission = "membership_list" | "members_comp" | "order_overview";
+export type MaybeWithStatusCode<T> = { success: true, data: T } | { success: false, status?: number };
+
+export type UserPermission =
+  | "membership_list"
+  | "members_comp"
+  | "order_overview"
+  | "agreement_overview";
 
 export type CompWCIF = {
   persons: {
@@ -114,3 +185,5 @@ export type UserWithWcaId = {
   name: string;
   wcaId: string;
 };
+
+export type AddMemberResult = "added_membership" | "duplicate_payment" | "already_processed";

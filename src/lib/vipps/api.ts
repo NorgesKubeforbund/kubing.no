@@ -1,0 +1,533 @@
+import {
+  VippsAccessTokenResponse,
+  VippsAgreementCreateReponse,
+  VippsAgreementResponse,
+  VippsCancelPayment,
+  VippsChargeResponse,
+  VippsPayment,
+  VippsPaymentCreateReponse,
+  VippsPaymentStatusReponse,
+} from "@/types/responses";
+import { Maybe, MaybeWithStatusCode, VippsPaymentStatus, VippsPaymentType } from "@/types";
+import { randomUUID } from "crypto";
+import { getMembershipCost } from "@/lib/vipps/util";
+
+if (!process.env.VIPPS_URL) throw new Error("VIPPS_URL is missing");
+if (!process.env.VIPPS_CLIENT_ID) throw new Error("VIPPS_CLIENT_ID is missing");
+if (!process.env.VIPPS_CLIENT_SECRET) throw new Error("VIPPS_CLIENT_SECRET is missing");
+if (!process.env.VIPPS_SUBSCRIPTION_KEY) throw new Error("VIPPS_SUBSCRIPTION_KEY is missing");
+if (!process.env.VIPPS_MSN) throw new Error("VIPPS_MSN is missing");
+if (!process.env.VIPPS_REF) throw new Error("VIPPS_REF is missing");
+
+type VippsAccessToken = { accessToken: string, expiresAt: Date }
+let vippsAccessToken: VippsAccessToken | null = null;
+const VIPPS_URL = process.env.VIPPS_URL;
+const VIPPS_CLIENT_ID = process.env.VIPPS_CLIENT_ID;
+const VIPPS_CLIENT_SECRET = process.env.VIPPS_CLIENT_SECRET;
+const VIPPS_SUBSCRIPTION_KEY = process.env.VIPPS_SUBSCRIPTION_KEY;
+const VIPPS_MSN = process.env.VIPPS_MSN;
+const VIPPS_TIMEOUT = 15000;
+
+const STANDARD_HEADERS = {
+  "Vipps-System-Name": "kubing-no",
+  "Vipps-System-Version": "1.0.0",
+  "Vipps-System-Plugin-Name": "kubing-membership",
+  "Vipps-System-Plugin-Version": "1.0.0",
+};
+
+function getProductDescription(name: string) {
+  return `Medlemskap for ${name.split(" ")[0]}`.substring(0, 100);
+}
+
+async function getAccessToken(): Promise<Maybe<string>> {
+  if (!vippsAccessToken || vippsAccessToken.expiresAt < new Date()) {
+    const res = await fetch(
+      `${VIPPS_URL}/accesstoken/get`,
+      {
+        method: "POST",
+        signal: AbortSignal.timeout(VIPPS_TIMEOUT),
+        headers: {
+          ...STANDARD_HEADERS,
+          "Content-Type": "application/json",
+          "client_id": VIPPS_CLIENT_ID,
+          "client_secret": VIPPS_CLIENT_SECRET,
+          "Ocp-Apim-Subscription-Key": VIPPS_SUBSCRIPTION_KEY,
+          "Merchant-Serial-Number": VIPPS_MSN,
+        }
+      }
+    )
+    if (!res.ok) {
+      console.error(await res.text());
+      return { success: false };
+    }
+    const accessToken = await res.json() as VippsAccessTokenResponse;
+    vippsAccessToken = { accessToken: accessToken.access_token, expiresAt: new Date(accessToken.expires_on * 1000 - 1000 * 30) };
+  }
+  return {
+    success: true,
+    data: vippsAccessToken.accessToken,
+  };
+}
+
+export async function createVippsAgreement(baseUrl: string, name: string, charge?: { year: number, vippsReference: string }): Promise<Maybe<VippsAgreementCreateReponse>> {
+  const accessTokenRes = await getAccessToken();
+  if (!accessTokenRes.success) {
+    return { success: false };
+  }
+  const accessToken = accessTokenRes.data;
+  const res = await fetch(
+    `${VIPPS_URL}/recurring/v3/agreements`,
+    {
+      method: "POST",
+      signal: AbortSignal.timeout(VIPPS_TIMEOUT),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`,
+        "Ocp-Apim-Subscription-Key": VIPPS_SUBSCRIPTION_KEY,
+        "Merchant-Serial-Number": VIPPS_MSN,
+        "Idempotency-Key": charge?.vippsReference ?? randomUUID(),
+        ...STANDARD_HEADERS,
+      },
+      body: JSON.stringify({
+        "pricing": {
+          "type": "LEGACY",
+          "amount": getMembershipCost(),
+          "currency": "NOK",
+        },
+        "interval": {
+          "unit": "YEAR",
+          "count": 1,
+        },
+        "merchantRedirectUrl": `${baseUrl}/min-side?vipps=avtale`,
+        "merchantAgreementUrl": `${baseUrl}/min-side`,
+        "productName": "Medlemskap i NKF",
+        "productDescription": getProductDescription(name),
+        "initialCharge": charge && {
+          "amount": getMembershipCost(),
+          "description": `Medlemskap i NKF ${charge.year}`,
+          "transactionType": "DIRECT_CAPTURE",
+          "orderId": charge.vippsReference,
+        },
+      }),
+    }
+  );
+  if (!res.ok) {
+    console.error(await res.text());
+    return { success: false };
+  }
+  const agreement = await res.json() as VippsAgreementCreateReponse;
+  return {
+    success: true,
+    data: agreement,
+  };
+}
+
+export async function apiStopAgreement(vippsReference: string): Promise<boolean> {
+  const accessTokenRes = await getAccessToken();
+  if (!accessTokenRes.success) {
+    return false;
+  }
+  const accessToken = accessTokenRes.data;
+  const res = await fetch(
+    `${VIPPS_URL}/recurring/v3/agreements/${vippsReference}`,
+    {
+      method: "PATCH",
+      signal: AbortSignal.timeout(VIPPS_TIMEOUT),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`,
+        "Ocp-Apim-Subscription-Key": VIPPS_SUBSCRIPTION_KEY,
+        "Merchant-Serial-Number": VIPPS_MSN,
+        "Idempotency-Key": randomUUID(),
+        ...STANDARD_HEADERS,
+      },
+      body: JSON.stringify({
+        "status": "STOPPED",
+      }),
+    }
+  );
+  if (!res.ok) {
+    console.error(await res.text());
+    return false;
+  }
+  return true;
+}
+
+export async function updateNameForAgreement(vippsReference: string, name: string): Promise<boolean> {
+  const accessTokenRes = await getAccessToken();
+  if (!accessTokenRes.success) {
+    return false;
+  }
+  const accessToken = accessTokenRes.data;
+  const res = await fetch(
+    `${VIPPS_URL}/recurring/v3/agreements/${vippsReference}`,
+    {
+      method: "PATCH",
+      signal: AbortSignal.timeout(VIPPS_TIMEOUT),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`,
+        "Ocp-Apim-Subscription-Key": VIPPS_SUBSCRIPTION_KEY,
+        "Merchant-Serial-Number": VIPPS_MSN,
+        "Idempotency-Key": randomUUID(),
+        ...STANDARD_HEADERS,
+      },
+      body: JSON.stringify({
+        "productDescription": getProductDescription(name),
+      }),
+    }
+  );
+  if (!res.ok) {
+    console.error(await res.text());
+    return false;
+  }
+  return true;
+}
+
+export async function getActiveAgreements(): Promise<Maybe<VippsAgreementResponse[]>> {
+  const accessTokenRes = await getAccessToken();
+  if (!accessTokenRes.success) {
+    return { success: false };
+  }
+  const accessToken = accessTokenRes.data;
+
+  const pageNumber = 1;
+  const pageSize = 2000;
+
+  const res = await fetch(
+    `${VIPPS_URL}/recurring/v3/agreements?pageNumber=${pageNumber}&pageSize=${pageSize}`,
+    {
+      signal: AbortSignal.timeout(VIPPS_TIMEOUT),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`,
+        "Ocp-Apim-Subscription-Key": VIPPS_SUBSCRIPTION_KEY,
+        "Merchant-Serial-Number": VIPPS_MSN,
+        ...STANDARD_HEADERS,
+      },
+    }
+  );
+  if (!res.ok) {
+    console.error(await res.text());
+    return { success: false };
+  }
+  const agreements = await res.json() as VippsAgreementResponse[];
+
+  // If we ever hit more than 2000+ agreements, deal with pagination
+  if (agreements.length === 2000) {
+    return { success: false };
+  }
+
+  return {
+    success: true,
+    data: agreements,
+  };
+}
+
+export async function getAgreement(agreementRef: string): Promise<Maybe<VippsAgreementResponse>> {
+  const accessTokenRes = await getAccessToken();
+  if (!accessTokenRes.success) {
+    return { success: false };
+  }
+  const accessToken = accessTokenRes.data;
+  const res = await fetch(
+    `${VIPPS_URL}/recurring/v3/agreements/${agreementRef}`,
+    {
+      signal: AbortSignal.timeout(VIPPS_TIMEOUT),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`,
+        "Ocp-Apim-Subscription-Key": VIPPS_SUBSCRIPTION_KEY,
+        "Merchant-Serial-Number": VIPPS_MSN,
+        ...STANDARD_HEADERS,
+      },
+    }
+  );
+  if (!res.ok) {
+    console.error(await res.text());
+    return { success: false };
+  }
+  const agreement = await res.json() as VippsAgreementResponse;
+  return {
+    success: true,
+    data: agreement,
+  };
+}
+
+export async function getCharge(agreementRef: string, chargeRef: string): Promise<MaybeWithStatusCode<VippsChargeResponse>> {
+  const accessTokenRes = await getAccessToken();
+  if (!accessTokenRes.success) {
+    return { success: false };
+  }
+  const accessToken = accessTokenRes.data;
+  const res = await fetch(
+    `${VIPPS_URL}/recurring/v3/agreements/${agreementRef}/charges/${chargeRef}`,
+    {
+      signal: AbortSignal.timeout(VIPPS_TIMEOUT),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`,
+        "Ocp-Apim-Subscription-Key": VIPPS_SUBSCRIPTION_KEY,
+        "Merchant-Serial-Number": VIPPS_MSN,
+        ...STANDARD_HEADERS,
+      },
+    }
+  );
+  if (!res.ok) {
+    console.error(await res.text());
+    return { success: false, status: res.status };
+  }
+  const charge = await res.json() as VippsChargeResponse;
+  return {
+    success: true,
+    data: charge,
+  };
+}
+
+export async function createCharge(agreementRef: string, chargeRef: string, due: string, year: number): Promise<boolean> {
+  const accessTokenRes = await getAccessToken();
+  if (!accessTokenRes.success) {
+    return false;
+  }
+  const accessToken = accessTokenRes.data;
+  const res = await fetch(
+    `${VIPPS_URL}/recurring/v3/agreements/${agreementRef}/charges`,
+    {
+      method: "POST",
+      signal: AbortSignal.timeout(VIPPS_TIMEOUT),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`,
+        "Ocp-Apim-Subscription-Key": VIPPS_SUBSCRIPTION_KEY,
+        "Merchant-Serial-Number": VIPPS_MSN,
+        "Idempotency-Key": chargeRef,
+        ...STANDARD_HEADERS,
+      },
+      body: JSON.stringify({
+        "amount": getMembershipCost(),
+        "transactionType": "DIRECT_CAPTURE",
+        "description": `Medlemskap i NKF ${year}`,
+        "due": due,
+        "retryDays": 14,
+        "orderId": chargeRef,
+      }),
+    }
+  );
+  if (!res.ok) {
+    console.error(await res.text());
+    return false;
+  }
+  return true;
+}
+
+export async function refundCharge(agreementRef: string, chargeRef: string): Promise<boolean> {
+  const accessTokenRes = await getAccessToken();
+  if (!accessTokenRes.success) {
+    return false;
+  }
+  const accessToken = accessTokenRes.data;
+  const res = await fetch(
+    `${VIPPS_URL}/recurring/v3/agreements/${agreementRef}/charges/${chargeRef}/refund`,
+    {
+      method: "POST",
+      signal: AbortSignal.timeout(VIPPS_TIMEOUT),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`,
+        "Ocp-Apim-Subscription-Key": VIPPS_SUBSCRIPTION_KEY,
+        "Merchant-Serial-Number": VIPPS_MSN,
+        "Idempotency-Key": `refund-${chargeRef}`,
+        ...STANDARD_HEADERS,
+      },
+      body: JSON.stringify({
+        "amount": getMembershipCost(),
+        "description": `Duplikat betaling`,
+      }),
+    }
+  );
+  if (!res.ok) {
+    console.error(await res.text());
+    return false;
+  }
+  return true;
+}
+
+export async function createEpayment(baseUrl: string, vippsReference: string, paymentType: VippsPaymentType, year: number): Promise<Maybe<VippsPaymentCreateReponse>> {
+  const accessTokenRes = await getAccessToken();
+  if (!accessTokenRes.success) {
+    return { success: false };
+  }
+  const accessToken = accessTokenRes.data;
+  const res = await fetch(
+    `${VIPPS_URL}/epayment/v1/payments`,
+    {
+      method: "POST",
+      signal: AbortSignal.timeout(VIPPS_TIMEOUT),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`,
+        "Ocp-Apim-Subscription-Key": VIPPS_SUBSCRIPTION_KEY,
+        "Merchant-Serial-Number": VIPPS_MSN,
+        "Idempotency-Key": vippsReference,
+        ...STANDARD_HEADERS,
+      },
+      body: JSON.stringify({
+        "amount": { "currency": "NOK", "value": getMembershipCost() },
+        "paymentMethod": { "type": paymentType },
+        "reference": vippsReference,
+        "returnUrl": `${baseUrl}/min-side?vipps=betaling`,
+        "userFlow": "WEB_REDIRECT",
+        "paymentDescription": `Medlemskap i NKF ${year}`,
+      }),
+    }
+  );
+  if (!res.ok) {
+    console.error(await res.text());
+    return { success: false };
+  }
+  const payment = await res.json() as VippsPaymentCreateReponse;
+  return {
+    success: true,
+    data: payment,
+  };
+}
+
+export async function getEpayment(reference: string): Promise<MaybeWithStatusCode<VippsPayment>> {
+  const accessTokenRes = await getAccessToken();
+  if (!accessTokenRes.success) {
+    return { success: false };
+  }
+  const accessToken = accessTokenRes.data;
+  const res = await fetch(
+    `${VIPPS_URL}/epayment/v1/payments/${reference}`,
+    {
+      signal: AbortSignal.timeout(VIPPS_TIMEOUT),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`,
+        "Ocp-Apim-Subscription-Key": VIPPS_SUBSCRIPTION_KEY,
+        "Merchant-Serial-Number": VIPPS_MSN,
+        ...STANDARD_HEADERS,
+      },
+    }
+  )
+  if (!res.ok) {
+    console.error(await res.text());
+    return { success: false, status: res.status };
+  }
+  const payment = await res.json() as VippsPaymentStatusReponse;
+  return {
+    success: true,
+    data: {
+      state: payment.state,
+      authorizedAmount: payment.aggregate.authorizedAmount.value,
+      cancelledAmount: payment.aggregate.cancelledAmount.value,
+      capturedAmount: payment.aggregate.capturedAmount.value,
+      refundedAmount: payment.aggregate.refundedAmount.value,
+    },
+  };
+}
+
+export async function cancelEpayment(vippsReference: string, cancelTransactionOnly: boolean): Promise<Maybe<VippsCancelPayment>> {
+  const accessTokenRes = await getAccessToken();
+  if (!accessTokenRes.success) {
+    return { success: false };
+  }
+  const accessToken = accessTokenRes.data;
+  const res = await fetch(
+    `${VIPPS_URL}/epayment/v1/payments/${vippsReference}/cancel`,
+    {
+      method: "POST",
+      signal: AbortSignal.timeout(VIPPS_TIMEOUT),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`,
+        "Ocp-Apim-Subscription-Key": VIPPS_SUBSCRIPTION_KEY,
+        "Merchant-Serial-Number": VIPPS_MSN,
+        ...STANDARD_HEADERS,
+      },
+      body: JSON.stringify({
+        "cancelTransactionOnly": cancelTransactionOnly,
+      }),
+    }
+  );
+  if (!res.ok) {
+    console.error(await res.text());
+    return { success: false };
+  }
+  const status = await res.json() as VippsCancelPayment;
+  return {
+    success: true,
+    data: status,
+  };
+}
+
+export async function refundEpayment(vippsReference: string): Promise<Maybe<VippsCancelPayment>> {
+  const accessTokenRes = await getAccessToken();
+  if (!accessTokenRes.success) {
+    return { success: false };
+  }
+  const accessToken = accessTokenRes.data;
+  const res = await fetch(
+    `${VIPPS_URL}/epayment/v1/payments/${vippsReference}/refund`,
+    {
+      method: "POST",
+      signal: AbortSignal.timeout(VIPPS_TIMEOUT),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`,
+        "Ocp-Apim-Subscription-Key": VIPPS_SUBSCRIPTION_KEY,
+        "Merchant-Serial-Number": VIPPS_MSN,
+        "Idempotency-Key": `refund-${vippsReference}`,
+        ...STANDARD_HEADERS,
+      },
+      body: JSON.stringify({
+        "modificationAmount": { "currency": "NOK", "value": getMembershipCost() },
+      }),
+    }
+  );
+  if (!res.ok) {
+    console.error(await res.text());
+    return { success: false };
+  }
+  const status = await res.json() as VippsCancelPayment;
+  return {
+    success: true,
+    data: status,
+  };
+}
+
+export async function captureEpayment(vippsReference: string): Promise<Maybe<VippsPaymentStatus>> {
+  const accessTokenRes = await getAccessToken();
+  if (!accessTokenRes.success) {
+    return { success: false };
+  }
+  const accessToken = accessTokenRes.data;
+  const res = await fetch(
+    `${VIPPS_URL}/epayment/v1/payments/${vippsReference}/capture`,
+    {
+      method: "POST",
+      signal: AbortSignal.timeout(VIPPS_TIMEOUT),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`,
+        "Ocp-Apim-Subscription-Key": VIPPS_SUBSCRIPTION_KEY,
+        "Merchant-Serial-Number": VIPPS_MSN,
+        "Idempotency-Key": `capture-${vippsReference}`,
+        ...STANDARD_HEADERS,
+      },
+      body: JSON.stringify({
+        "modificationAmount": { "currency": "NOK", "value": getMembershipCost() },
+      }),
+    }
+  )
+  if (!res.ok) {
+    console.error(await res.text());
+    return { success: false };
+  }
+  const status = await res.json() as VippsPaymentStatusReponse;
+  return {
+    success: true,
+    data: status.state,
+  };
+}

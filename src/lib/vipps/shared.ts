@@ -1,0 +1,315 @@
+import {
+  addMemberFromCharge,
+  addMemberFromOrder,
+  getCreatedAgreement,
+  getCreatedCharge,
+  getCreatedOrder,
+  setAgreementActive,
+  setAgreementCancelled,
+  setAgreementStopped,
+  setChargeCancelled,
+  setChargeCancelledBeforeCreation,
+  setChargeCancelledByAgreementId,
+  setChargeFailed,
+  setChargeRefunded,
+  setOrderCancelled,
+  setOrderRefunded,
+} from "@/lib/vipps/queries";
+import { UserLock } from "@/types";
+import { PoolClient } from "pg";
+import {
+  cancelEpayment,
+  captureEpayment,
+  getAgreement,
+  getCharge,
+  getEpayment,
+  refundCharge,
+  refundEpayment,
+} from "@/lib/vipps/api";
+import { getMembershipCost } from "@/lib/vipps/util";
+import { sendMembershipConfirmation } from "@/lib/mail";
+import { hasUserActiveAgreementWithClient } from "@/lib/agreement";
+
+type TransactionResult =
+  | { success: false }
+  | { success: true; activeAgreement: true; sendEmail: (() => Promise<void>) | null }
+  | { success: true; activeAgreement: false; activatedMembership: false, vippsConfirmationUrl: string | null }
+  | { success: true; activeAgreement: false; activatedMembership: true; sendEmail: () => Promise<void>, vippsConfirmationUrl: string | null };
+
+type OrderResult =
+  | { success: false }
+  | { success: true; status: "no_order" | "order_cancelled" | "order_already_processed" }
+  | { success: true; status: "order_paid"; sendEmail: () => Promise<void> };
+
+type AgreementResult =
+  | { success: false }
+  | { success: true; status: "no_agreement" | "agreement_started" | "agreement_cancelled" }
+  | { success: true; status: "agreement_pending", vippsConfirmationUrl: string };
+
+type ChargeResult =
+  | { success: false }
+  | { success: true, status: "no_charge" | "charge_cancelled" | "charge_already_processed" }
+  | { success: true; status: "charge_paid"; sendEmail: () => Promise<void> };;
+
+export async function handleOpenTransactionForCreation(user: UserLock, isCreatingEpayment: boolean, client: PoolClient): Promise<TransactionResult> {
+  const { userId } = user;
+  const hasActiveAgreement = await hasUserActiveAgreementWithClient(userId, client);
+  if (hasActiveAgreement) {
+    return { success: true, activeAgreement: true, sendEmail: null };
+  }
+
+  const orderRes = await handleOpenOrderForCreation(user, client);
+  if (!orderRes.success) {
+    return { success: false };
+  }
+  let sendOrderEmail: (() => Promise<void>) | null = null;
+  switch (orderRes.status) {
+    case "order_paid":
+      if (isCreatingEpayment) {
+        return {
+          success: true,
+          activeAgreement: false,
+          activatedMembership: true,
+          sendEmail: orderRes.sendEmail,
+          vippsConfirmationUrl: null,
+        };
+      }
+      sendOrderEmail = orderRes.sendEmail;
+      break;
+    case "order_cancelled":
+      break;
+    case "no_order":
+      break;
+    case "order_already_processed":
+      if (isCreatingEpayment) {
+        return {
+          success: true,
+          activeAgreement: false,
+          activatedMembership: false,
+          vippsConfirmationUrl: null,
+        };
+      }
+      break;
+  }
+
+  const agreementRes = await handleOpenAgreementForCreation(user, client);
+  if (!agreementRes.success) {
+    return { success: false };
+  }
+  switch (agreementRes.status) {
+    case "agreement_started":
+      return {
+        success: true,
+        activeAgreement: true,
+        sendEmail: sendOrderEmail,
+      };
+    case "agreement_pending":
+      return getNoActiveAgreementResult(sendOrderEmail, agreementRes.vippsConfirmationUrl);
+    case "no_agreement":
+      break;
+  }
+  const chargeRes = await handleOpenChargeForCreation(user, client);
+  if (!chargeRes.success) {
+    return { success: false };
+  }
+  switch (chargeRes.status) {
+    case "charge_paid":
+      return {
+        success: true,
+        activeAgreement: false,
+        activatedMembership: true,
+        sendEmail: chargeRes.sendEmail,
+        vippsConfirmationUrl: null,
+      };
+    case "charge_cancelled":
+      break;
+    case "no_charge":
+      break;
+    case "charge_already_processed":
+      break;
+  }
+  return getNoActiveAgreementResult(sendOrderEmail, null);
+}
+
+function getNoActiveAgreementResult(sendEmail: (() => Promise<void>) | null, vippsConfirmationUrl: string | null): TransactionResult {
+  if (sendEmail) {
+    return {
+      success: true,
+      activeAgreement: false,
+      activatedMembership: true,
+      sendEmail,
+      vippsConfirmationUrl,
+    };
+  }
+  return {
+    success: true,
+    activeAgreement: false,
+    activatedMembership: false,
+    vippsConfirmationUrl,
+  };
+}
+
+async function handleOpenOrderForCreation(user: UserLock, client: PoolClient): Promise<OrderResult> {
+  const { userId } = user;
+  const order = await getCreatedOrder(userId, client);
+  if (!order) {
+    return {
+      success: true,
+      status: "no_order",
+    };
+  }
+  const paymentRes = await getEpayment(order.vippsReference);
+  if (!paymentRes.success) {
+    return { success: false };
+  }
+  const payment = paymentRes.data;
+  const cost = getMembershipCost();
+  if (payment.cancelledAmount >= cost || payment.refundedAmount >= cost) {
+    await setOrderRefunded(order.id, client);
+    return {
+      success: true,
+      status: "order_cancelled",
+    };
+  }
+  if (payment.state === "AUTHORIZED") {
+    const alreadyCaptured = payment.capturedAmount >= cost;
+    const addMemberRes = await addMemberFromOrder(userId, order.id, order.year, order.vippsReference, client);
+    switch (addMemberRes) {
+      case "already_processed":
+        return {
+          success: true,
+          status: "order_already_processed",
+        };
+      case "added_membership":
+        break;
+      case "duplicate_payment":
+        const res = alreadyCaptured
+          ? await refundEpayment(order.vippsReference)
+          : await cancelEpayment(order.vippsReference, false);
+        if (!res.success) {
+          return { success: false };
+        }
+        await setOrderRefunded(order.id, client);
+        return {
+          success: true,
+          status: "order_cancelled",
+        };
+    }
+    if (!alreadyCaptured) {
+      const captureRes = await captureEpayment(order.vippsReference);
+      if (!captureRes.success) {
+        return { success: false };
+      }
+    }
+    return {
+      success: true,
+      status: "order_paid",
+      sendEmail: () => sendMembershipConfirmation(user, order),
+    };
+  }
+  if (payment.state === "CREATED") {
+    const cancelRes = await cancelEpayment(order.vippsReference, true);
+    if (!cancelRes.success) {
+      return { success: false };
+    }
+  }
+  await setOrderCancelled(order.id, client);
+  return {
+    success: true,
+    status: "order_cancelled",
+  };
+}
+
+async function handleOpenAgreementForCreation(user: UserLock, client: PoolClient): Promise<AgreementResult> {
+  const { userId } = user;
+  const agreement = await getCreatedAgreement(userId, client);
+  if (!agreement) {
+    return {
+      success: true,
+      status: "no_agreement",
+    };
+  }
+  const agreementRes = await getAgreement(agreement.vippsReference);
+  if (!agreementRes.success) {
+    return { success: false };
+  }
+  const agreementData = agreementRes.data;
+  const status = agreementData.status;
+  switch (status) {
+    case "ACTIVE":
+      await setAgreementActive(agreement.vippsReference, client);
+      return { success: true, status: "agreement_started" };
+    case "EXPIRED":
+      await setAgreementCancelled(agreement.vippsReference, client);
+      await setChargeCancelledByAgreementId(agreement.id, client);
+      return { success: true, status: "agreement_cancelled" };
+    case "PENDING":
+      return { success: true, status: "agreement_pending", vippsConfirmationUrl: agreementRes.data.vippsConfirmationUrl };
+    case "STOPPED":
+      await setAgreementStopped(agreement.id, client);
+      return { success: true, status: "agreement_cancelled" };
+  }
+}
+
+async function handleOpenChargeForCreation(user: UserLock, client: PoolClient): Promise<ChargeResult> {
+  const { userId } = user;
+  const charge = await getCreatedCharge(userId, client);
+  if (!charge) {
+    return {
+      success: true,
+      status: "no_charge",
+    };
+  }
+  const chargeRes = await getCharge(charge.agreementRef, charge.chargeRef);
+  if (!chargeRes.success) {
+    if (chargeRes.status === 404) {
+      await setChargeCancelledBeforeCreation(charge.chargeId, client)
+      return {
+        success: true,
+        status: "charge_cancelled",
+      };
+    }
+    return { success: false };
+  }
+  const chargeData = chargeRes.data;
+  const status = chargeData.status;
+  if (status === "CHARGED") {
+    const addMemberRes = await addMemberFromCharge(userId, charge.chargeRef, charge.year, client);
+    switch (addMemberRes) {
+      case "added_membership":
+        return {
+          success: true,
+          status: "charge_paid",
+          sendEmail: () => sendMembershipConfirmation(user, { id: charge.chargeId, vippsReference: charge.agreementRef, year: charge.year }),
+        };
+      case "already_processed":
+        return {
+          success: true,
+          status: "charge_already_processed",
+        };
+      case "duplicate_payment":
+        const refundSuccess = await refundCharge(charge.agreementRef, charge.chargeRef)
+        if (!refundSuccess) {
+          return { success: false };
+        }
+        await setChargeRefunded(charge.chargeId, client);
+        return {
+          success: true,
+          status: "charge_cancelled",
+        };
+    }
+  } else if (status === "CANCELLED") {
+    await setChargeCancelled(charge.chargeId, client);
+    return {
+      success: true,
+      status: "charge_cancelled",
+    };
+  } else if (status === "FAILED") {
+    await setChargeFailed(charge.chargeId, client);
+    return {
+      success: true,
+      status: "charge_cancelled",
+    };
+  }
+  return { success: false };
+}

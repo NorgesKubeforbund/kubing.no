@@ -27,21 +27,22 @@ export async function addMembershipIfManuallyPaid(userId: number, wcaId: string,
   const client = await getClient();
   try {
     await client.query("BEGIN");
-    const hasManuallyPaid = (await query("SELECT * FROM manual_payments WHERE wca_id = $1 FOR UPDATE", [wcaId])).rowCount;
+    const hasManuallyPaid = (await client.query("SELECT * FROM manual_payments WHERE wca_id = $1 FOR UPDATE", [wcaId])).rowCount;
     if (hasManuallyPaid) {
-      await query(`
+      await client.query(`
         INSERT INTO memberships
         (user_id, year)
         VALUES
         ($1, $2);
       `, [userId, year]);
-      await query(`
+      await client.query(`
         DELETE FROM manual_payments WHERE wca_id = $1
       `, [wcaId]);
     }
     await client.query("COMMIT");
-  } catch {
-    await client.query("ROLLBACK");
+  } catch (e) {
+    await client.query("ROLLBACK").catch(() => { });
+    console.error(e);
   } finally {
     client.release();
   }

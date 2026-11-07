@@ -1,5 +1,6 @@
-import { OrderCreated, User } from "@/types";
+import { OrderCreated, UserLock } from "@/types";
 import { Resend } from "resend";
+import { formatDate } from "@/lib/time";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const fromDomain = process.env.RESEND_DOMAIN;
@@ -15,6 +16,15 @@ async function sendMail(email: string, subject: string, html: string) {
     console.error("Failed:", error.message);
     return;
   }
+}
+
+function escapeHtml(text: string) {
+  return text
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll("\"", "&quot;")
+    .replaceAll("'", "&#39;");
 }
 
 function htmlTemplate(content: string) {
@@ -53,8 +63,9 @@ function htmlTemplate(content: string) {
 </html>`;
 }
 
-export async function sendMembershipConfirmation(user: User, order: OrderCreated) {
-  const { name, email } = user;
+export async function sendMembershipConfirmation(user: UserLock, order: OrderCreated) {
+  const { email } = user;
+  const name = escapeHtml(user.name);
   const { id: orderNumber, year } = order;
   const orderConfirmationHtml = `\
 <tr>
@@ -85,4 +96,73 @@ export async function sendMembershipConfirmation(user: User, order: OrderCreated
 </tr>`;
   const html = htmlTemplate(orderConfirmationHtml);
   await sendMail(email, `Bekreftelse på medlemskap hos Norges Kubeforbund ${year}`, html);
+}
+
+export async function notifyOfPaymentDue(user: UserLock, price: string, due: string) {
+  const { email } = user;
+  const name = escapeHtml(user.name);
+  const { norwegian: norwegianDueDate, english: englishDueDate } = formatDate(due);
+  const paymentDueHtml = `\
+<tr>
+  <td style="margin: 8px; padding: 16px; padding-bottom: 8px; color:#171717; font-size:14px; line-height:1.5;">
+      <p>Kjære ${name},</p>
+      <p>Vi ønsker å informere om at ditt medlemskap hos NKF vil fornyes
+        for ${price} kroner den ${norwegianDueDate}.
+      </p>
+      <p>Hvis du ikke lenger ønsker å være medlem, kan du avslutte automatisk fornyelse
+        på <a href="https://kubing.no/min-side/innstillinger">Min side</a> eller
+        direkte i Vipps-appen.
+      </p>
+      <p>Takk for at du er medlem i NKF!</p>
+      <p>Med vennlig hilsen,<br />Norges Kubeforbund</p>
+      <br />
+      <hr />
+      <br />
+      <p>Dear ${name},</p>
+      <p>We want to let you know that your membership with NKF will be renewed
+        for ${price} kroner on ${englishDueDate}.
+      </p>
+      <p>If you no longer wish to be a member, you can end the automatic renewal
+        at <a href="https://kubing.no/min-side/innstillinger">My page</a> or
+        directly in the Vipps app.
+      </p>
+      <p>Thank you for being a member of NKF!</p>
+      <p>Best regards,<br />Norges Kubeforbund</p>
+  </td>
+</tr>`;
+  const html = htmlTemplate(paymentDueHtml);
+  await sendMail(email, "Kommende fornyelse av medlemskap i Norges Kubeforbund", html);
+}
+
+export async function notifyOfAgreementEndedAfterFailedCharge(user: UserLock) {
+  const { email } = user;
+  const name = escapeHtml(user.name);
+  const paymentDueHtml = `\
+<tr>
+  <td style="margin: 8px; padding: 16px; padding-bottom: 8px; color:#171717; font-size:14px; line-height:1.5;">
+      <p>Kjære ${name},</p>
+      <p>Vi ønsker å informere om at din betaling for medlemskap hos NKF feilet
+        etter gjentatte forsøk fra Vipps. Vi har derfor avsluttet din automatisk fornyelse.
+      </p>
+      <p>Hvis du fortsatt ønsker å være medlem i NKF, må du gå inn
+        på <a href="https://kubing.no/min-side">Min side</a> og sette opp
+        automatisk fornyelse på nytt eller betale for medlemskap for i år.
+      </p>
+      <p>Med vennlig hilsen,<br />Norges Kubeforbund</p>
+      <br />
+      <hr />
+      <br />
+      <p>Dear ${name},</p>
+      <p>We want to let you know that your payment for membership with NKF failed
+        after repeated attempts from Vipps. We have therefore ended your automatic payment.
+      </p>
+      <p>If you still wish to be a member of NKF, you have to go
+        to <a href="https://kubing.no/min-side">My page</a> and set up
+        automatic renewal again or pay for membership for this year.
+      </p>
+      <p>Best regards,<br />Norges Kubeforbund</p>
+  </td>
+</tr>`;
+  const html = htmlTemplate(paymentDueHtml);
+  await sendMail(email, "Betaling feilet for medlemskap i Norges Kubeforbund", html);
 }
