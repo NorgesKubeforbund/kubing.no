@@ -74,7 +74,7 @@ function RenewalPendingBadge() {
   return (
     <div className="mt-6 bg-yellow-500 border-4 border-yellow-600 text-white rounded-xl p-4 w-fit self-center">
       <div className="text-2xl font-semibold">Medlemskapet fornyes snart</div>
-      <p>Du har aktiv automatisk fornyelse og medlemskapet ditt vil bli fornyet automatisk om kort tid.</p>
+      <p>Du har automatisk fornyelse og medlemskapet ditt vil bli fornyet automatisk om kort tid.</p>
     </div>
   );
 }
