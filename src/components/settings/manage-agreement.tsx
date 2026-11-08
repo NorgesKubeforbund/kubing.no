@@ -3,6 +3,7 @@
 import BlueLink from "@/components/ui/blue-link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import Button from "@/components/ui/button";
 
 export default function ManageAgreement({ hasActiveAgreement }: { hasActiveAgreement: boolean }) {
   const router = useRouter();
@@ -34,13 +35,14 @@ export default function ManageAgreement({ hasActiveAgreement }: { hasActiveAgree
   return (
     <div className="flex flex-col gap-4">
       <div>Du kan når som helst avslutte automatisk fornyelse her eller direkte i Vipps.</div>
-      <button
+      <Button
         onClick={stopAgreement}
         disabled={loading}
-        className="bg-neutral-100 hover:bg-neutral-400 cursor-pointer disabled:cursor-not-allowed disabled:hover:bg-neutral-100 disabled:text-neutral-400 border rounded-md px-2 py-1 w-fit self-center"
+        variant="danger"
+        className="self-center"
       >
         Avslutt automatisk fornyelse
-      </button>
+      </Button>
     </div>
   );
 }

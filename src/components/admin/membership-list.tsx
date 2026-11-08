@@ -2,7 +2,10 @@
 
 import { Member } from "@/types";
 import { useState, useMemo, useRef } from "react";
+import { SearchIcon, XIcon } from "lucide-react";
 import Spinner from "@/components/ui/spinner";
+import Button from "@/components/ui/button";
+import Select from "@/components/ui/select";
 
 const PAGE_SIZE = 25;
 
@@ -49,6 +52,7 @@ export default function MembershipList({
   const [search, setSearch] = useState<string>("");
 
   const requestIdRef = useRef(0);
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   const filteredMembers = useMemo(() => members.filter(member =>
     stripDiacritics(search).split(" ").every(subSearch =>
@@ -92,19 +96,20 @@ export default function MembershipList({
 
   return (
     <div className="flex flex-col gap-4">
-      <select
+      <Select
         defaultValue={initialYear}
         onChange={e => loadMembers(parseInt(e.target.value))}
-        className="self-center bg-neutral-100 cursor-pointer disabled:cursor-not-allowed disabled:hover:bg-neutral-100 disabled:text-neutral-400 border rounded-md px-2 py-1 w-fit justify-self-center sm:justify-self-start"
+        className="self-center"
       >
         {years.map(year => <option key={year}>{year}</option>)}
-      </select>
-      <button
+      </Select>
+      <Button
         onClick={() => exportMembershipCSV(members.filter(member => member.address !== null && parseInt(member.dob.substring(0, 4)) >= selectedYear - 26))}
-        className="bg-neutral-100 hover:bg-neutral-400 cursor-pointer disabled:cursor-not-allowed disabled:hover:bg-neutral-100 disabled:text-neutral-400 border rounded-md px-2 py-1 w-fit self-center"
+        variant="secondary"
+        className="self-center"
       >
         Eksporter medlemsliste
-      </button>
+      </Button>
       {loading ?
         <Spinner className="self-center mt-8" />
         :
@@ -112,16 +117,35 @@ export default function MembershipList({
           <div>
             Antall medlemmer: {members.length}
           </div>
-          <input
-            className="w-full max-w-96 border border-neutral-400 rounded-md px-3 py-2 self-center"
-            type="text"
-            placeholder="Medlemssøk"
-            onChange={e => {
-              setSearch(e.target.value)
-              setPage(1);
-            }}
-            value={search}
-          />
+          <div className="relative w-full max-w-96 self-center">
+            <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-neutral-400" />
+            <input
+              ref={searchInputRef}
+              className="w-full rounded-lg border border-neutral-300 bg-white py-2.5 pl-10 pr-11 transition-colors hover:border-neutral-500 focus:border-neutral-900 focus:outline-none"
+              type="text"
+              placeholder="Medlemssøk"
+              autoComplete="off"
+              onChange={e => {
+                setSearch(e.target.value)
+                setPage(1);
+              }}
+              value={search}
+            />
+            {search !== "" &&
+              <button
+                type="button"
+                aria-label="Tøm søk"
+                onClick={() => {
+                  setSearch("");
+                  setPage(1);
+                  searchInputRef.current?.focus();
+                }}
+                className="absolute right-1.5 top-1/2 -translate-y-1/2 cursor-pointer rounded-md p-1.5 text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-700 focus:outline-none focus-visible:bg-neutral-100 focus-visible:text-neutral-700"
+              >
+                <XIcon className="h-5 w-5" />
+              </button>
+            }
+          </div>
           <div className="overflow-x-auto self-center-safe max-w-full sm:text-xl text-sm">
             <table>
               <thead>
@@ -147,23 +171,25 @@ export default function MembershipList({
           </div>
           {pageCount > 1 &&
             <div className="flex items-center gap-6 self-center mt-2">
-              <button
+              <Button
                 onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="bg-neutral-100 hover:bg-neutral-400 cursor-pointer disabled:cursor-not-allowed disabled:hover:bg-neutral-100 disabled:text-neutral-400 border rounded-md px-2 py-1"
+                variant="secondary"
+                size="sm"
               >
                 Forrige
-              </button>
+              </Button>
               <span className="text-sm">
                 Side {page} av {pageCount}
               </span>
-              <button
+              <Button
                 onClick={() => setPage(p => Math.min(pageCount, p + 1))}
                 disabled={page === pageCount}
-                className="bg-neutral-100 hover:bg-neutral-400 cursor-pointer disabled:cursor-not-allowed disabled:hover:bg-neutral-100 disabled:text-neutral-400 border rounded-md px-2 py-1"
+                variant="secondary"
+                size="sm"
               >
                 Neste
-              </button>
+              </Button>
             </div>
           }
         </>

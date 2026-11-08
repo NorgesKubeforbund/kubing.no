@@ -7,6 +7,8 @@ import { useEffect, useState } from "react";
 import { CreditCardIcon, InfoIcon } from "lucide-react";
 import BlueLink from "@/components/ui/blue-link";
 import Title from "@/components/ui/title";
+import Button from "@/components/ui/button";
+import Tabs from "@/components/ui/tabs";
 import { getCurrentYear } from "@/lib/time";
 import { cn } from "@/lib/utils";
 
@@ -92,26 +94,14 @@ export default function BecomeMemberButtons({
 
       <div className="flex flex-col gap-6 rounded-xl border border-neutral-200 bg-white p-5 sm:p-6">
         {!isMember && (
-          <div className="flex gap-1 rounded-lg bg-neutral-200 p-1">
-            <button
-              onClick={() => setRecurring(false)}
-              className={cn(
-                "flex-1 cursor-pointer rounded-md px-3 py-2 transition-colors",
-                !recurring ? "bg-white" : "not-hover:text-neutral-600 hover:bg-neutral-300",
-              )}
-            >
-              Betal én gang
-            </button>
-            <button
-              onClick={() => setRecurring(true)}
-              className={cn(
-                "flex-1 cursor-pointer rounded-md px-3 py-2 transition-colors",
-                recurring ? "bg-white" : "not-hover:text-neutral-600 hover:bg-neutral-300",
-              )}
-            >
-              Automatisk fornyelse
-            </button>
-          </div>
+          <Tabs
+            options={[
+              { value: false, label: "Betal én gang" },
+              { value: true, label: "Automatisk fornyelse" },
+            ]}
+            value={recurring}
+            onChange={setRecurring}
+          />
         )}
 
         <div className="flex flex-col gap-3">
@@ -208,19 +198,19 @@ export default function BecomeMemberButtons({
             </p>
           </label>
 
-          <button
+          <Button
             disabled={loading || !consent}
             onClick={() =>
               recurring ? redirectToAutomaticVipps() : redirectToVipps(paymentType)
             }
-            className="w-full cursor-pointer rounded-lg bg-link-text px-4 py-3 text-white transition-colors hover:bg-link-text/85 disabled:cursor-not-allowed disabled:bg-neutral-100 disabled:text-neutral-400 disabled:hover:bg-neutral-100"
+            className="w-full"
           >
             {loading
               ? "Venter..."
               : recurring
                 ? "Start automatisk fornyelse med Vipps"
                 : `Betal med ${paymentType === "WALLET" ? "Vipps" : "kort"}`}
-          </button>
+          </Button>
         </div>
       </div>
     </div>

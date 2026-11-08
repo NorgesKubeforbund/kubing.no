@@ -2,6 +2,7 @@
 
 import BlueLink from "@/components/ui/blue-link";
 import { useEffect } from "react";
+import Button from "@/components/ui/button";
 
 export default function ErrorPage({
   error,
@@ -21,12 +22,12 @@ export default function ErrorPage({
         Hvis problemet vedvarer,
             ta kontakt <BlueLink href="/om-oss#kontakt-oss">her</BlueLink>.
       </div>
-      <button
+      <Button
         onClick={retry}
-        className="bg-neutral-100 hover:bg-neutral-400 cursor-pointer disabled:cursor-not-allowed disabled:hover:bg-neutral-100 disabled:text-neutral-400 border rounded-md px-2 py-1 w-fit self-center"
+        className="self-center"
       >
         Prøv igjen
-      </button>
+      </Button>
     </div>
   );
 }

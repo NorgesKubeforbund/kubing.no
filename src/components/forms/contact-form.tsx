@@ -3,6 +3,7 @@
 import { SubmitEvent, useState } from "react";
 import emailjs from "@emailjs/browser";
 import Title from "@/components/ui/title";
+import Button from "@/components/ui/button";
 
 function ContactForm({ serviceId }: { serviceId: string }) {
   const [delivered, setDelivered] = useState<boolean>(false);
@@ -97,9 +98,9 @@ function ContactForm({ serviceId }: { serviceId: string }) {
               <textarea className="w-full bg-transparen border border-neutral-400 rounded-md px-3 py-2" name="message" id="message" placeholder="Melding..." rows={6} required />
             </div>
             <div className="flex flex-row justify-center">
-              <button className="bg-neutral-100 active:bg-neutral-400 hover:bg-neutral-400 cursor-pointer border rounded-md px-2 py-1 w-fit" type="submit">
+              <Button type="submit">
                 Send e-post
-              </button>
+              </Button>
             </div>
           </form>
         </div>}
