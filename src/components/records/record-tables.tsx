@@ -1,6 +1,7 @@
 "use client"
 
 import { ReactNode, useState } from "react";
+import Tabs from "@/components/ui/tabs";
 
 type RecordTableType = "wca" | "unofficial" | "non-wca";
 
@@ -18,26 +19,16 @@ function RecordTables({
   return (
     <div className="flex flex-col gap-4 text-xs sm:text-sm md:text-xl">
       <div className="flex flex-row justify-center">
-        <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 justify-center">
-          <button
-            className={`bg-neutral-100 active:bg-neutral-300 hover:bg-neutral-300 cursor-pointer border rounded-md px-2 py-1 w-fit ${selected === "wca" && "ring-2 ring-blue-400"}`}
-            onClick={() => setSelected("wca")}
-          >
-            Offisielle rekorder
-          </button>
-          <button
-            className={`bg-neutral-100 active:bg-neutral-300 hover:bg-neutral-300 cursor-pointer border rounded-md px-2 py-1 w-fit ${selected === "unofficial" && "ring-2 ring-blue-400"}`}
-            onClick={() => setSelected("unofficial")}
-          >
-            Uoffisielle rekorder
-          </button>
-          <button
-            className={`bg-neutral-100 active:bg-neutral-300 hover:bg-neutral-300 cursor-pointer border rounded-md px-2 py-1 w-fit ${selected === "non-wca" && "ring-2 ring-blue-400"}`}
-            onClick={() => setSelected("non-wca")}
-          >
-            Ikke-WCA rekorder
-          </button>
-        </div>
+        <Tabs
+          options={[
+            { value: "wca", label: "Offisielle rekorder" },
+            { value: "unofficial", label: "Uoffisielle rekorder" },
+            { value: "non-wca", label: "Ikke-WCA rekorder" },
+          ]}
+          value={selected}
+          onChange={setSelected}
+          className="w-full max-w-2xl"
+        />
       </div>
       <div className="flex flex-row justify-center">
         <div className="max-w-[75vw] overflow-x-auto">

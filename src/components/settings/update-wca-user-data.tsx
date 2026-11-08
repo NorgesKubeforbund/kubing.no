@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Button from "@/components/ui/button";
 
 export default function UpdateWCAUserData() {
   const [loading, setLoading] = useState<boolean>(false);
@@ -28,13 +29,13 @@ export default function UpdateWCAUserData() {
         oppdatere informasjonen vi har om deg. Slik at vi har
         riktig navn og kontaktinformasjon.
       </p>
-      <button
+      <Button
         onClick={() => updateWCAUserData()}
-        className="self-center bg-neutral-100 hover:bg-neutral-400 cursor-pointer disabled:cursor-not-allowed disabled:hover:bg-neutral-100 disabled:text-neutral-400 border rounded-md px-2 py-1 w-fit"
+        className="self-center"
         disabled={loading}
       >
         Oppdater informasjon
-      </button>
+      </Button>
     </div>
   );
 }

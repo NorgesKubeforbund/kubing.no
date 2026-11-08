@@ -1,6 +1,7 @@
 "use client";
 
 import AddressForm from "@/components/forms/address-form";
+import Button from "@/components/ui/button";
 import { SubmitEvent, useState } from "react";
 
 export default function AddressUpdateForm() {
@@ -39,12 +40,13 @@ export default function AddressUpdateForm() {
       onSubmit={updateAddress}
     >
       <AddressForm setFieldsFilled={setFieldsFilled} />
-      <input
+      <Button
         disabled={!fieldsFilled}
         type="submit"
-        value="Oppdater adresse"
-        className="w-full cursor-pointer rounded-lg bg-link-text px-4 py-2.5 text-white transition-colors hover:bg-link-text/85 disabled:cursor-not-allowed disabled:bg-neutral-100 disabled:text-neutral-400 disabled:hover:bg-neutral-100"
-      />
+        className="w-full"
+      >
+        Oppdater adresse
+      </Button>
     </form>
   )
 }

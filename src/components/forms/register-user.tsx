@@ -4,6 +4,7 @@ import Title from "@/components/ui/title";
 import { useRouter } from "next/navigation";
 import { SubmitEvent, useState } from "react";
 import AddressForm from "@/components/forms/address-form";
+import Button from "@/components/ui/button";
 
 function RegisterUser() {
   const router = useRouter();
@@ -68,12 +69,13 @@ function RegisterUser() {
           />
           <span>Jeg har ikke norsk adresse</span>
         </label>
-        <input
+        <Button
           disabled={(!fieldsFilled && !hasNotNorwegianAddress) || loading}
           type="submit"
-          value={loading ? "Lager bruker..." : "Lag bruker"}
-          className="w-full cursor-pointer rounded-lg bg-link-text px-4 py-2.5 text-white transition-colors hover:bg-link-text/85 disabled:cursor-not-allowed disabled:bg-neutral-100 disabled:text-neutral-400 disabled:hover:bg-neutral-100"
-        />
+          className="w-full"
+        >
+          {loading ? "Lager bruker..." : "Lag bruker"}
+        </Button>
       </form>
     </div>
   )

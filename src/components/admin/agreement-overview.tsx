@@ -4,6 +4,8 @@ import { cn } from "@/lib/utils";
 import { AgreementWithUser } from "@/types";
 import { ChevronDownIcon } from "lucide-react";
 import { Fragment, useMemo, useState } from "react";
+import Button from "@/components/ui/button";
+import Select from "@/components/ui/select";
 
 const PAGE_SIZE = 25;
 
@@ -39,12 +41,12 @@ export default function AgreementOverview({ agreements }: { agreements: Agreemen
 
   return (
     <div className="flex flex-col gap-4">
-      <select
+      <Select
         onChange={e => {
           setAgreementFilter(e.target.value as AgreementStatus | "ALL");
           setPage(1);
         }}
-        className="self-center bg-neutral-100 cursor-pointer disabled:cursor-not-allowed disabled:hover:bg-neutral-100 disabled:text-neutral-400 border rounded-md px-2 py-1 w-fit justify-self-center sm:justify-self-start"
+        className="self-center"
       >
         <option value="ALL">
           Vis alle
@@ -61,7 +63,7 @@ export default function AgreementOverview({ agreements }: { agreements: Agreemen
         <option value="STOPPED">
           Avsluttet
         </option>
-      </select>
+      </Select>
       <div className="overflow-x-auto self-center-safe max-w-full sm:text-xl text-sm">
         <table>
           <thead>
@@ -120,23 +122,25 @@ export default function AgreementOverview({ agreements }: { agreements: Agreemen
       </div>
       {pageCount > 1 &&
         <div className="flex items-center gap-6 self-center mt-2">
-          <button
+          <Button
             onClick={() => setPage(p => Math.max(1, p - 1))}
             disabled={page === 1}
-            className="bg-neutral-100 hover:bg-neutral-400 cursor-pointer disabled:cursor-not-allowed disabled:hover:bg-neutral-100 disabled:text-neutral-400 border rounded-md px-2 py-1"
+            variant="secondary"
+            size="sm"
           >
             Forrige
-          </button>
+          </Button>
           <span className="text-sm">
             Side {page} av {pageCount}
           </span>
-          <button
+          <Button
             onClick={() => setPage(p => Math.min(pageCount, p + 1))}
             disabled={page === pageCount}
-            className="bg-neutral-100 hover:bg-neutral-400 cursor-pointer disabled:cursor-not-allowed disabled:hover:bg-neutral-100 disabled:text-neutral-400 border rounded-md px-2 py-1"
+            variant="secondary"
+            size="sm"
           >
             Neste
-          </button>
+          </Button>
         </div>
       }
     </div>

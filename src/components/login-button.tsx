@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import Button from "@/components/ui/button";
 
 export default function LoginButton({ redirect }: { redirect?: string }) {
   const [loading, setLoading] = useState<boolean>(false);
@@ -22,19 +23,19 @@ export default function LoginButton({ redirect }: { redirect?: string }) {
   }
 
   return (
-    <button
+    <Button
       disabled={loading}
       onClick={login}
-      className="flex flex-row items-center justify-center gap-3 w-full cursor-pointer rounded-lg bg-link-text px-4 py-2 text-white transition-colors hover:bg-link-text/85 disabled:cursor-not-allowed disabled:bg-neutral-100 disabled:text-neutral-400 disabled:hover:bg-neutral-100"
+      className="w-full gap-3"
     >
       <Image
         src="/wca-logo.svg"
         alt=""
-        width={32}
-        height={32}
-        className="p-1 rounded-sm h-8 w-8 bg-white"
+        width={24}
+        height={24}
+        className="p-0.5 rounded-sm h-6 w-6 bg-white"
       />
       <div>Logg inn med WCA</div>
-    </button>
+    </Button>
   );
 }
