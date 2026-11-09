@@ -195,7 +195,7 @@ export async function getActiveAgreements(): Promise<Maybe<VippsAgreementRespons
   const pageSize = 2000;
 
   const res = await fetch(
-    `${VIPPS_URL}/recurring/v3/agreements?pageNumber=${pageNumber}&pageSize=${pageSize}`,
+    `${VIPPS_URL}/recurring/v3/agreements?status=ACTIVE&pageNumber=${pageNumber}&pageSize=${pageSize}`,
     {
       signal: AbortSignal.timeout(VIPPS_TIMEOUT),
       headers: {
