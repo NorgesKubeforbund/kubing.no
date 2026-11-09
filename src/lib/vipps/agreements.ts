@@ -25,6 +25,7 @@ import {
   setAgreementStoppedByVippsReference,
   setChargeCancelled,
   setChargeCancelledBeforeCreation,
+  setChargeCancelledByAgreementId,
   setChargeCreated,
   setChargeFailed,
   setChargeRefunded,
@@ -387,10 +388,14 @@ async function handleOpenAgreement(agreement: { userId: number, vippsReference: 
         await setAgreementActive(vippsReference, client);
         await client.query("COMMIT");
         return;
-      case "EXPIRED":
-        await setAgreementCancelled(vippsReference, client);
+      case "EXPIRED": {
+        const cancelledAgreement = await setAgreementCancelled(vippsReference, client);
+        if (cancelledAgreement) {
+          await setChargeCancelledByAgreementId(cancelledAgreement.id, client);
+        }
         await client.query("COMMIT");
         return;
+      }
       case "PENDING":
         await client.query("ROLLBACK");
         return;
