@@ -48,8 +48,7 @@ export async function getUserLockByCharge(vippsReference: string, client: PoolCl
       u.email,
       c.year,
       c.id AS "chargeId",
-      a.id AS "agreementId",
-      a.status AS "agreementStatus"
+      a.id AS "agreementId"
     FROM users u
     JOIN agreements a ON u.id = a.user_id
     JOIN charges c ON a.id = c.agreement_id

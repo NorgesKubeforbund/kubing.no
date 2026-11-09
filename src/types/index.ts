@@ -28,7 +28,7 @@ export type UserLock = {
   email: string;
 };
 
-export type UserLockWithCharge = (UserLock & { year: number, chargeId: number, agreementId: number, agreementStatus: string });
+export type UserLockWithCharge = (UserLock & { year: number, chargeId: number, agreementId: number });
 
 export type UserLockWithOrder = (UserLock & { year: number, orderId: number, vippsReference: string });
 
