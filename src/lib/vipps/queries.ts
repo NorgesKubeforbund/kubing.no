@@ -348,7 +348,7 @@ export async function setChargeCancelledBeforeCreation(chargeId: number, client:
   await client.query(`
     UPDATE charges
     SET status = 'CANCELLED_BEFORE_CREATION'
-    WHERE id = $1
+    WHERE id = $1 AND status IN ('CREATED', 'NOT_CREATED')
   `, [chargeId]);
 }
 
