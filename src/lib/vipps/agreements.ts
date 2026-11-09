@@ -156,7 +156,6 @@ export async function stopAgreement(userId: number): Promise<boolean> {
         ...charge,
         id: charge.chargeId,
         userId,
-        agreementId: agreement.id,
       });
     }
     return true;
@@ -348,7 +347,6 @@ async function stopAgreementIfStopped(stoppedAgreement: { userId: number, vippsR
         ...charge,
         id: charge.chargeId,
         userId,
-        agreementId: agreement.id,
       });
     }
   } catch (e) {
