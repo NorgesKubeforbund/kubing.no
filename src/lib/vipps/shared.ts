@@ -49,7 +49,7 @@ type AgreementResult =
 type ChargeResult =
   | { success: false }
   | { success: true, status: "no_charge" | "charge_cancelled" | "charge_already_processed" }
-  | { success: true; status: "charge_paid"; sendEmail: () => Promise<void> };;
+  | { success: true; status: "charge_paid"; sendEmail: () => Promise<void> };
 
 export async function handleOpenTransactionForCreation(user: UserLock, isCreatingEpayment: boolean, client: PoolClient): Promise<TransactionResult> {
   const { userId } = user;

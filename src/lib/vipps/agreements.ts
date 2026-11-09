@@ -171,8 +171,8 @@ export async function stopAgreement(userId: number): Promise<boolean> {
 export async function createCharges(): Promise<boolean> {
   const chargeDate = getNextChargeDate();
   if (chargeDate) {
-    const eligbleUsers = await getUsersForChargeCreation(chargeDate.year);
-    for (const user of eligbleUsers) {
+    const eligibleUsers = await getUsersForChargeCreation(chargeDate.year);
+    for (const user of eligibleUsers) {
       await createChargeDatabase(user.userId, chargeDate);
     }
   }
@@ -190,8 +190,8 @@ function getNextChargeDate(): { year: number, due: string } | null {
     return null;
   }
   if (month === 1) {
-    const tommorow = new Date(Date.now() + 1000 * 60 * 60 * 24);
-    const due = toNorwayDateString(tommorow);
+    const tomorrow = new Date(Date.now() + 1000 * 60 * 60 * 24);
+    const due = toNorwayDateString(tomorrow);
     const year = getCurrentYear();
     return {
       year,
