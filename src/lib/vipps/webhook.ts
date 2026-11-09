@@ -80,7 +80,8 @@ async function handleAgreementActivated(payload: RecurringAgreementActivated): P
     const user = await getUserLockByAgreement(payload.agreementId, client);
     if (!user) {
       await client.query("ROLLBACK");
-      return false;
+      console.error(`Webhook ${payload.eventType}: no agreement found for ${payload.agreementId}`);
+      return true;
     }
     await setAgreementActive(payload.agreementId, client);
     await client.query("COMMIT");
@@ -101,7 +102,8 @@ async function handleAgreementCancelled(payload: RecurringAgreementExpired | Rec
     const user = await getUserLockByAgreement(payload.agreementId, client);
     if (!user) {
       await client.query("ROLLBACK");
-      return false;
+      console.error(`Webhook ${payload.eventType}: no agreement found for ${payload.agreementId}`);
+      return true;
     }
     const agreement = await setAgreementCancelled(payload.agreementId, client);
     if (!agreement) {
@@ -130,7 +132,8 @@ async function handleAgreementStopped(payload: RecurringAgreementStopped): Promi
     const user = await getUserLockByAgreement(payload.agreementId, client);
     if (!user) {
       await client.query("ROLLBACK");
-      return false;
+      console.error(`Webhook ${payload.eventType}: no agreement found for ${payload.agreementId}`);
+      return true;
     }
     const agreement = await setAgreementStoppedByVippsReference(payload.agreementId, client);
     if (!agreement) {
@@ -164,7 +167,8 @@ async function handleChargeCaptured(payload: RecurringChargeCaptured): Promise<b
     const res = await getUserLockByCharge(payload.chargeId, client);
     if (!res) {
       await client.query("ROLLBACK");
-      return false;
+      console.error(`Webhook ${payload.eventType}: no charge found for ${payload.chargeId}`);
+      return true;
     }
     const addMemberRes = await addMemberFromCharge(res.userId, payload.chargeId, res.year, client);
     switch (addMemberRes) {
