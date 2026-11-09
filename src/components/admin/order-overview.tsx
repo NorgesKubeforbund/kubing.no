@@ -9,7 +9,7 @@ import Select from "@/components/ui/select";
 
 const PAGE_SIZE = 25;
 
-type OrderStatus = "CREATED" | "NOT_CREATED" | "CANCELLED" | "CANCELLED_BEFORE_CREATION" | "FAILED" | "COMPLETED";
+type OrderStatus = "CREATED" | "NOT_CREATED" | "CANCELLED" | "CANCELLED_BEFORE_CREATION" | "FAILED" | "REFUNDED" | "COMPLETED";
 
 export default function OrderOverview({ orders }: { orders: Payment[] }) {
   const [page, setPage] = useState<number>(1);
