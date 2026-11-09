@@ -14,6 +14,7 @@ import { apiStopAgreement, cancelEpayment, captureEpayment, getEpayment, refundC
 import {
   addMemberFromCharge,
   addMemberFromOrder,
+  getAgreementById,
   getCreatedCharge,
   getUserLockByAgreement,
   getUserLockByCharge,
@@ -223,7 +224,8 @@ async function handleChargeFailed(payload: RecurringChargeFailed): Promise<boole
       await client.query("ROLLBACK");
       return true;
     }
-    if (user.agreementStatus === "STOPPED") {
+    const agreement = await getAgreementById(user.agreementId, client);
+    if (!agreement || agreement.status === "STOPPED") {
       await client.query("COMMIT");
       return true;
     }
