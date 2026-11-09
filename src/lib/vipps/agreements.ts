@@ -409,6 +409,9 @@ async function handleOpenAgreement(agreement: { userId: number, vippsReference: 
         await setAgreementStoppedByVippsReference(vippsReference, client);
         await client.query("COMMIT");
         return;
+      default:
+        await client.query("ROLLBACK");
+        return;
     }
   } catch (e) {
     await client.query("ROLLBACK").catch(() => { });
