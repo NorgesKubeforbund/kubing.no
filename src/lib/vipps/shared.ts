@@ -310,6 +310,12 @@ async function handleOpenChargeForCreation(user: UserLock, client: PoolClient): 
       success: true,
       status: "charge_cancelled",
     };
+  } else if (status === "REFUNDED") {
+    await setChargeRefunded(charge.chargeId, client);
+    return {
+      success: true,
+      status: "charge_cancelled",
+    };
   }
   return { success: false };
 }
