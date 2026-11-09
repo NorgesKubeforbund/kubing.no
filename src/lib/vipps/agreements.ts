@@ -447,7 +447,7 @@ export async function handleOpenCharge(charge: ChargeWithAgreement): Promise<voi
     const chargeRes = await getCharge(agreementRef, chargeRef);
     if (!chargeRes.success) {
       if (chargeRes.status === 404) {
-        await setChargeCancelled(id, client);
+        await setChargeCancelledBeforeCreation(id, client);
         await client.query("COMMIT");
         return;
       }
