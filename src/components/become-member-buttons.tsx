@@ -80,7 +80,8 @@ export default function BecomeMemberButtons({
     return null;
   }
 
-  const walletSelected = recurring || paymentType === "WALLET";
+  const isRecurring = recurring || isMember;
+  const walletSelected = isRecurring || paymentType === "WALLET";
 
   return (
     <div className="flex max-w-xl flex-col gap-4">
@@ -131,7 +132,7 @@ export default function BecomeMemberButtons({
                 <span className={cn("h-2.5 w-2.5 rounded-full", walletSelected ? "bg-neutral-900" : "group-hover:bg-neutral-400")} />
               </span>
             </button>
-            {!recurring && (
+            {!isRecurring && (
               <button
                 onClick={() => setPaymentType("CARD")}
                 className={cn(
@@ -152,7 +153,7 @@ export default function BecomeMemberButtons({
               </button>
             )}
           </div>
-          {recurring && (
+          {isRecurring && (
             <p className="text-sm text-neutral-500">
               Automatisk fornyelse er kun tilgjengelig med Vipps.
             </p>
@@ -177,7 +178,7 @@ export default function BecomeMemberButtons({
                 <p>Medlemskap {year}</p>
                 <p>{membershipCost} kr</p>
               </div>
-              {recurring && (
+              {isRecurring && (
                 <p className="text-left text-sm text-neutral-500">
                   Fornyes automatisk hvert år
                 </p>
@@ -201,13 +202,13 @@ export default function BecomeMemberButtons({
           <Button
             disabled={loading || !consent}
             onClick={() =>
-              recurring ? redirectToAutomaticVipps() : redirectToVipps(paymentType)
+              isRecurring ? redirectToAutomaticVipps() : redirectToVipps(paymentType)
             }
             className="w-full"
           >
             {loading
               ? "Venter..."
-              : recurring
+              : isRecurring
                 ? "Start automatisk fornyelse med Vipps"
                 : `Betal med ${paymentType === "WALLET" ? "Vipps" : "kort"}`}
           </Button>
