@@ -30,7 +30,7 @@ import {
 } from "@/lib/vipps/queries";
 import { handleOpenCharge } from "./agreements";
 import { getMembershipCost } from "./util";
-import { OrderCreated } from "@/types";
+import { ChargeWithAgreement, OrderCreated } from "@/types";
 
 export async function handleWebhook(payload: WebhookPayload): Promise<boolean> {
   if (!("eventType" in payload)) {
@@ -127,6 +127,7 @@ async function handleAgreementStopped(payload: RecurringAgreementStopped): Promi
     return true;
   }
   const client = await getClient();
+  let openCharge: ChargeWithAgreement | undefined;
   try {
     await client.query("BEGIN");
     const user = await getUserLockByAgreement(payload.agreementId, client);
@@ -143,13 +144,8 @@ async function handleAgreementStopped(payload: RecurringAgreementStopped): Promi
     await client.query("COMMIT");
     const charge = await getCreatedCharge(user.userId, client);
     if (charge) {
-      await handleOpenCharge({
-        ...charge,
-        id: charge.chargeId,
-        userId: user.userId,
-      });
+      openCharge = { ...charge, id: charge.chargeId, userId: user.userId };
     }
-    return true;
   } catch (e) {
     await client.query("ROLLBACK").catch(() => { });
     console.error(e);
@@ -157,6 +153,14 @@ async function handleAgreementStopped(payload: RecurringAgreementStopped): Promi
   } finally {
     client.release();
   }
+  if (openCharge) {
+    try {
+      await handleOpenCharge(openCharge);
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  return true;
 }
 
 async function handleChargeCaptured(payload: RecurringChargeCaptured): Promise<boolean> {

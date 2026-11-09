@@ -131,6 +131,7 @@ export async function createVippsAgreementAndGetRedirectUrl(userId: number, base
 
 export async function stopAgreement(userId: number): Promise<boolean> {
   const client = await getClient();
+  let openCharge: ChargeWithAgreement | undefined;
   try {
     await client.query("BEGIN");
     const user = await getUserLock(userId, client);
@@ -152,13 +153,8 @@ export async function stopAgreement(userId: number): Promise<boolean> {
     await client.query("COMMIT");
     const charge = await getCreatedCharge(userId, client);
     if (charge) {
-      await handleOpenCharge({
-        ...charge,
-        id: charge.chargeId,
-        userId,
-      });
+      openCharge = { ...charge, id: charge.chargeId, userId };
     }
-    return true;
   } catch (e) {
     await client.query("ROLLBACK").catch(() => { });
     console.error(e);
@@ -166,6 +162,14 @@ export async function stopAgreement(userId: number): Promise<boolean> {
   } finally {
     client.release();
   }
+  if (openCharge) {
+    try {
+      await handleOpenCharge(openCharge);
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  return true;
 }
 
 export async function createCharges(): Promise<boolean> {
@@ -318,6 +322,7 @@ export async function checkActiveAgreements(): Promise<boolean> {
 async function stopAgreementIfStopped(stoppedAgreement: { userId: number, vippsReference: string }): Promise<void> {
   const { userId, vippsReference } = stoppedAgreement;
   const client = await getClient();
+  let openCharge: ChargeWithAgreement | undefined;
   try {
     await client.query("BEGIN");
     const user = await getUserLock(userId, client);
@@ -343,17 +348,20 @@ async function stopAgreementIfStopped(stoppedAgreement: { userId: number, vippsR
     await client.query("COMMIT");
     const charge = await getCreatedCharge(userId, client);
     if (charge) {
-      await handleOpenCharge({
-        ...charge,
-        id: charge.chargeId,
-        userId,
-      });
+      openCharge = { ...charge, id: charge.chargeId, userId };
     }
   } catch (e) {
     await client.query("ROLLBACK").catch(() => { });
     console.error(e);
   } finally {
     client.release();
+  }
+  if (openCharge) {
+    try {
+      await handleOpenCharge(openCharge);
+    } catch (e) {
+      console.error(e);
+    }
   }
 }
 
