@@ -30,9 +30,9 @@ const VIPPS_TIMEOUT = 15000;
 
 const STANDARD_HEADERS = {
   "Vipps-System-Name": "kubing-no",
-  "Vipps-System-Version": "1.0.0",
+  "Vipps-System-Version": "1.1.0",
   "Vipps-System-Plugin-Name": "kubing-membership",
-  "Vipps-System-Plugin-Version": "1.0.0",
+  "Vipps-System-Plugin-Version": "1.1.0",
 };
 
 function getProductDescription(name: string) {
