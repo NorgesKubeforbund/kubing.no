@@ -11,7 +11,8 @@ flake repository.
 ## Building the system
 
 The machine must be built with the SSH key required by `sops-nix` present on the
-system. The secrets can be regenerated should the key be unavailable.
+system. The secrets can be regenerated should the key be unavailable. The key
+is managed by Lars Johan Folde.
 
 The sops key must be placed in `~/.ssh/id_ed25519_nix` and `sops-nix` will
 find it automatically. After the key is present you can rebuild the system
