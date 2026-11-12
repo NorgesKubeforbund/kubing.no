@@ -12,14 +12,19 @@ flake repository.
 
 The machine must be built with the SSH key required by `sops-nix` present on the
 system. The secrets can be regenerated should the key be unavailable. The key
-is managed by Lars Johan Folde.
+is managed by Lars Johan Folde. The sops key must be placed in
+`~/.ssh/id_ed25519_nix` and `sops-nix` will find it automatically. 
 
-The sops key must be placed in `~/.ssh/id_ed25519_nix` and `sops-nix` will
-find it automatically. After the key is present you can rebuild the system
+Additionally if you are not in the real Lairon machine you must use the impure
+version of the configuration. The only difference is that it sources
+`hardware-configuration.nix` from `/etc/nixos/`. Ensure this file is correct and
+up to date before building the system.
+
+After the key and `hardware-configuration.nix` is present you can rebuild the system
 using:
 
 ```
-sudo nixos-rebuild --flake gitlab:ljfolde/nix-config#lairon switch --impure
+sudo nixos-rebuild --flake gitlab:ljfolde/nix-config#lairon-impure switch --impure
 ```
 
 ## Database import
