@@ -105,7 +105,7 @@ export async function createVippsAgreement(baseUrl: string, name: string, charge
         "initialCharge": charge && {
           "amount": getMembershipCost(),
           "description": `Medlemskap i NKF ${charge.year}`,
-          "transactionType": "DIRECT_CAPTURE",
+          "transactionType": "RESERVE_CAPTURE",
           "orderId": charge.vippsReference,
         },
       }),
@@ -305,7 +305,7 @@ export async function createCharge(agreementRef: string, chargeRef: string, due:
       },
       body: JSON.stringify({
         "amount": getMembershipCost(),
-        "transactionType": "DIRECT_CAPTURE",
+        "transactionType": "RESERVE_CAPTURE",
         "description": `Medlemskap i NKF ${year}`,
         "due": due,
         "retryDays": 14,
