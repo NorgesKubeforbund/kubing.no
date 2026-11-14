@@ -292,7 +292,11 @@ async function handleOpenChargeForCreation(user: UserLock, client: PoolClient): 
         if (!refundSuccess) {
           return { success: false };
         }
-        await setChargeRefunded(charge.chargeId, client);
+        if (status === "CHARGED") {
+          await setChargeRefunded(charge.chargeId, client);
+        } else {
+          await setChargeCancelled(charge.chargeId, client);
+        }
         return {
           success: true,
           status: "charge_cancelled",

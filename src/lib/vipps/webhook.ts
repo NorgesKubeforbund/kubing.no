@@ -215,7 +215,11 @@ async function handleChargeReserved(payload: RecurringChargeReserved): Promise<b
           await client.query("ROLLBACK");
           return false;
         }
-        await setChargeRefunded(res.chargeId, client);
+        if (status === "CHARGED") {
+          await setChargeRefunded(res.chargeId, client);
+        } else {
+          await setChargeCancelled(res.chargeId, client);
+        }
         await client.query("COMMIT");
         return true;
     }
