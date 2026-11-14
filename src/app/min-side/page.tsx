@@ -27,7 +27,7 @@ export default async function MyPage({
   if (vipps === "avtale" || vipps === "betaling") {
     return <WaitForOpenOrder type={vipps} />
   }
-  
+
   const user = await getUser(userId);
   const isMember = await isUserMember(userId);
   const hasActiveAgreement = await hasUserActiveAgreement(userId);
@@ -40,7 +40,7 @@ export default async function MyPage({
         {user.success && <div className="text-base">Hei {user.data.name.split(" ")[0]}!</div>}
       </div>
       <MembershipBadge isMember={isMember} hasActiveAgreement={hasActiveAgreement} />
-      <BecomeMemberButtons isMember={isMember} hasActiveAgreement={hasActiveAgreement} membershipCost={getMembershipCostRoundedString()}/>
+      <BecomeMemberButtons isMember={isMember} hasActiveAgreement={hasActiveAgreement} membershipCost={getMembershipCostRoundedString()} />
       <div className="flex flex-col gap-4 mt-auto">
         <BlueLink href="/min-side/innstillinger">Innstillinger</BlueLink>
         {hasPermissions && <BlueLink href="/admin">Admin-side</BlueLink>}
@@ -56,16 +56,16 @@ function MembershipBadge({
   isMember: boolean;
   hasActiveAgreement: boolean;
 }) {
-  if (isMember) return <IsMemberBadge />;
+  if (isMember) return <IsMemberBadge hasActiveAgreement={hasActiveAgreement} />;
   if (hasActiveAgreement) return <RenewalPendingBadge />;
   return <NotMemberBadge />;
 }
 
-function IsMemberBadge() {
+function IsMemberBadge({ hasActiveAgreement }: { hasActiveAgreement: boolean }) {
   return (
     <div className="mt-6 bg-green-600 border-4 border-green-700 text-white rounded-xl p-4 w-fit self-center">
       <div className="text-2xl font-semibold">Aktivt medlemskap i NKF</div>
-      <p>Medlemskapet varer ut inneværende kalenderår.</p>
+      <p>Medlemskapet varer ut inneværende kalenderår{hasActiveAgreement ? " og fornyes automatisk" : ""}.</p>
     </div>
   );
 }
