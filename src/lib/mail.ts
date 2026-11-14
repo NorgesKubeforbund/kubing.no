@@ -11,6 +11,7 @@ async function sendMail(email: string, subject: string, html: string) {
     to: email,
     subject: subject,
     html: html,
+    replyTo: "kontakt@kubing.no",
   });
   if (error) {
     console.error("Failed:", error.message);
