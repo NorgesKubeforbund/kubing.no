@@ -5,12 +5,12 @@ import {
   RecurringAgreementExpired,
   RecurringAgreementRejected,
   RecurringAgreementStopped,
-  RecurringChargeCaptured,
   RecurringChargeFailed,
+  RecurringChargeReserved,
   WebhookPayload,
 } from "@/types/webhook";
 import { notifyOfAgreementEndedAfterFailedCharge, sendMembershipConfirmation } from "@/lib/mail";
-import { apiStopAgreement, cancelEpayment, captureEpayment, getEpayment, refundCharge, refundEpayment } from "@/lib/vipps/api";
+import { apiStopAgreement, cancelCharge, cancelEpayment, captureCharge, captureEpayment, getCharge, getEpayment, refundCharge, refundEpayment } from "@/lib/vipps/api";
 import {
   addMemberFromCharge,
   addMemberFromOrder,
@@ -23,6 +23,7 @@ import {
   setAgreementCancelled,
   setAgreementStopped,
   setAgreementStoppedByVippsReference,
+  setChargeCancelled,
   setChargeCancelledByAgreementId,
   setChargeFailed,
   setChargeRefunded,
@@ -47,8 +48,8 @@ export async function handleWebhook(payload: WebhookPayload): Promise<boolean> {
       return (await handleAgreementCancelled(payload));
     case "recurring.agreement-stopped.v1":
       return (await handleAgreementStopped(payload));
-    case "recurring.charge-captured.v1":
-      return (await handleChargeCaptured(payload));
+    case "recurring.charge-reserved.v1":
+      return (await handleChargeReserved(payload));
     case "recurring.charge-failed.v1":
       return (await handleChargeFailed(payload));
     default:
@@ -164,7 +165,7 @@ async function handleAgreementStopped(payload: RecurringAgreementStopped): Promi
   return true;
 }
 
-async function handleChargeCaptured(payload: RecurringChargeCaptured): Promise<boolean> {
+async function handleChargeReserved(payload: RecurringChargeReserved): Promise<boolean> {
   const client = await getClient();
   try {
     await client.query("BEGIN");
@@ -174,6 +175,31 @@ async function handleChargeCaptured(payload: RecurringChargeCaptured): Promise<b
       console.error(`Webhook ${payload.eventType}: no charge found for ${payload.chargeId}`);
       return true;
     }
+    const chargeRes = await getCharge(payload.agreementId, payload.chargeId);
+    if (!chargeRes.success) {
+      await client.query("ROLLBACK");
+      return chargeRes.status === 404;
+    }
+    const charge = chargeRes.data;
+    const status = charge.status;
+    if (status === "REFUNDED") {
+      await setChargeRefunded(res.chargeId, client);
+      await client.query("COMMIT");
+      return true;
+    }
+    if (status === "CANCELLED") {
+      await setChargeCancelled(res.chargeId, client);
+      await client.query("COMMIT");
+      return true;
+    }
+    if (status === "FAILED") {
+      await client.query("ROLLBACK");
+      return true;
+    }
+    if (status !== "RESERVED" && status !== "CHARGED") {
+      await client.query("ROLLBACK");
+      return false;
+    }
     const addMemberRes = await addMemberFromCharge(res.userId, payload.chargeId, res.year, client);
     switch (addMemberRes) {
       case "added_membership":
@@ -182,7 +208,9 @@ async function handleChargeCaptured(payload: RecurringChargeCaptured): Promise<b
         await client.query("ROLLBACK");
         return true;
       case "duplicate_payment":
-        const refundSuccess = await refundCharge(payload.agreementId, payload.chargeId)
+        const refundSuccess = status === "CHARGED"
+          ? await refundCharge(payload.agreementId, payload.chargeId)
+          : await cancelCharge(payload.agreementId, payload.chargeId);
         if (!refundSuccess) {
           await client.query("ROLLBACK");
           return false;
@@ -190,6 +218,13 @@ async function handleChargeCaptured(payload: RecurringChargeCaptured): Promise<b
         await setChargeRefunded(res.chargeId, client);
         await client.query("COMMIT");
         return true;
+    }
+    if (status === "RESERVED") {
+      const captureSuccess = await captureCharge(payload.agreementId, payload.chargeId);
+      if (!captureSuccess) {
+        await client.query("ROLLBACK");
+        return false;
+      }
     }
     await client.query("COMMIT");
     try {
