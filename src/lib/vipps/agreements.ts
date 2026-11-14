@@ -529,7 +529,11 @@ export async function handleOpenCharge(charge: ChargeWithAgreement): Promise<voi
           await client.query("ROLLBACK");
           return;
         }
-        await setChargeRefunded(id, client);
+        if (status === "CHARGED") {
+          await setChargeRefunded(id, client);
+        } else {
+          await setChargeCancelled(id, client);
+        }
         await client.query("COMMIT");
         return;
     }
