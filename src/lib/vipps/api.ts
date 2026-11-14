@@ -352,6 +352,65 @@ export async function refundCharge(agreementRef: string, chargeRef: string): Pro
   return true;
 }
 
+export async function cancelCharge(agreementRef: string, chargeRef: string): Promise<boolean> {
+  const accessTokenRes = await getAccessToken();
+  if (!accessTokenRes.success) {
+    return false;
+  }
+  const accessToken = accessTokenRes.data;
+  const res = await fetch(
+    `${VIPPS_URL}/recurring/v3/agreements/${agreementRef}/charges/${chargeRef}`,
+    {
+      method: "DELETE",
+      signal: AbortSignal.timeout(VIPPS_TIMEOUT),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`,
+        "Ocp-Apim-Subscription-Key": VIPPS_SUBSCRIPTION_KEY,
+        "Merchant-Serial-Number": VIPPS_MSN,
+        "Idempotency-Key": `cancel-${chargeRef}`,
+        ...STANDARD_HEADERS,
+      },
+    }
+  );
+  if (!res.ok) {
+    console.error(await res.text());
+    return false;
+  }
+  return true;
+}
+
+export async function captureCharge(agreementRef: string, chargeRef: string): Promise<boolean> {
+  const accessTokenRes = await getAccessToken();
+  if (!accessTokenRes.success) {
+    return false;
+  }
+  const accessToken = accessTokenRes.data;
+  const res = await fetch(
+    `${VIPPS_URL}/recurring/v3/agreements/${agreementRef}/charges/${chargeRef}/capture`,
+    {
+      method: "POST",
+      signal: AbortSignal.timeout(VIPPS_TIMEOUT),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`,
+        "Ocp-Apim-Subscription-Key": VIPPS_SUBSCRIPTION_KEY,
+        "Merchant-Serial-Number": VIPPS_MSN,
+        "Idempotency-Key": `capture-${chargeRef}`,
+        ...STANDARD_HEADERS,
+      },
+      body: JSON.stringify({
+        "amount": getMembershipCost(),
+      }),
+    }
+  );
+  if (!res.ok) {
+    console.error(await res.text());
+    return false;
+  }
+  return true;
+}
+
 export async function createEpayment(baseUrl: string, vippsReference: string, paymentType: VippsPaymentType, year: number): Promise<Maybe<VippsPaymentCreateReponse>> {
   const accessTokenRes = await getAccessToken();
   if (!accessTokenRes.success) {
