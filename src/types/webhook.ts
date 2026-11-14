@@ -40,7 +40,7 @@ type ChargeBase = {
   amountRefunded: number;
 };
 
-export type RecurringChargeCaptured = ChargeBase & { eventType: "recurring.charge-captured.v1" };
+export type RecurringChargeReserved = ChargeBase & { eventType: "recurring.charge-reserved.v1" };
 
 export type RecurringChargeFailureReason =
   | "user_action_required"
@@ -53,7 +53,7 @@ export type RecurringChargeFailed = ChargeBase & {
   failureReason?: RecurringChargeFailureReason | null;
 };
 
-export type RecurringChargeEvent = RecurringChargeCaptured | RecurringChargeFailed;
+export type RecurringChargeEvent = RecurringChargeReserved | RecurringChargeFailed;
 
 export type EpaymentEvent = {
   msn: string;

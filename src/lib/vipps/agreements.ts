@@ -31,7 +31,7 @@ import {
   setChargeRefunded,
 } from "@/lib/vipps/queries";
 import { isUserMemberInYearWithClient } from "@/lib/membership";
-import { apiStopAgreement, createCharge, createVippsAgreement, getActiveAgreements, getAgreement, getCharge, refundCharge } from "@/lib/vipps/api";
+import { apiStopAgreement, cancelCharge, captureCharge, createCharge, createVippsAgreement, getActiveAgreements, getAgreement, getCharge, refundCharge } from "@/lib/vipps/api";
 import { AgreementCreation, ChargeWithAgreement } from "@/types";
 import { notifyOfAgreementEndedAfterFailedCharge, notifyOfPaymentDue, sendMembershipConfirmation } from "@/lib/mail";
 import { getMembershipCostRoundedString, getVippsReference } from "@/lib/vipps/util";
@@ -510,7 +510,7 @@ export async function handleOpenCharge(charge: ChargeWithAgreement): Promise<voi
       await client.query("COMMIT");
       return;
     }
-    if (status !== "CHARGED") {
+    if (status !== "RESERVED" && status !== "CHARGED") {
       await client.query("ROLLBACK");
       return;
     }
@@ -522,7 +522,9 @@ export async function handleOpenCharge(charge: ChargeWithAgreement): Promise<voi
         await client.query("ROLLBACK");
         return;
       case "duplicate_payment":
-        const refundSuccess = await refundCharge(agreementRef, chargeRef)
+        const refundSuccess = status === "CHARGED"
+          ? await refundCharge(agreementRef, chargeRef)
+          : await cancelCharge(agreementRef, chargeRef);
         if (!refundSuccess) {
           await client.query("ROLLBACK");
           return;
@@ -530,6 +532,13 @@ export async function handleOpenCharge(charge: ChargeWithAgreement): Promise<voi
         await setChargeRefunded(id, client);
         await client.query("COMMIT");
         return;
+    }
+    if (status === "RESERVED") {
+      const captureSuccess = await captureCharge(agreementRef, chargeRef);
+      if (!captureSuccess) {
+        await client.query("ROLLBACK");
+        return;
+      }
     }
     await client.query("COMMIT");
     try {

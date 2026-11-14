@@ -18,7 +18,9 @@ import {
 import { UserLock } from "@/types";
 import { PoolClient } from "pg";
 import {
+  cancelCharge,
   cancelEpayment,
+  captureCharge,
   captureEpayment,
   getAgreement,
   getCharge,
@@ -273,22 +275,20 @@ async function handleOpenChargeForCreation(user: UserLock, client: PoolClient): 
   }
   const chargeData = chargeRes.data;
   const status = chargeData.status;
-  if (status === "CHARGED") {
+  if (status === "RESERVED" || status === "CHARGED") {
     const addMemberRes = await addMemberFromCharge(userId, charge.chargeRef, charge.year, client);
     switch (addMemberRes) {
       case "added_membership":
-        return {
-          success: true,
-          status: "charge_paid",
-          sendEmail: () => sendMembershipConfirmation(user, { id: charge.chargeId, vippsReference: charge.agreementRef, year: charge.year }),
-        };
+        break;
       case "already_processed":
         return {
           success: true,
           status: "charge_already_processed",
         };
       case "duplicate_payment":
-        const refundSuccess = await refundCharge(charge.agreementRef, charge.chargeRef)
+        const refundSuccess = status === "CHARGED"
+          ? await refundCharge(charge.agreementRef, charge.chargeRef)
+          : await cancelCharge(charge.agreementRef, charge.chargeRef);
         if (!refundSuccess) {
           return { success: false };
         }
@@ -298,6 +298,17 @@ async function handleOpenChargeForCreation(user: UserLock, client: PoolClient): 
           status: "charge_cancelled",
         };
     }
+    if (status === "RESERVED") {
+      const captureSuccess = await captureCharge(charge.agreementRef, charge.chargeRef);
+      if (!captureSuccess) {
+        return { success: false };
+      }
+    }
+    return {
+      success: true,
+      status: "charge_paid",
+      sendEmail: () => sendMembershipConfirmation(user, { id: charge.chargeId, vippsReference: charge.agreementRef, year: charge.year }),
+    };
   } else if (status === "CANCELLED") {
     await setChargeCancelled(charge.chargeId, client);
     return {

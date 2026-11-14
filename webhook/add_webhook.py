@@ -42,7 +42,7 @@ def add_webhook():
                 "recurring.agreement-rejected.v1",
                 "recurring.agreement-stopped.v1",
                 "recurring.agreement-expired.v1",
-                "recurring.charge-captured.v1",
+                "recurring.charge-reserved.v1",
                 "recurring.charge-failed.v1",
                 "epayments.payment.aborted.v1",
                 "epayments.payment.expired.v1",
